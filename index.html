@@ -132,6 +132,87 @@
     color:var(--paper-dim);
   }
   .trader-menu .row:hover{background:var(--olive);color:var(--paper);}
+  .raid-tray{
+    position:fixed;
+    bottom:0;left:0;right:0;
+    z-index:40;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .raid-tray-bar{
+    width:100%;
+    background:var(--panel);
+    border-top:3px solid var(--rust);
+    color:var(--amber);
+    font-family:inherit;
+    font-size:11.5px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    padding:10px 16px;
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .raid-tray-count{
+    background:var(--rust);
+    color:#1a0d08;
+    font-weight:600;
+    padding:1px 8px;
+    font-size:11px;
+  }
+  .raid-tray-panel{
+    display:none;
+    max-height:45vh;
+    overflow-y:auto;
+    background:var(--bg);
+    border-top:1px solid var(--line);
+    text-align:left;
+  }
+  .raid-tray.open .raid-tray-panel{display:block;}
+  .raid-tray-item{border-bottom:1px solid var(--line);}
+  .raid-tray-item-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 16px;
+    cursor:pointer;
+  }
+  .raid-tray-item-name{
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    text-transform:uppercase;
+    font-size:12.5px;
+    color:var(--paper);
+  }
+  .raid-tray-item-sub{
+    font-size:10.5px;
+    color:var(--paper-dim);
+  }
+  .raid-tray-remove{
+    background:none;
+    border:1px solid var(--danger);
+    color:#e8a49c;
+    font-size:10px;
+    padding:2px 7px;
+    cursor:pointer;
+  }
+  .raid-tray-remove:hover{background:var(--danger);color:#fff;}
+  .raid-tray-detail{
+    display:none;
+    padding:0 16px 14px;
+    font-size:11.5px;
+    color:var(--paper-dim);
+    line-height:1.6;
+  }
+  .raid-tray-item.expanded .raid-tray-detail{display:block;}
+  .raid-tray-detail b{color:var(--amber);}
+  .raid-tray-detail .rt-row{margin-bottom:4px;}
+  .raid-tray-empty{
+    padding:16px;
+    text-align:center;
+    font-size:11px;
+    color:var(--paper-dim);
+  }
 </style>
 </head>
 <body>
@@ -151,10 +232,101 @@
   </div>
 </div>
 
+<div class="raid-tray" id="raidTray">
+  <button class="raid-tray-bar" id="raidTrayBar" type="button">
+    <span>Raid tray</span>
+    <span class="raid-tray-count" id="raidTrayCount">0</span>
+  </button>
+  <div class="raid-tray-panel" id="raidTrayPanel"></div>
+</div>
+
 <script>
 const TASKS = [
-  { name: 'Delivery From the Past', trader: 'Prapor', url: 'delivery_from_the_past.html' }
+  { name: 'Delivery From the Past', trader: 'Prapor', level: 5, url: 'delivery_from_the_past.html' },
+  { name: 'A Shooter Born in Heaven', trader: 'Mechanic', level: 14, url: 'a_shooter_born_in_heaven.html' }
 ];
+
+const TASK_DETAILS = {
+  'delivery_from_the_past.html': {
+    location: 'Customs, Factory',
+    items: [
+      "Tarcone Director's office key \u2014 needed to enter, not consumed",
+      'Secure folder / documents case \u2014 quest item, lost on death'
+    ],
+  },
+  'a_shooter_born_in_heaven.html': {
+    location: 'Woods, Reserve, Shoreline, Customs, Lighthouse, Streets of Tarkov, Interchange, Ground Zero',
+    items: [
+      'Bolt-action rifle \u2014 not consumed;',
+      '5 PMC headshots required on each of the 8 maps'
+    ],
+  }
+};
+
+const RAID_TRAY_KEY = 'easytarkov-raidtray';
+
+function loadTray(){
+  try{
+    const raw = localStorage.getItem(RAID_TRAY_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){
+    return [];
+  }
+}
+
+function saveTray(list){
+  try{ localStorage.setItem(RAID_TRAY_KEY, JSON.stringify(list)); }catch(e){}
+}
+
+let raidTray = loadTray();
+
+const raidTrayEl = document.getElementById('raidTray');
+const raidTrayBar = document.getElementById('raidTrayBar');
+const raidTrayPanel = document.getElementById('raidTrayPanel');
+const raidTrayCount = document.getElementById('raidTrayCount');
+
+function taskLookup(url){
+  return TASKS.find(t => t.url === url) || { name: url, trader: '', level: '' };
+}
+
+function renderTray(){
+  raidTrayCount.textContent = raidTray.length;
+  raidTrayPanel.innerHTML = raidTray.length
+    ? raidTray.map(url => {
+        const t = taskLookup(url);
+        const d = TASK_DETAILS[url];
+        const detail = d
+          ? '<div class="rt-row"><b>Location:</b> '+d.location+'</div>' +
+            '<div class="rt-row"><b>Items:</b> '+d.items.join(';<br>')+'</div>' +
+            '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>'
+          : '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>';
+        return '<div class="raid-tray-item" data-url="'+url+'">' +
+          '<div class="raid-tray-item-head">' +
+            '<span><span class="raid-tray-item-name">'+t.name+'</span><br><span class="raid-tray-item-sub">'+t.trader+(t.level ? ' &middot; Level '+t.level : '')+'</span></span>' +
+            '<button class="raid-tray-remove" data-url="'+url+'" type="button">Remove</button>' +
+          '</div>' +
+          '<div class="raid-tray-detail">'+detail+'</div>' +
+        '</div>';
+      }).join('')
+    : '<div class="raid-tray-empty">No tasks pinned yet. Pin tasks from any task page to plan a raid.</div>';
+}
+
+raidTrayBar.addEventListener('click', () => raidTrayEl.classList.toggle('open'));
+
+raidTrayPanel.addEventListener('click', (e) => {
+  const removeBtn = e.target.closest('.raid-tray-remove');
+  if(removeBtn){
+    const url = removeBtn.getAttribute('data-url');
+    raidTray = raidTray.filter(u => u !== url);
+    saveTray(raidTray);
+    renderTray();
+    return;
+  }
+  const head = e.target.closest('.raid-tray-item-head');
+  if(head) head.closest('.raid-tray-item').classList.toggle('expanded');
+});
+
+renderTray();
 
 const searchInput = document.getElementById('taskSearch');
 const searchResults = document.getElementById('searchResults');

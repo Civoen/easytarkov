@@ -31,7 +31,7 @@
     background:var(--bg);
     color:var(--paper);
     font-family:'IBM Plex Mono',monospace;
-    padding:32px 16px 64px;
+    padding:32px 16px 100px;
   }
   .wrap{max-width:760px;margin:0 auto;}
   .tab{
@@ -73,9 +73,9 @@
   a.trader-btn{display:inline-block;text-decoration:none;}
   .trader-menu{
     position:absolute;
-    top:100%;right:0;
-    margin-top:1px;
-    width:220px;
+    top:100%;left:0;
+    margin-top:4px;
+    width:130px;
     background:var(--panel-2);
     border:1px solid var(--line);
     z-index:5;
@@ -164,15 +164,39 @@
   .task-list{display:flex;flex-direction:column;gap:10px;}
   .task-row{
     display:flex;
-    justify-content:space-between;
     align-items:center;
+    gap:12px;
     background:var(--panel);
     border:1px solid var(--line);
-    padding:14px 16px;
+  }
+  .task-row:hover{border-color:var(--rust);}
+  .task-check{
+    flex-shrink:0;
+    width:44px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    align-self:stretch;
+    border-right:1px solid var(--line);
+    cursor:pointer;
+  }
+  .task-check input{
+    width:16px;
+    height:16px;
+    accent-color:var(--rust);
+    cursor:pointer;
+  }
+  .task-link{
+    flex:1;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 16px 14px 0;
     text-decoration:none;
     color:var(--paper);
   }
-  .task-row:hover{border-color:var(--rust);}
+  .task-row.done .task-link{opacity:.55;}
+  .task-row.done .task-name{text-decoration:line-through;}
   .task-name{
     font-family:'Oswald',sans-serif;
     font-weight:600;
@@ -185,6 +209,117 @@
     color:var(--paper-dim);
   }
   .task-arrow{color:var(--amber);font-size:13px;}
+  .task-pin{
+    flex-shrink:0;
+    background:none;
+    border:1px solid var(--olive-light);
+    color:var(--amber);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    padding:4px 9px;
+    cursor:pointer;
+    margin-right:14px;
+  }
+  .task-pin:hover{border-color:var(--rust);color:var(--paper);}
+  .task-pin.pinned{border-color:var(--amber);background:var(--olive);color:var(--paper);}
+  .raid-tray{
+    position:fixed;
+    bottom:0;left:0;right:0;
+    z-index:40;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .raid-tray-bar{
+    width:100%;
+    background:var(--panel);
+    border-top:3px solid var(--rust);
+    color:var(--amber);
+    font-family:inherit;
+    font-size:11.5px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    padding:10px 16px;
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .raid-tray-count{
+    background:var(--rust);
+    color:#1a0d08;
+    font-weight:600;
+    padding:1px 8px;
+    font-size:11px;
+  }
+  .raid-tray-panel{
+    display:none;
+    max-height:45vh;
+    overflow-y:auto;
+    background:var(--bg);
+    border-top:1px solid var(--line);
+  }
+  .raid-tray.open .raid-tray-panel{display:block;}
+  .raid-tray-item{border-bottom:1px solid var(--line);}
+  .raid-tray-item-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 16px;
+    cursor:pointer;
+  }
+  .raid-tray-item-name{
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    text-transform:uppercase;
+    font-size:12.5px;
+    color:var(--paper);
+  }
+  .raid-tray-item-sub{
+    font-size:10.5px;
+    color:var(--paper-dim);
+  }
+  .raid-tray-remove{
+    background:none;
+    border:1px solid var(--danger);
+    color:#e8a49c;
+    font-size:10px;
+    padding:2px 7px;
+    cursor:pointer;
+  }
+  .raid-tray-remove:hover{background:var(--danger);color:#fff;}
+  .raid-tray-detail{
+    display:none;
+    padding:0 16px 14px;
+    font-size:11.5px;
+    color:var(--paper-dim);
+    line-height:1.6;
+  }
+  .raid-tray-item.expanded .raid-tray-detail{display:block;}
+  .raid-tray-detail b{color:var(--amber);}
+  .raid-tray-detail .rt-row{margin-bottom:4px;}
+  .raid-tray-empty{
+    padding:16px;
+    text-align:center;
+    font-size:11px;
+    color:var(--paper-dim);
+  }
+  .progress-wrap{margin-bottom:20px;}
+  .progress-label{
+    display:flex;
+    justify-content:space-between;
+    font-size:11px;
+    color:var(--paper-dim);
+    margin-bottom:6px;
+  }
+  .progress-track{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    height:8px;
+  }
+  .progress-fill{
+    background:var(--rust);
+    height:100%;
+    width:0%;
+  }
   .empty-note{
     font-size:12px;
     color:var(--paper-dim);
@@ -210,7 +345,7 @@
     <div class="topbar-right">
       <a class="trader-btn" href="index.html">Home</a>
       <div class="trader-wrap">
-        <button class="trader-btn" id="traderBtn" type="button">Prapor</button>
+        <button class="trader-btn" id="traderBtn" type="button">Traders</button>
         <div class="trader-menu" id="traderMenu"></div>
       </div>
       <div class="search-wrap">
@@ -227,29 +362,203 @@
 
   <section>
     <div class="section-label">Required tasks</div>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="progressText">0 of 0 complete</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
     <div class="task-list" id="taskList"></div>
   </section>
 
-  <footer>Task list reflects pages currently built for this site &mdash; more of Prapor's Kappa-required tasks will be added in batches.</footer>
+  <footer>Task list is currently incomplete. More tasks required for Kappa will be added shortly.</footer>
+</div>
+
+<div class="raid-tray" id="raidTray">
+  <button class="raid-tray-bar" id="raidTrayBar" type="button">
+    <span>Raid tray</span>
+    <span class="raid-tray-count" id="raidTrayCount">0</span>
+  </button>
+  <div class="raid-tray-panel" id="raidTrayPanel"></div>
 </div>
 
 <script>
 const TASKS = [
-  { name: 'Delivery From the Past', trader: 'Prapor', level: 5, url: 'delivery_from_the_past.html' }
+  { name: 'Delivery From the Past', trader: 'Prapor', level: 5, url: 'delivery_from_the_past.html' },
+  { name: 'A Shooter Born in Heaven', trader: 'Mechanic', level: 14, url: 'a_shooter_born_in_heaven.html' }
 ];
 
 const PAGE_TRADER = 'Prapor';
 const taskList = document.getElementById('taskList');
 const traderTasks = TASKS.filter(t => t.trader === PAGE_TRADER);
 
+const TASK_DETAILS = {
+  'delivery_from_the_past.html': {
+    location: 'Customs, Factory',
+    items: [
+      "Tarcone Director's office key \u2014 needed to enter, not consumed",
+      'Secure folder / documents case \u2014 quest item, lost on death'
+    ],
+  },
+  'a_shooter_born_in_heaven.html': {
+    location: 'Woods, Reserve, Shoreline, Customs, Lighthouse, Streets of Tarkov, Interchange, Ground Zero',
+    items: [
+      'Bolt-action rifle \u2014 not consumed;',
+      '5 PMC headshots required on each of the 8 maps'
+    ],
+  }
+};
+
+const RAID_TRAY_KEY = 'easytarkov-raidtray';
+
+function loadTray(){
+  try{
+    const raw = localStorage.getItem(RAID_TRAY_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){
+    return [];
+  }
+}
+
+function saveTray(list){
+  try{ localStorage.setItem(RAID_TRAY_KEY, JSON.stringify(list)); }catch(e){}
+}
+
+let raidTray = loadTray();
+
+const raidTrayEl = document.getElementById('raidTray');
+const raidTrayBar = document.getElementById('raidTrayBar');
+const raidTrayPanel = document.getElementById('raidTrayPanel');
+const raidTrayCount = document.getElementById('raidTrayCount');
+
+function taskLookup(url){
+  return TASKS.find(t => t.url === url) || { name: url, trader: '', level: '' };
+}
+
+function renderTray(){
+  raidTrayCount.textContent = raidTray.length;
+  raidTrayPanel.innerHTML = raidTray.length
+    ? raidTray.map(url => {
+        const t = taskLookup(url);
+        const d = TASK_DETAILS[url];
+        const detail = d
+          ? '<div class="rt-row"><b>Location:</b> '+d.location+'</div>' +
+            '<div class="rt-row"><b>Items:</b> '+d.items.join(';<br>')+'</div>' +
+            '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>'
+          : '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>';
+        return '<div class="raid-tray-item" data-url="'+url+'">' +
+          '<div class="raid-tray-item-head">' +
+            '<span><span class="raid-tray-item-name">'+t.name+'</span><br><span class="raid-tray-item-sub">'+t.trader+(t.level ? ' &middot; Level '+t.level : '')+'</span></span>' +
+            '<button class="raid-tray-remove" data-url="'+url+'" type="button">Remove</button>' +
+          '</div>' +
+          '<div class="raid-tray-detail">'+detail+'</div>' +
+        '</div>';
+      }).join('')
+    : '<div class="raid-tray-empty">No tasks pinned yet. Pin tasks you\'re running together this raid.</div>';
+}
+
+raidTrayBar.addEventListener('click', () => raidTrayEl.classList.toggle('open'));
+
+raidTrayPanel.addEventListener('click', (e) => {
+  const removeBtn = e.target.closest('.raid-tray-remove');
+  if(removeBtn){
+    const url = removeBtn.getAttribute('data-url');
+    raidTray = raidTray.filter(u => u !== url);
+    saveTray(raidTray);
+    renderTray();
+    updatePinButtons();
+    return;
+  }
+  const head = e.target.closest('.raid-tray-item-head');
+  if(head) head.closest('.raid-tray-item').classList.toggle('expanded');
+});
+
+function togglePin(url){
+  if(raidTray.includes(url)){
+    raidTray = raidTray.filter(u => u !== url);
+  }else{
+    raidTray.push(url);
+  }
+  saveTray(raidTray);
+  renderTray();
+}
+
+function updatePinButtons(){
+  taskList.querySelectorAll('.task-pin').forEach(btn => {
+    const url = btn.getAttribute('data-url');
+    const pinned = raidTray.includes(url);
+    btn.textContent = pinned ? '\u2713 Pinned' : '+ Pin';
+    btn.classList.toggle('pinned', pinned);
+  });
+}
+
+renderTray();
+
+const PROGRESS_KEY = 'easytarkov-progress';
+
+function loadProgress(){
+  try{
+    const raw = localStorage.getItem(PROGRESS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){
+    return {};
+  }
+}
+
+function saveProgress(progress){
+  try{
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+  }catch(e){}
+}
+
+let progress = loadProgress();
+
+function updateProgressBar(){
+  const total = traderTasks.length;
+  const done = traderTasks.filter(t => progress[t.url]).length;
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progressText').textContent = done + ' of ' + total + ' complete';
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
 taskList.innerHTML = traderTasks.length
   ? traderTasks.map(t =>
-      '<a class="task-row" href="'+t.url+'">' +
-        '<span><span class="task-name">'+t.name+'</span><br><span class="task-level">Level '+t.level+'</span></span>' +
-        '<span class="task-arrow">&rarr;</span>' +
-      '</a>'
+      '<div class="task-row" data-url="'+t.url+'">' +
+        '<label class="task-check"><input type="checkbox" data-url="'+t.url+'"></label>' +
+        '<a class="task-link" href="'+t.url+'">' +
+          '<span><span class="task-name">'+t.name+'</span><br><span class="task-level">Level '+t.level+'</span></span>' +
+          '<span class="task-arrow">&rarr;</span>' +
+        '</a>' +
+        '<button class="task-pin" data-url="'+t.url+'" type="button">+ Pin</button>' +
+      '</div>'
     ).join('')
   : '<div class="empty-note">No Kappa-required tasks added yet for '+PAGE_TRADER+'.</div>';
+
+taskList.querySelectorAll('.task-check input').forEach(box => {
+  const url = box.getAttribute('data-url');
+  box.checked = !!progress[url];
+  if(box.checked) box.closest('.task-row').classList.add('done');
+  box.addEventListener('change', () => {
+    progress[url] = box.checked;
+    saveProgress(progress);
+    box.closest('.task-row').classList.toggle('done', box.checked);
+    updateProgressBar();
+  });
+});
+
+taskList.querySelectorAll('.task-pin').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    togglePin(btn.getAttribute('data-url'));
+    updatePinButtons();
+  });
+});
+
+updatePinButtons();
+updateProgressBar();
 
 const searchInput = document.getElementById('taskSearch');
 const searchResults = document.getElementById('searchResults');

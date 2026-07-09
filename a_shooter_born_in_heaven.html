@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Delivery From the Past | Field Guide</title>
+<title>A Shooter Born in Heaven | Field Guide</title>
 <style>
 @font-face{font-family:'Oswald';src:url('fonts/oswald-v57-latin-500.woff2') format('woff2');font-weight:500;font-display:swap;}
 @font-face{font-family:'Oswald';src:url('fonts/oswald-v57-latin-600.woff2') format('woff2');font-weight:600;font-display:swap;}
@@ -515,7 +515,7 @@
 <div class="wrap">
 
   <div class="topbar">
-    <span class="tab">Prapor &middot; Quest Line</span>
+    <span class="tab">Mechanic &middot; Quest Line</span>
     <div class="topbar-right">
       <a class="trader-btn" href="index.html">Home</a>
       <div class="trader-wrap">
@@ -529,12 +529,12 @@
     </div>
   </div>
   <header>
-    <h1>Delivery From the Past</h1>
+    <h1>A Shooter Born in Heaven</h1>
     <div class="meta-row">
-      <span><b>Level req.</b> 5</span>
-      <span><b>Location</b> Customs, Factory</span>
-      <span><b>Leads to</b> BP Depot</span>
-      <span><b>Previous</b> Background Check</span>
+      <span><b>Level req.</b> 14</span>
+      <span><b>Location</b> Woods, Reserve, Shoreline, Customs, Lighthouse, Streets of Tarkov, Interchange, Ground Zero</span>
+      <span><b>Leads to</b> Setting Priorities, Collector</span>
+      <span><b>Previous</b> Farming - Part 3</span>
     </div>
     <button class="pin-btn" id="pinBtn" type="button">+ Pin to raid tray</button>
   </header>
@@ -544,31 +544,29 @@
     <table class="items">
       <tr><th>Item</th><th>Amount</th><th>Find in raid</th><th>Notes</th></tr>
       <tr>
-        <td>Tarcone Director's office key</td>
+        <td>Bolt-action rifle</td>
         <td>1</td>
-        <td class="req-no">No &mdash; needed to enter</td>
-        <td>Found in drawers, off Scavs, or bartered with Therapist.</td>
-      </tr>
-      <tr>
-        <td>Secure folder / documents case</td>
-        <td>1</td>
-        <td class="req-yes">Yes</td>
-        <td>Quest item &mdash; picked up on Customs, must be planted on Factory. Lost on death.</td>
+        <td class="req-no">No &mdash; not consumed</td>
+        <td>Any bolt-action (Mosin, SV-98, DVL-10, Remington M700, ORSIS T-5000M, VPO-215, AMXC, Marlin lever-action).</td>
       </tr>
     </table>
+    <p class="section-hint">No items to hand in &mdash; eliminate 5 PMCs with a headshot on each of the 8 listed maps using a bolt-action rifle. No distance limit.</p>
   </section>
 
   <section>
     <div class="section-label">Rewards</div>
     <table class="items">
       <tr><th>Reward</th><th>Amount</th></tr>
-      <tr><td>Experience</td><td>4,000 EXP</td></tr>
-      <tr><td>Prapor reputation</td><td>+0.03</td></tr>
-      <tr><td>Roubles</td><td>20,000 &mdash; 23,000 with Intelligence Center</td></tr>
-      <tr><td>Saiga 12ga ver.10 12/76 shotgun</td><td>1</td></tr>
-      <tr><td>SOK-12 12/76 sb.5 5-round magazine</td><td>4</td></tr>
-      <tr><td>12/70 7mm buckshot</td><td>40</td></tr>
-      <tr><td>Trader unlock</td><td>5.45x39mm PS gs at Prapor LL1</td></tr>
+      <tr><td>Experience</td><td>55,000 EXP</td></tr>
+      <tr><td>Bolt-action Rifles skill</td><td>+5 levels</td></tr>
+      <tr><td>Mechanic reputation</td><td>+0.03</td></tr>
+      <tr><td>Roubles</td><td>150,000 &mdash; 172,500 with Intelligence Center</td></tr>
+      <tr><td>HK G28 7.62x51 marksman rifle</td><td>1</td></tr>
+      <tr><td>HK417/G28 7.62x51 20-round magazine</td><td>2</td></tr>
+      <tr><td>7.62x51mm M993 ammo pack (20 pcs)</td><td>2</td></tr>
+      <tr><td>GP coin</td><td>3</td></tr>
+      <tr><td>Trader unlock</td><td>Magazine case at Mechanic LL3</td></tr>
+      <tr><td>Trader unlock</td><td>HK G28 at Jaeger LL4</td></tr>
     </table>
   </section>
 
@@ -774,7 +772,7 @@ function addSlot(label){
   updateDeleteButtons();
 }
 
-['Tarcone Director\u2019s office \u2014 Customs', 'Factory break room \u2014 Gate 3'].forEach(addSlot);
+['Woods vantage point', 'Reserve vantage point'].forEach(addSlot);
 
 document.getElementById('newImageBtn').addEventListener('click', () => addSlot(''));
 
@@ -876,7 +874,7 @@ function togglePin(url){
 
 renderTray();
 
-const THIS_TASK_URL = 'delivery_from_the_past.html';
+const THIS_TASK_URL = 'a_shooter_born_in_heaven.html';
 const pinBtn = document.getElementById('pinBtn');
 
 function updatePinBtn(){
