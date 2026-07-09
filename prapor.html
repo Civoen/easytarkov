@@ -70,6 +70,7 @@
     white-space:nowrap;
   }
   .trader-btn:hover{border-color:var(--rust);}
+  a.trader-btn{display:inline-block;text-decoration:none;}
   .trader-menu{
     position:absolute;
     top:100%;right:0;
@@ -207,6 +208,7 @@
   <div class="topbar">
     <span class="tab">Prapor &middot; Trader</span>
     <div class="topbar-right">
+      <a class="trader-btn" href="index.html">Home</a>
       <div class="trader-wrap">
         <button class="trader-btn" id="traderBtn" type="button">Prapor</button>
         <div class="trader-menu" id="traderMenu"></div>
@@ -233,7 +235,6 @@
 
 <script>
 const TASKS = [
-  { name: 'Chemical - Part 1', trader: 'Skier', level: 10, url: 'chemical_part1_mockup.html' },
   { name: 'Delivery From the Past', trader: 'Prapor', level: 5, url: 'delivery_from_the_past.html' }
 ];
 

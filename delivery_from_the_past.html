@@ -107,6 +107,7 @@
     white-space:nowrap;
   }
   .trader-btn:hover{border-color:var(--rust);}
+  a.trader-btn{display:inline-block;text-decoration:none;}
   .trader-menu{
     position:absolute;
     top:100%;right:0;
@@ -296,6 +297,64 @@
     cursor:pointer;
   }
   .new-image-btn:hover{border-color:var(--rust);color:var(--paper);}
+  .notes-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .note-row{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-left:3px solid var(--olive-light);
+    padding:10px 14px;
+  }
+  .note-meta{
+    font-size:10.5px;
+    color:var(--paper-dim);
+    margin-bottom:6px;
+  }
+  .note-body{
+    font-size:12.5px;
+    line-height:1.6;
+    color:var(--paper);
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+  .notes-empty{
+    font-size:11.5px;
+    color:var(--paper-dim);
+    border:1px dashed var(--olive-light);
+    padding:14px;
+    text-align:center;
+    margin-bottom:14px;
+  }
+  .note-form textarea{
+    width:100%;
+    min-height:70px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--paper);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    padding:10px;
+    outline:none;
+    resize:vertical;
+  }
+  .note-form textarea:focus{border-color:var(--rust);}
+  .note-submit{
+    display:block;
+    margin-top:8px;
+    background:var(--panel-2);
+    border:1px dashed var(--olive-light);
+    color:var(--amber);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    letter-spacing:.03em;
+    padding:8px 16px;
+    cursor:pointer;
+  }
+  .note-submit:hover{border-color:var(--rust);color:var(--paper);}
   input[type=file]{display:none;}
   footer{
     margin-top:32px;
@@ -313,6 +372,7 @@
   <div class="topbar">
     <span class="tab">Prapor &middot; Quest Line</span>
     <div class="topbar-right">
+      <a class="trader-btn" href="index.html">Home</a>
       <div class="trader-wrap">
         <button class="trader-btn" id="traderBtn" type="button">Prapor</button>
         <div class="trader-menu" id="traderMenu"></div>
@@ -328,6 +388,7 @@
     <div class="meta-row">
       <span><b>Level req.</b> 5</span>
       <span><b>Required for</b> Kappa Container</span>
+      <span><b>Location</b> Customs, Factory</span>
       <span><b>Leads to</b> BP Depot</span>
       <span><b>Previous</b> Background Check</span>
     </div>
@@ -367,18 +428,67 @@
   </section>
 
   <section>
+    <div class="section-label">Field Intel - PMC Notes</div>
+    <p class="section-hint">Open to everyone. Leave a note for other PMCs working this task.</p>
+    <div class="notes-list" id="notesList"></div>
+    <button class="note-submit" id="noteToggleBtn" type="button">Post note</button>
+    <div class="note-form" id="noteForm" style="display:none;">
+      <textarea id="noteInput" placeholder="Share a tip, a warning, anything useful..."></textarea>
+      <button class="note-submit" id="noteSubmit" type="button">Submit note</button>
+    </div>
+  </section>
+
+  <section>
     <div class="section-label">Field intel &mdash; community screenshots</div>
     <p class="section-hint">Open to everyone. Click a box to upload, use &times; to remove a box, or the label to rename it.</p>
     <div class="slot-grid" id="slotGrid"></div>
     <button class="new-image-btn" id="newImageBtn" type="button">+ New image</button>
   </section>
 
-  <footer>Demo only &mdash; uploads exist in this browser tab and are lost on refresh. A live public version would send files to shared storage (e.g. S3, Cloudinary) so uploads from any visitor persist and are visible to everyone.</footer>
+  <footer>Demo only. Created by Civoen. 9th July 2026. v.01.</footer>
 </div>
 
 <script>
 const grid = document.getElementById('slotGrid');
 const MIN_SLOTS = 1;
+
+const notesList = document.getElementById('notesList');
+const noteToggleBtn = document.getElementById('noteToggleBtn');
+const noteForm = document.getElementById('noteForm');
+const noteInput = document.getElementById('noteInput');
+const noteSubmit = document.getElementById('noteSubmit');
+let notes = [];
+
+function renderNotes(){
+  notesList.innerHTML = notes.length
+    ? notes.map(n =>
+        '<div class="note-row">' +
+          '<div class="note-meta">PMC &middot; just now</div>' +
+          '<div class="note-body"></div>' +
+        '</div>'
+      ).join('')
+    : '<div class="notes-empty">No notes yet. Be the first to leave field intel.</div>';
+  const bodies = notesList.querySelectorAll('.note-body');
+  notes.forEach((n, i) => { bodies[i].textContent = n; });
+}
+
+noteToggleBtn.addEventListener('click', () => {
+  noteToggleBtn.style.display = 'none';
+  noteForm.style.display = 'block';
+  noteInput.focus();
+});
+
+noteSubmit.addEventListener('click', () => {
+  const text = noteInput.value.trim();
+  if(!text) return;
+  notes.unshift(text);
+  noteInput.value = '';
+  noteForm.style.display = 'none';
+  noteToggleBtn.style.display = 'block';
+  renderNotes();
+});
+
+renderNotes();
 
 function updateDeleteButtons(){
   const slots = grid.querySelectorAll('.slot');
@@ -464,7 +574,6 @@ function addSlot(label){
 document.getElementById('newImageBtn').addEventListener('click', () => addSlot(''));
 
 const TASKS = [
-  { name: 'Chemical - Part 1', trader: 'Skier', url: 'chemical_part1_mockup.html' },
   { name: 'Delivery From the Past', trader: 'Prapor', url: 'delivery_from_the_past.html' }
 ];
 const searchInput = document.getElementById('taskSearch');
