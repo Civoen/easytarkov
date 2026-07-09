@@ -134,7 +134,9 @@
   .trader-menu .row:hover{background:var(--olive);color:var(--paper);}
   .raid-tray{
     position:fixed;
-    bottom:0;left:0;right:0;
+    bottom:0;left:16px;right:16px;
+    max-width:760px;
+    margin:0 auto;
     z-index:40;
     font-family:'IBM Plex Mono',monospace;
   }
@@ -142,6 +144,8 @@
     width:100%;
     background:var(--panel);
     border-top:3px solid var(--rust);
+    border-left:1px solid var(--line);
+    border-right:1px solid var(--line);
     padding:10px 16px;
     display:flex;
     align-items:center;
@@ -195,6 +199,8 @@
     overflow-y:auto;
     background:var(--bg);
     border-top:1px solid var(--line);
+    border-left:1px solid var(--line);
+    border-right:1px solid var(--line);
     text-align:left;
   }
   .raid-tray.open .raid-tray-panel{display:block;}
