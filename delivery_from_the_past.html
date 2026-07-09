@@ -420,20 +420,9 @@
     cursor:pointer;
   }
   .raid-tray-infil:hover{border-color:var(--rust);color:var(--paper);}
-  .raid-tray-close{
-    display:none;
-    background:none;
-    border:1px solid var(--danger);
-    color:#e8a49c;
-    font-family:inherit;
-    font-size:13px;
-    padding:4px 11px;
-    cursor:pointer;
-  }
-  .raid-tray-close:hover{background:var(--danger);color:#fff;}
   .raid-tray.infil .raid-tray-panel{max-height:80vh;}
-  .raid-tray.infil .raid-tray-infil{display:none;}
-  .raid-tray.infil .raid-tray-close{display:inline-block;}
+  .raid-tray.infil .raid-tray-infil{border-color:var(--danger);color:#e8a49c;}
+  .raid-tray.infil .raid-tray-infil:hover{background:var(--danger);color:#fff;}
   .raid-tray-count{
     background:var(--rust);
     color:#1a0d08;
@@ -441,7 +430,9 @@
     padding:1px 8px;
     font-size:11px;
     margin-left:auto;
+    cursor:pointer;
   }
+  .raid-tray-count:hover{background:var(--danger);color:#fff;}
   .raid-tray-panel{
     display:none;
     max-height:45vh;
@@ -637,7 +628,6 @@
       <button class="raid-tray-infil" id="raidTrayInfil" type="button">Infil</button>
       <span class="raid-tray-count" id="raidTrayCount">0</span>
     </div>
-    <button class="raid-tray-close" id="raidTrayClose" type="button">&times;</button>
   </div>
   <div class="raid-tray-panel" id="raidTrayPanel"></div>
 </div>
@@ -857,7 +847,6 @@ let raidTray = loadTray();
 const raidTrayEl = document.getElementById('raidTray');
 const raidTrayToggle = document.getElementById('raidTrayToggle');
 const raidTrayInfil = document.getElementById('raidTrayInfil');
-const raidTrayClose = document.getElementById('raidTrayClose');
 const raidTrayPanel = document.getElementById('raidTrayPanel');
 const raidTrayCount = document.getElementById('raidTrayCount');
 
@@ -892,14 +881,25 @@ raidTrayToggle.addEventListener('keydown', (e) => {
   if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); raidTrayEl.classList.toggle('open'); }
 });
 
-raidTrayInfil.addEventListener('click', (e) => {
+raidTrayCount.addEventListener('click', (e) => {
   e.stopPropagation();
-  raidTrayEl.classList.add('open', 'infil');
+  if(!raidTray.length) return;
+  raidTray = [];
+  saveTray(raidTray);
   renderTray();
+  if(typeof updatePinBtn === 'function') updatePinBtn();
+  if(typeof updatePinButtons === 'function') updatePinButtons();
 });
 
-raidTrayClose.addEventListener('click', () => {
-  raidTrayEl.classList.remove('infil', 'open');
+raidTrayInfil.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const active = raidTrayEl.classList.toggle('infil');
+  if(active){
+    raidTrayEl.classList.add('open');
+  }else{
+    raidTrayEl.classList.remove('open');
+  }
+  raidTrayInfil.textContent = active ? 'Exfil' : 'Infil';
   renderTray();
 });
 
