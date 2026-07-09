@@ -232,23 +232,56 @@
     width:100%;
     background:var(--panel);
     border-top:3px solid var(--rust);
+    padding:10px 16px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .raid-tray-toggle{
+    flex:1;
     color:var(--amber);
     font-family:inherit;
     font-size:11.5px;
     letter-spacing:.05em;
     text-transform:uppercase;
-    padding:10px 16px;
     cursor:pointer;
     display:flex;
-    justify-content:space-between;
     align-items:center;
+    gap:10px;
   }
+  .raid-tray-infil{
+    background:none;
+    border:1px solid var(--olive-light);
+    color:var(--amber);
+    font-family:inherit;
+    font-size:10.5px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    padding:5px 12px;
+    cursor:pointer;
+  }
+  .raid-tray-infil:hover{border-color:var(--rust);color:var(--paper);}
+  .raid-tray-close{
+    display:none;
+    background:none;
+    border:1px solid var(--danger);
+    color:#e8a49c;
+    font-family:inherit;
+    font-size:13px;
+    padding:4px 11px;
+    cursor:pointer;
+  }
+  .raid-tray-close:hover{background:var(--danger);color:#fff;}
+  .raid-tray.infil .raid-tray-panel{max-height:80vh;}
+  .raid-tray.infil .raid-tray-infil{display:none;}
+  .raid-tray.infil .raid-tray-close{display:inline-block;}
   .raid-tray-count{
     background:var(--rust);
     color:#1a0d08;
     font-weight:600;
     padding:1px 8px;
     font-size:11px;
+    margin-left:auto;
   }
   .raid-tray-panel{
     display:none;
@@ -376,10 +409,14 @@
 </div>
 
 <div class="raid-tray" id="raidTray">
-  <button class="raid-tray-bar" id="raidTrayBar" type="button">
-    <span>Raid tray</span>
-    <span class="raid-tray-count" id="raidTrayCount">0</span>
-  </button>
+  <div class="raid-tray-bar">
+    <div class="raid-tray-toggle" id="raidTrayToggle" role="button" tabindex="0">
+      <span>Current Raid</span>
+      <button class="raid-tray-infil" id="raidTrayInfil" type="button">Infil</button>
+      <span class="raid-tray-count" id="raidTrayCount">0</span>
+    </div>
+    <button class="raid-tray-close" id="raidTrayClose" type="button">&times;</button>
+  </div>
   <div class="raid-tray-panel" id="raidTrayPanel"></div>
 </div>
 
@@ -428,7 +465,9 @@ function saveTray(list){
 let raidTray = loadTray();
 
 const raidTrayEl = document.getElementById('raidTray');
-const raidTrayBar = document.getElementById('raidTrayBar');
+const raidTrayToggle = document.getElementById('raidTrayToggle');
+const raidTrayInfil = document.getElementById('raidTrayInfil');
+const raidTrayClose = document.getElementById('raidTrayClose');
 const raidTrayPanel = document.getElementById('raidTrayPanel');
 const raidTrayCount = document.getElementById('raidTrayCount');
 
@@ -447,7 +486,7 @@ function renderTray(){
             '<div class="rt-row"><b>Items:</b> '+d.items.join(';<br>')+'</div>' +
             '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>'
           : '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>';
-        return '<div class="raid-tray-item" data-url="'+url+'">' +
+        return '<div class="raid-tray-item'+(raidTrayEl.classList.contains('infil') ? ' expanded' : '')+'" data-url="'+url+'">' +
           '<div class="raid-tray-item-head">' +
             '<span><span class="raid-tray-item-name">'+t.name+'</span><br><span class="raid-tray-item-sub">'+t.trader+(t.level ? ' &middot; Level '+t.level : '')+'</span></span>' +
             '<button class="raid-tray-remove" data-url="'+url+'" type="button">Remove</button>' +
@@ -458,7 +497,21 @@ function renderTray(){
     : '<div class="raid-tray-empty">No tasks pinned yet. Pin tasks you\'re running together this raid.</div>';
 }
 
-raidTrayBar.addEventListener('click', () => raidTrayEl.classList.toggle('open'));
+raidTrayToggle.addEventListener('click', () => raidTrayEl.classList.toggle('open'));
+raidTrayToggle.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); raidTrayEl.classList.toggle('open'); }
+});
+
+raidTrayInfil.addEventListener('click', (e) => {
+  e.stopPropagation();
+  raidTrayEl.classList.add('open', 'infil');
+  renderTray();
+});
+
+raidTrayClose.addEventListener('click', () => {
+  raidTrayEl.classList.remove('infil', 'open');
+  renderTray();
+});
 
 raidTrayPanel.addEventListener('click', (e) => {
   const removeBtn = e.target.closest('.raid-tray-remove');
