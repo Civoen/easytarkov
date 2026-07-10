@@ -10,7 +10,7 @@
 }
 .meta-row b{color:var(--amber);font-weight:600;}
 table.items{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed;}
-table.items th:last-child, table.items td:last-child{width:240px;}
+table.items th:first-child, table.items td:first-child{width:240px;}
 table.items th{
   text-align:left;color:var(--paper-dim);font-weight:500;
   text-transform:uppercase;font-size:10.5px;letter-spacing:.06em;

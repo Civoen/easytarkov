@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Farming - Part 1 | Field Guide</title>
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="task.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <span class="tab">Mechanic</span>
+    <div class="topbar-right">
+      <a class="trader-btn" href="index.html">Home</a>
+      <a class="trader-btn" href="kappa.html">Kappa</a>
+      <div class="trader-wrap">
+        <button class="trader-btn" id="traderBtn" type="button">Traders</button>
+        <div class="trader-menu" id="traderMenu"></div>
+      </div>
+      <div class="search-wrap">
+        <input type="text" id="taskSearch" placeholder="Search tasks..." autocomplete="off">
+        <div class="search-results" id="searchResults"></div>
+      </div>
+    </div>
+  </div>
+  <header>
+    <h1>Farming - Part 1</h1>
+    <div class="meta-row">
+      <span><b>Level req.</b> 12</span>
+      <span><b>Location</b> Factory</span>
+      <span><b>Leads to</b> Farming - Part 2</span>
+      <span><b>Previous</b> Gunsmith - Part 1</span>
+    </div>
+    <button class="pin-btn" id="pinBtn" type="button">+ Pin to raid tray</button>
+  </header>
+
+  <section>
+    <div class="section-label">Required items</div>
+    <table class="items">
+      <tr><th>Item</th><th>Amount</th><th>Find in raid</th><th>Notes</th></tr>
+      <tr>
+        <td>Toolset</td>
+        <td>2</td>
+        <td class="req-no">No &mdash; consumed on use</td>
+        <td>Used to repair each control board. Removed from inventory once placed &mdash; carry in a secure container to avoid losing it on death.</td>
+      </tr>
+    </table>
+    <p class="section-hint">Repair 2 control boards (blinking red lights) on Factory. Works on both day and night variants.</p>
+  </section>
+
+  <section>
+    <div class="section-label">Rewards</div>
+    <table class="items">
+      <tr><th>Reward</th><th>Amount</th></tr>
+      <tr><td>Experience</td><td>6,600 EXP</td></tr>
+      <tr><td>Mechanic reputation</td><td>+0.02</td></tr>
+      <tr><td>Roubles</td><td>25,000 &mdash; 28,750 with Intelligence Center</td></tr>
+      <tr><td>Light bulb</td><td>2</td></tr>
+      <tr><td>Radiator helix</td><td>2</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <div class="section-label">Field Intel - PMC Notes</div>
+    <p class="section-hint">Open to everyone. Leave a note for other PMCs working this task.</p>
+    <div class="notes-list" id="notesList"></div>
+    <button class="note-submit" id="noteToggleBtn" type="button">Post note</button>
+    <div class="note-form" id="noteForm" style="display:none;">
+      <textarea id="noteInput" placeholder="Share a tip, a warning, anything useful..."></textarea>
+      <button class="note-submit" id="noteSubmit" type="button">Submit note</button>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-label">Field intel &mdash; community screenshots</div>
+    <p class="section-hint">Open to everyone. Click a box to upload, use &times; to remove a box, or the label to rename it.</p>
+    <div class="slot-grid" id="slotGrid"></div>
+    <button class="new-image-btn" id="newImageBtn" type="button">+ New image</button>
+  </section>
+
+  <footer>Demo only. Created by Civoen. 9th July 2026. v.01.</footer>
+</div>
+
+<div class="zoom-overlay" id="zoomOverlay">
+  <img id="zoomImg" src="" alt="Zoomed screenshot">
+</div>
+
+<div class="raid-tray" id="raidTray">
+  <div class="raid-tray-bar">
+    <div class="raid-tray-toggle" id="raidTrayToggle" role="button" tabindex="0">
+      <span>Current Raid</span>
+      <button class="raid-tray-infil" id="raidTrayInfil" type="button">Infil</button>
+      <span class="raid-tray-count" id="raidTrayCount">0</span>
+    </div>
+  </div>
+  <div class="raid-tray-panel" id="raidTrayPanel"></div>
+</div>
+
+<script src="data.js"></script>
+<script src="site.js"></script>
+<script src="task.js"></script>
+<script>
+initTaskPage('farming_part_1.html', ['Control board \u2014 forklift room', 'Control board \u2014 window hallway']);
+</script>
+</body>
+</html>

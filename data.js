@@ -1,6 +1,10 @@
 const TASKS = [
   { name: 'Debut', trader: 'Prapor', level: 1, url: 'debut.html' },
   { name: 'Delivery From the Past', trader: 'Prapor', level: 5, url: 'delivery_from_the_past.html' },
+  { name: 'Farming - Part 1', trader: 'Mechanic', level: 12, url: 'farming_part_1.html', chain: 'farming', chainOrder: 1 },
+  { name: 'Farming - Part 2', trader: 'Mechanic', level: 12, url: 'farming_part_2.html', chain: 'farming', chainOrder: 2 },
+  { name: 'Farming - Part 3', trader: 'Mechanic', level: 14, url: 'farming_part_3.html', chain: 'farming', chainOrder: 3 },
+  { name: 'Farming - Part 4', trader: 'Mechanic', level: 14, url: 'farming_part_4.html', chain: 'farming', chainOrder: 4 },
   { name: 'A Shooter Born in Heaven', trader: 'Mechanic', level: 14, url: 'a_shooter_born_in_heaven.html' }
 ];
 
@@ -17,6 +21,34 @@ const TASK_DETAILS = {
     items: [
       "Tarcone Director's office key \u2014 needed to enter, not consumed",
       'Secure folder / documents case \u2014 quest item, lost on death'
+    ]
+  },
+  'farming_part_1.html': {
+    location: 'Factory',
+    items: [
+      'Toolset \u00d7 2 \u2014 consumed on use, not found in raid'
+    ]
+  },
+  'farming_part_2.html': {
+    location: 'Any location',
+    items: [
+      'Power cord \u00d7 2 \u2014 found in raid;',
+      'T-Shaped Plug \u00d7 4 \u2014 found in raid;',
+      'Printed circuit board \u00d7 2 \u2014 found in raid'
+    ]
+  },
+  'farming_part_3.html': {
+    location: 'Customs',
+    items: [
+      'Customs office key \u2014 needed to enter, not consumed;',
+      'Package with graphics cards \u2014 found in raid, quest item'
+    ]
+  },
+  'farming_part_4.html': {
+    location: 'Any location',
+    items: [
+      'Graphics card \u00d7 3 \u2014 found in raid;',
+      'CPU fan \u00d7 15 \u2014 found in raid'
     ]
   },
   'a_shooter_born_in_heaven.html': {
