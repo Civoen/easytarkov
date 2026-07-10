@@ -33,6 +33,20 @@ table.items tr:last-child td{border-bottom:none;}
   margin-top:14px;
 }
 .pin-btn:hover{border-color:var(--rust);color:var(--paper);}
+.copy-link-btn{
+  background:var(--panel-2);
+  border:1px solid var(--olive-light);
+  color:var(--amber);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:.03em;
+  padding:7px 14px;
+  cursor:pointer;
+  margin-top:14px;
+  margin-left:8px;
+}
+.copy-link-btn:hover{border-color:var(--rust);color:var(--paper);}
+.copy-link-btn.copied{border-color:var(--amber);background:var(--olive);color:var(--paper);}
 .pin-btn.pinned{border-color:var(--amber);background:var(--olive);color:var(--paper);}
 
 .slot-grid{

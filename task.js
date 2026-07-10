@@ -187,4 +187,29 @@ function initTaskPage(taskUrl, initialSlotLabels){
   });
 
   updatePinBtn();
+
+  const copyLinkBtn = document.getElementById('copyLinkBtn');
+  if(copyLinkBtn){
+    copyLinkBtn.addEventListener('click', () => {
+      const url = window.location.href;
+      const showCopied = () => {
+        const original = 'Copy Link';
+        copyLinkBtn.textContent = 'Copied!';
+        copyLinkBtn.classList.add('copied');
+        setTimeout(() => {
+          copyLinkBtn.textContent = original;
+          copyLinkBtn.classList.remove('copied');
+        }, 1500);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(url).then(showCopied).catch(() => {
+          copyLinkBtn.textContent = 'Copy failed';
+          setTimeout(() => { copyLinkBtn.textContent = 'Copy Link'; }, 1500);
+        });
+      }else{
+        copyLinkBtn.textContent = 'Copy failed';
+        setTimeout(() => { copyLinkBtn.textContent = 'Copy Link'; }, 1500);
+      }
+    });
+  }
 }
