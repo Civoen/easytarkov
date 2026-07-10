@@ -65,7 +65,7 @@ initChecklist({
   storageKey: 'easytarkov-progress',
   countLabel: 'complete',
   emptyMessage: 'No Kappa-required tasks added yet for Prapor.',
-  items: TASKS.filter(t => t.trader === 'Prapor').map(t => ({
+  items: sortTasksForTrader(TASKS.filter(t => t.trader === 'Prapor')).map(t => ({
     key: t.url, name: t.name, sub: 'Level ' + t.level, href: t.url, pinnable: true
   }))
 });

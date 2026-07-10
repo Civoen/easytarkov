@@ -1,9 +1,17 @@
 const TASKS = [
+  { name: 'Debut', trader: 'Prapor', level: 1, url: 'debut.html' },
   { name: 'Delivery From the Past', trader: 'Prapor', level: 5, url: 'delivery_from_the_past.html' },
   { name: 'A Shooter Born in Heaven', trader: 'Mechanic', level: 14, url: 'a_shooter_born_in_heaven.html' }
 ];
 
 const TASK_DETAILS = {
+  'debut.html': {
+    location: 'Any location',
+    items: [
+      'MP-133 12ga shotgun \u00d7 2 \u2014 handover only, not found in raid;',
+      '5 Scav eliminations, any map'
+    ]
+  },
   'delivery_from_the_past.html': {
     location: 'Customs, Factory',
     items: [

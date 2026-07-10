@@ -1,3 +1,24 @@
+// Sorts a trader's tasks by the level a player would naturally receive them.
+// Multi-part quests (e.g. Farming - Part 1/2/3) should share a `chain` key and
+// an ascending `chainOrder` in data.js so they stay grouped together and appear
+// positioned by the chain's earliest level, rather than being split up if a
+// later part happens to share a level with an unrelated task.
+function sortTasksForTrader(tasks){
+  const chains = {};
+  tasks.forEach(t => {
+    const key = t.chain || ('__solo__' + t.url);
+    if(!chains[key]) chains[key] = [];
+    chains[key].push(t);
+  });
+  const groups = Object.values(chains).map(group => {
+    group.sort((a, b) => (a.chainOrder || 0) - (b.chainOrder || 0));
+    const minLevel = Math.min(...group.map(t => t.level));
+    return { minLevel, group };
+  });
+  groups.sort((a, b) => a.minLevel - b.minLevel);
+  return groups.flatMap(g => g.group);
+}
+
 // Renders a checklist of items with per-item progress (localStorage-backed) and
 // an overall progress bar that turns green at 100%. Optionally supports pinning
 // items into the Raid Tray when each item has an href (i.e. task rows, not plain items).
