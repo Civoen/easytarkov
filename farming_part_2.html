@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <title>Farming - Part 2 | Field Guide</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preload" href="fonts/oswald-v57-latin-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/oswald-v57-latin-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/oswald-v57-latin-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ibm-plex-mono-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ibm-plex-mono-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="site.css" as="style">
 <link rel="preload" href="task.css" as="style">
 <link rel="preload" href="data.js" as="script">
@@ -16,7 +22,7 @@
 <div class="wrap">
 
   <div class="topbar">
-    <span class="tab">Mechanic</span>
+    <span class="tab" id="tabLabel" data-default="Mechanic">Mechanic</span>
     <div class="topbar-right">
       <a class="trader-btn" href="index.html">Home</a>
       <a class="trader-btn" href="kappa.html">Kappa</a>
