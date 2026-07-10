@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lightkeeper | Kappa Container Tasks</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preload" href="site.css" as="style">
+<link rel="preload" href="trader.css" as="style">
+<link rel="preload" href="data.js" as="script">
+<link rel="preload" href="site.js" as="script">
+<link rel="preload" href="trader.js" as="script">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="trader.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <span class="tab" id="tabLabel" data-default="Trader">Trader</span>
+    <div class="topbar-right">
+      <a class="trader-btn" href="index.html">Home</a>
+      <a class="trader-btn" href="kappa.html">Kappa</a>
+      <div class="trader-wrap">
+        <button class="trader-btn" id="traderBtn" type="button">Traders</button>
+        <div class="trader-menu" id="traderMenu"></div>
+      </div>
+      <div class="search-wrap">
+        <input type="text" id="taskSearch" placeholder="Search tasks..." autocomplete="off">
+        <div class="search-results" id="searchResults"></div>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <h1>Lightkeeper</h1>
+    <div class="sub">Kappa Container tasks</div>
+  </header>
+
+  <section>
+    <div class="section-label">Required tasks</div>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="progressText">0 of 0 complete</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div class="task-list" id="taskList"></div>
+  </section>
+
+  <footer>Task list is currently incomplete. More tasks required for Kappa will be added shortly.</footer>
+</div>
+
+<div class="raid-tray" id="raidTray">
+  <div class="raid-tray-bar">
+    <div class="raid-tray-toggle" id="raidTrayToggle" role="button" tabindex="0">
+      <span>Current Raid</span>
+      <button class="raid-tray-infil" id="raidTrayInfil" type="button">Infil</button>
+      <span class="raid-tray-count" id="raidTrayCount">0</span>
+    </div>
+  </div>
+  <div class="raid-tray-panel" id="raidTrayPanel"></div>
+</div>
+
+<script src="data.js"></script>
+<script src="site.js"></script>
+<script src="trader.js"></script>
+<script>
+initChecklist({
+  listElId: 'taskList',
+  storageKey: 'easytarkov-progress',
+  countLabel: 'complete',
+  emptyMessage: 'No Kappa-required tasks added yet for Lightkeeper.',
+  items: sortTasksForTrader(TASKS.filter(t => t.trader === 'Lightkeeper')).map(t => ({
+    key: t.url, name: t.name, sub: 'Level ' + t.level, href: t.url, pinnable: true
+  }))
+});
+</script>
+</body>
+</html>

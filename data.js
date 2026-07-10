@@ -5,7 +5,8 @@ const TASKS = [
   { name: 'Farming - Part 2', trader: 'Mechanic', level: 12, url: 'farming_part_2.html', chain: 'farming', chainOrder: 2 },
   { name: 'Farming - Part 3', trader: 'Mechanic', level: 14, url: 'farming_part_3.html', chain: 'farming', chainOrder: 3 },
   { name: 'Farming - Part 4', trader: 'Mechanic', level: 14, url: 'farming_part_4.html', chain: 'farming', chainOrder: 4 },
-  { name: 'A Shooter Born in Heaven', trader: 'Mechanic', level: 14, url: 'a_shooter_born_in_heaven.html' }
+  { name: 'A Shooter Born in Heaven', trader: 'Mechanic', level: 14, url: 'a_shooter_born_in_heaven.html' },
+  { name: 'Return the Favor', trader: 'Lightkeeper', level: 33, url: 'return_the_favor.html' }
 ];
 
 const TASK_DETAILS = {
@@ -57,6 +58,13 @@ const TASK_DETAILS = {
       'Bolt-action rifle \u2014 not consumed;',
       '5 PMC headshots required on each of the 8 maps'
     ]
+  },
+  'return_the_favor.html': {
+    location: 'Woods',
+    items: [
+      'TerraGroup "Blue Folders" materials \u00d7 2 \u2014 found in raid;',
+      '15 PMC eliminations required first'
+    ]
   }
 };
 
@@ -69,7 +77,8 @@ const TRADERS = [
   { name: 'Ragman', url: 'ragman.html' },
   { name: 'Jaeger', url: 'jaeger.html' },
   { name: 'Fence', url: 'fence.html' },
-  { name: 'Ref', url: 'ref.html' }
+  { name: 'Ref', url: 'ref.html' },
+  { name: 'Lightkeeper', url: 'lightkeeper.html' }
 ];
 
 const KAPPA_ITEMS = [
