@@ -48,6 +48,7 @@
   .search-results{text-align:left;}
   .search-results div{font-size:14px;padding:11px 14px;}
   .btn-row{
+    position:relative;
     display:flex;
     justify-content:center;
     gap:14px;
@@ -55,16 +56,35 @@
   .btn-row .trader-btn{font-size:15px;padding:14px 26px;}
   .trader-wrap{display:inline-block;}
   .trader-menu{
-    text-align:left;
-    width:100%;
-    top:auto;
-    bottom:100%;
-    margin-top:0;
-    margin-bottom:6px;
-    max-height:220px;
-    overflow-y:auto;
+    position:absolute;
+    top:100%;left:0;right:0;
+    margin-top:10px;
+    width:auto;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
+    background:none;
+    border:none;
+    max-height:none;
+    overflow:visible;
+    z-index:45;
   }
-  .trader-menu .row{font-size:14px;padding:11px 14px;}
+  .trader-menu .row{
+    background:var(--panel-2);
+    border:1px solid var(--olive-light);
+    color:var(--amber);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:14px;
+    padding:11px 20px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .trader-menu .row:hover{border-color:var(--rust);color:var(--paper);background:var(--panel-2);}
+  .trader-menu.open{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
 </style>
 </head>
 <body>
@@ -81,9 +101,9 @@
   <div class="btn-row">
     <div class="trader-wrap">
       <button class="trader-btn" id="traderBtn" type="button">Traders</button>
-      <div class="trader-menu" id="traderMenu"></div>
     </div>
     <a class="trader-btn" href="kappa.html">Kappa</a>
+    <div class="trader-menu" id="traderMenu"></div>
   </div>
 </div>
 
