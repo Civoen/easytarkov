@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Easy Tarkov</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="site.css">
+<style>
+  body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px 24px 110px;
+  }
+  .hero{
+    max-width:640px;
+    width:100%;
+    text-align:center;
+  }
+  h1{
+    font-size:68px;
+    letter-spacing:.08em;
+    margin:0 0 10px;
+  }
+  .sub{
+    font-size:16px;
+    color:var(--paper-dim);
+    margin:0 0 28px;
+    letter-spacing:.02em;
+  }
+  .badge{
+    display:inline-block;
+    background:var(--panel-2);
+    border:1px solid var(--amber);
+    color:var(--amber);
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    padding:6px 14px;
+    margin-bottom:18px;
+  }
+  .search-wrap{width:100%;margin:0 auto 18px;}
+  .search-wrap input{
+    font-size:16px;
+    padding:16px 18px;
+  }
+  .search-results{text-align:left;}
+  .search-results div{font-size:14px;padding:11px 14px;}
+  .btn-row{
+    display:flex;
+    justify-content:center;
+    gap:14px;
+  }
+  .btn-row .trader-btn{font-size:15px;padding:14px 26px;}
+  .trader-wrap{display:inline-block;}
+  .trader-menu{
+    text-align:left;
+    width:100%;
+    top:auto;
+    bottom:100%;
+    margin-top:0;
+    margin-bottom:6px;
+    max-height:220px;
+    overflow-y:auto;
+  }
+  .trader-menu .row{font-size:14px;padding:11px 14px;}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="badge">Site under construction</div>
+  <h1>Easy Tarkov</h1>
+  <div class="sub">A quick and easy way to progress</div>
+
+  <div class="search-wrap">
+    <input type="text" id="taskSearch" placeholder="Search tasks..." autocomplete="off">
+    <div class="search-results" id="searchResults"></div>
+  </div>
+
+  <div class="btn-row">
+    <div class="trader-wrap">
+      <button class="trader-btn" id="traderBtn" type="button">Traders</button>
+      <div class="trader-menu" id="traderMenu"></div>
+    </div>
+    <a class="trader-btn" href="kappa.html">Kappa</a>
+  </div>
+</div>
+
+<div class="raid-tray" id="raidTray">
+  <div class="raid-tray-bar">
+    <div class="raid-tray-toggle" id="raidTrayToggle" role="button" tabindex="0">
+      <span>Current Raid</span>
+      <button class="raid-tray-infil" id="raidTrayInfil" type="button">Infil</button>
+      <span class="raid-tray-count" id="raidTrayCount">0</span>
+    </div>
+  </div>
+  <div class="raid-tray-panel" id="raidTrayPanel"></div>
+</div>
+
+<script src="data.js"></script>
+<script src="site.js"></script>
+</body>
+</html>
