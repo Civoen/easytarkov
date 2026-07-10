@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Mechanic | Kappa Container Tasks</title>
+<title>Maps | Field Guide</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preload" href="fonts/oswald-v57-latin-500.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/oswald-v57-latin-600.woff2" as="font" type="font/woff2" crossorigin>
@@ -14,7 +14,6 @@
 <link rel="preload" href="trader.css" as="style">
 <link rel="preload" href="data.js" as="script">
 <link rel="preload" href="site.js" as="script">
-<link rel="preload" href="trader.js" as="script">
 <link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="trader.css">
 </head>
@@ -22,7 +21,7 @@
 <div class="wrap">
 
   <div class="topbar">
-    <span class="tab" id="tabLabel" data-default="Trader">Trader</span>
+    <span class="tab">Maps</span>
     <div class="topbar-right">
       <a class="trader-btn" href="index.html">Home</a>
       <a class="trader-btn" href="kappa.html">Kappa</a>
@@ -39,25 +38,18 @@
   </div>
 
   <header>
-    <h1>Mechanic</h1>
-    <div class="sub">Kappa Container tasks</div>
+    <h1>Maps</h1>
+    <div class="sub">Browse task guides by map location</div>
   </header>
 
   <section>
-    <div class="section-label">Required tasks</div>
-    <div class="progress-wrap">
-      <div class="progress-label">
-        <span id="progressText">0 of 0 complete</span>
-        <span id="progressPct">0%</span>
-      </div>
-      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-    </div>
-    <input type="text" class="task-filter" id="taskFilter" placeholder="Search tasks..." autocomplete="off">
-    <div class="task-list" id="taskList"></div>
-    <div class="task-filter-empty" id="taskFilterEmpty">No tasks match your search.</div>
+    <div class="section-label">All maps</div>
+    <input type="text" class="task-filter" id="mapFilter" placeholder="Search maps..." autocomplete="off">
+    <div class="task-list" id="mapList"></div>
+    <div class="task-filter-empty" id="mapFilterEmpty">No maps match your search.</div>
   </section>
 
-  <footer>Task list is currently incomplete. More tasks required for Kappa will be added shortly.</footer>
+  <footer>Map pages haven't been built yet &mdash; these links will 404 until each one is added.</footer>
 </div>
 
 <div class="raid-tray" id="raidTray">
@@ -73,16 +65,46 @@
 
 <script src="data.js"></script>
 <script src="site.js"></script>
-<script src="trader.js"></script>
 <script>
-initChecklist({
-  listElId: 'taskList',
-  storageKey: 'easytarkov-progress',
-  countLabel: 'complete',
-  emptyMessage: 'No Kappa-required tasks added yet for Mechanic.',
-  items: sortTasksForTrader(TASKS.filter(t => t.trader === 'Mechanic')).map(t => ({
-    key: t.url, name: t.name, sub: 'Level ' + t.level, href: t.url, pinnable: true
-  }))
+const MAPS = [
+  { name: 'Customs', url: 'customs.html' },
+  { name: 'Factory', url: 'factory.html' },
+  { name: 'Ground Zero', url: 'ground_zero.html' },
+  { name: 'Icebreaker', url: 'icebreaker.html' },
+  { name: 'Interchange', url: 'interchange.html' },
+  { name: 'Lighthouse', url: 'lighthouse.html' },
+  { name: 'Reserve', url: 'reserve.html' },
+  { name: 'Shoreline', url: 'shoreline.html' },
+  { name: 'Streets of Tarkov', url: 'streets_of_tarkov.html' },
+  { name: 'Terminal', url: 'terminal.html' },
+  { name: 'The Lab', url: 'the_lab.html' },
+  { name: 'The Labyrinth', url: 'the_labyrinth.html' },
+  { name: 'Woods', url: 'woods.html' }
+];
+
+const mapList = document.getElementById('mapList');
+mapList.innerHTML = MAPS.map(m =>
+  '<div class="task-row">' +
+    '<a class="task-link" href="'+m.url+'" style="padding-left:16px;">' +
+      '<span class="task-name">'+m.name+'</span>' +
+      '<span class="task-arrow">&rarr;</span>' +
+    '</a>' +
+  '</div>'
+).join('');
+
+const mapFilter = document.getElementById('mapFilter');
+const mapFilterEmpty = document.getElementById('mapFilterEmpty');
+
+mapFilter.addEventListener('input', () => {
+  const q = mapFilter.value.trim().toLowerCase();
+  let visibleCount = 0;
+  mapList.querySelectorAll('.task-row').forEach(row => {
+    const name = row.querySelector('.task-name').textContent.toLowerCase();
+    const match = name.includes(q);
+    row.style.display = match ? '' : 'none';
+    if(match) visibleCount++;
+  });
+  mapFilterEmpty.style.display = visibleCount === 0 ? 'block' : 'none';
 });
 </script>
 </body>

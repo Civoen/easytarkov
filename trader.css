@@ -88,7 +88,7 @@
   padding:16px;
   text-align:center;
 }
-.item-filter{
+.task-filter{
   width:100%;
   background:var(--panel-2);
   border:1px solid var(--line);
@@ -99,8 +99,8 @@
   outline:none;
   margin-bottom:16px;
 }
-.item-filter:focus{border-color:var(--rust);}
-.item-filter-empty{
+.task-filter:focus{border-color:var(--rust);}
+.task-filter-empty{
   font-size:12px;
   color:var(--paper-dim);
   border:1px dashed var(--olive-light);

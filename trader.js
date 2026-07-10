@@ -107,4 +107,20 @@ function initChecklist(config){
 
   updatePinButtons();
   updateProgressBar();
+
+  const filterInput = document.getElementById('taskFilter');
+  const filterEmpty = document.getElementById('taskFilterEmpty');
+  if(filterInput){
+    filterInput.addEventListener('input', () => {
+      const q = filterInput.value.trim().toLowerCase();
+      let visibleCount = 0;
+      listEl.querySelectorAll('.task-row').forEach(row => {
+        const name = row.querySelector('.task-name').textContent.toLowerCase();
+        const match = name.includes(q);
+        row.style.display = match ? '' : 'none';
+        if(match) visibleCount++;
+      });
+      if(filterEmpty) filterEmpty.style.display = visibleCount === 0 ? 'block' : 'none';
+    });
+  }
 }

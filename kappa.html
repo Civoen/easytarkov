@@ -26,6 +26,7 @@
     <div class="topbar-right">
       <a class="trader-btn" href="index.html">Home</a>
       <a class="trader-btn" href="kappa.html">Kappa</a>
+      <a class="trader-btn" href="maps.html">Maps</a>
       <div class="trader-wrap">
         <button class="trader-btn" id="traderBtn" type="button">Traders</button>
         <div class="trader-menu" id="traderMenu"></div>
@@ -51,9 +52,9 @@
       </div>
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     </div>
-    <input type="text" class="item-filter" id="itemFilter" placeholder="Search items..." autocomplete="off">
+    <input type="text" class="task-filter" id="taskFilter" placeholder="Search items..." autocomplete="off">
     <div class="task-list" id="itemList"></div>
-    <div class="item-filter-empty" id="itemFilterEmpty">No items match your search.</div>
+    <div class="task-filter-empty" id="taskFilterEmpty">No items match your search.</div>
   </section>
 
   <footer>All items are handover-only and must be Found in Raid. None are consumed elsewhere &mdash; safe to keep once found.</footer>
@@ -82,22 +83,6 @@ initChecklist({
   items: KAPPA_ITEMS.map(name => ({
     key: name, name: name, sub: 'Found in raid \u00b7 handover', href: null, pinnable: false
   }))
-});
-
-const itemFilter = document.getElementById('itemFilter');
-const itemFilterEmpty = document.getElementById('itemFilterEmpty');
-const itemListEl = document.getElementById('itemList');
-
-itemFilter.addEventListener('input', () => {
-  const q = itemFilter.value.trim().toLowerCase();
-  let visibleCount = 0;
-  itemListEl.querySelectorAll('.task-row').forEach(row => {
-    const name = row.querySelector('.task-name').textContent.toLowerCase();
-    const match = name.includes(q);
-    row.style.display = match ? '' : 'none';
-    if(match) visibleCount++;
-  });
-  itemFilterEmpty.style.display = visibleCount === 0 ? 'block' : 'none';
 });
 </script>
 </body>
