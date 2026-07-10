@@ -88,3 +88,23 @@
   padding:16px;
   text-align:center;
 }
+.item-filter{
+  width:100%;
+  background:var(--panel-2);
+  border:1px solid var(--line);
+  color:var(--paper);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  padding:7px 10px;
+  outline:none;
+  margin-bottom:16px;
+}
+.item-filter:focus{border-color:var(--rust);}
+.item-filter-empty{
+  font-size:12px;
+  color:var(--paper-dim);
+  border:1px dashed var(--olive-light);
+  padding:16px;
+  text-align:center;
+  display:none;
+}
