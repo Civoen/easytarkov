@@ -224,6 +224,7 @@ footer{
 .raid-tray.infil .raid-tray-item-sub{font-size:13px;}
 .raid-tray.infil .raid-tray-detail{font-size:14.5px;padding:0 24px 24px;line-height:1.8;}
 .raid-tray.infil .raid-tray-remove{font-size:12px;padding:5px 12px;}
+.raid-tray.infil .raid-tray-move{font-size:12px;padding:5px 12px;}
 .raid-tray-count{
   background:var(--rust);
   color:#1a0d08;
@@ -268,6 +269,16 @@ footer{
   gap:8px;
   align-items:center;
 }
+.raid-tray-move{
+  background:none;
+  border:1px solid var(--olive-light);
+  color:var(--amber);
+  font-size:10px;
+  padding:2px 7px;
+  cursor:pointer;
+}
+.raid-tray-move:hover:not(:disabled){border-color:var(--rust);color:var(--paper);}
+.raid-tray-move:disabled{opacity:.3;cursor:default;}
 .raid-tray-remove{
   background:none;
   border:1px solid var(--danger);

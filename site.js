@@ -29,7 +29,7 @@ function taskLookup(url){
 function renderTray(){
   raidTrayCount.textContent = raidTray.length;
   raidTrayPanel.innerHTML = raidTray.length
-    ? raidTray.map(url => {
+    ? raidTray.map((url, i) => {
         const t = taskLookup(url);
         const d = TASK_DETAILS[url];
         const detail = d
@@ -37,10 +37,16 @@ function renderTray(){
             '<div class="rt-row"><b>Items:</b> '+d.items.join(';<br>')+'</div>' +
             '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>'
           : '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>';
+        const isFirst = i === 0;
+        const isLast = i === raidTray.length - 1;
         return '<div class="raid-tray-item'+(raidTrayEl.classList.contains('infil') ? ' expanded' : '')+'" data-url="'+url+'">' +
           '<div class="raid-tray-item-head">' +
             '<span><span class="raid-tray-item-name">'+t.name+'</span><br><span class="raid-tray-item-sub">'+t.trader+(t.level ? ' &middot; Level '+t.level : '')+'</span></span>' +
-            '<span class="raid-tray-item-actions"><button class="raid-tray-remove" data-url="'+url+'" type="button">Remove</button></span>' +
+            '<span class="raid-tray-item-actions">' +
+              '<button class="raid-tray-move" data-url="'+url+'" data-dir="up" type="button" title="Move up"'+(isFirst ? ' disabled' : '')+'>&uarr;</button>' +
+              '<button class="raid-tray-move" data-url="'+url+'" data-dir="down" type="button" title="Move down"'+(isLast ? ' disabled' : '')+'>&darr;</button>' +
+              '<button class="raid-tray-remove" data-url="'+url+'" type="button">Remove</button>' +
+            '</span>' +
           '</div>' +
           '<div class="raid-tray-detail">'+detail+'</div>' +
         '</div>';
@@ -68,14 +74,37 @@ raidTrayInfil.addEventListener('click', (e) => {
   const active = raidTrayEl.classList.toggle('infil');
   if(active){
     raidTrayEl.classList.add('open');
+    const header = document.querySelector('header');
+    if(header){
+      const headerTop = header.getBoundingClientRect().top;
+      const barHeight = raidTrayEl.querySelector('.raid-tray-bar').getBoundingClientRect().height;
+      const panelHeight = Math.max(200, window.innerHeight - headerTop - barHeight);
+      raidTrayPanel.style.height = panelHeight + 'px';
+    }
   }else{
     raidTrayEl.classList.remove('open');
+    raidTrayPanel.style.height = '';
   }
   raidTrayInfil.textContent = active ? 'Exfil' : 'Infil';
   renderTray();
 });
 
 raidTrayPanel.addEventListener('click', (e) => {
+  const moveBtn = e.target.closest('.raid-tray-move');
+  if(moveBtn){
+    const url = moveBtn.getAttribute('data-url');
+    const dir = moveBtn.getAttribute('data-dir');
+    const idx = raidTray.indexOf(url);
+    const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
+    if(idx !== -1 && swapIdx >= 0 && swapIdx < raidTray.length){
+      const tmp = raidTray[idx];
+      raidTray[idx] = raidTray[swapIdx];
+      raidTray[swapIdx] = tmp;
+      saveTray(raidTray);
+      renderTray();
+    }
+    return;
+  }
   const removeBtn = e.target.closest('.raid-tray-remove');
   if(removeBtn){
     const url = removeBtn.getAttribute('data-url');
