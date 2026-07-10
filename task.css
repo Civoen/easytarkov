@@ -1,0 +1,245 @@
+.meta-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:18px;
+  margin-top:14px;
+  padding-top:14px;
+  border-top:1px dashed var(--line);
+  font-size:12px;
+  color:var(--paper-dim);
+}
+.meta-row b{color:var(--amber);font-weight:600;}
+table.items{width:100%;border-collapse:collapse;font-size:12.5px;}
+table.items th{
+  text-align:left;color:var(--paper-dim);font-weight:500;
+  text-transform:uppercase;font-size:10.5px;letter-spacing:.06em;
+  padding:6px 10px;border-bottom:1px solid var(--line);
+}
+table.items td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;}
+table.items tr:last-child td{border-bottom:none;}
+.req-yes{color:var(--rust);font-weight:600;}
+.req-no{color:var(--paper-dim);}
+.pin-btn{
+  background:var(--panel-2);
+  border:1px solid var(--olive-light);
+  color:var(--amber);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:.03em;
+  padding:7px 14px;
+  cursor:pointer;
+  margin-top:14px;
+}
+.pin-btn:hover{border-color:var(--rust);color:var(--paper);}
+.pin-btn.pinned{border-color:var(--amber);background:var(--olive);color:var(--paper);}
+
+.slot-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:16px;
+}
+.slot{
+  background:var(--panel-2);
+  border:1px dashed var(--olive-light);
+  position:relative;
+  padding:14px;
+  min-height:180px;
+  display:flex;
+  flex-direction:column;
+}
+.del-slot{
+  position:absolute;
+  top:6px;right:6px;
+  width:20px;height:20px;
+  border:1px solid var(--danger);
+  background:var(--bg);
+  color:#e8a49c;
+  font-size:12px;
+  line-height:1;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:2;
+}
+.del-slot:hover{background:var(--danger);color:#fff;}
+.slot-head{
+  font-size:11px;
+  color:var(--amber);
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  font-weight:600;
+  margin:0 22px 10px 0;
+  outline:none;
+  border-bottom:1px dashed transparent;
+  min-height:1.4em;
+}
+.slot-head:hover, .slot-head:focus{border-bottom:1px dashed var(--olive-light);}
+.slot-head:empty:before{content:attr(data-placeholder);color:var(--paper-dim);}
+.drop{
+  flex:1;
+  border:1px solid var(--line);
+  background:var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:10px;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  min-height:110px;
+}
+.drop.dragover{border-color:var(--rust);}
+.drop-empty{color:var(--paper-dim);font-size:11px;line-height:1.6;}
+.drop-empty .icon{font-size:20px;display:block;margin-bottom:6px;color:var(--olive-light);}
+.drop img{width:100%;height:100%;object-fit:cover;display:block;}
+.stamp{
+  position:absolute;top:8px;right:30px;
+  border:2px solid var(--olive-light);
+  color:var(--olive-light);
+  font-family:'Oswald',sans-serif;
+  font-weight:700;
+  font-size:10px;
+  letter-spacing:.08em;
+  padding:3px 7px;
+  transform:rotate(-8deg);
+  background:rgba(20,23,26,.55);
+  pointer-events:none;
+}
+.slot.filled .stamp{border-color:var(--amber);color:var(--amber);}
+.slot-foot{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:8px;
+  font-size:10.5px;
+  min-height:20px;
+}
+.uploader{color:var(--paper-dim);}
+.remove-btn{
+  background:none;border:1px solid var(--danger);color:#e8a49c;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;
+  padding:3px 8px;cursor:pointer;
+}
+.remove-btn:hover{background:var(--danger);color:#fff;}
+.new-image-btn{
+  display:block;
+  margin:16px auto 0;
+  background:var(--panel-2);
+  border:1px dashed var(--olive-light);
+  color:var(--amber);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  letter-spacing:.03em;
+  padding:10px 20px;
+  cursor:pointer;
+}
+.new-image-btn:hover{border-color:var(--rust);color:var(--paper);}
+.img-actions{
+  display:flex;
+  gap:6px;
+}
+.img-btn{
+  background:none;
+  border:1px solid var(--olive-light);
+  color:var(--amber);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  padding:3px 8px;
+  cursor:pointer;
+}
+.img-btn:hover{border-color:var(--rust);color:var(--paper);}
+.zoom-overlay{
+  display:none;
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  background:rgba(20,23,26,.85);
+  align-items:center;
+  justify-content:center;
+  z-index:50;
+  cursor:zoom-out;
+}
+.zoom-overlay.open{display:flex;}
+.zoom-overlay img{
+  width:50vw;
+  height:50vh;
+  object-fit:contain;
+  border:1px solid var(--olive-light);
+  background:var(--panel);
+}
+
+.notes-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-bottom:14px;
+}
+.note-row{
+  background:var(--panel-2);
+  border:1px solid var(--line);
+  border-left:3px solid var(--olive-light);
+  padding:10px 14px;
+}
+.note-meta{
+  font-size:10.5px;
+  color:var(--paper-dim);
+}
+.note-body{
+  font-size:12.5px;
+  line-height:1.6;
+  color:var(--paper);
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+.note-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+.note-delete{
+  background:none;
+  border:1px solid var(--danger);
+  color:#e8a49c;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  padding:2px 7px;
+  cursor:pointer;
+}
+.note-delete:hover{background:var(--danger);color:#fff;}
+.notes-empty{
+  font-size:11.5px;
+  color:var(--paper-dim);
+  border:1px dashed var(--olive-light);
+  padding:14px;
+  text-align:center;
+  margin-bottom:14px;
+}
+.note-form textarea{
+  width:100%;
+  min-height:70px;
+  background:var(--panel-2);
+  border:1px solid var(--line);
+  color:var(--paper);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  padding:10px;
+  outline:none;
+  resize:vertical;
+}
+.note-form textarea:focus{border-color:var(--rust);}
+.note-submit{
+  display:block;
+  margin-top:8px;
+  background:var(--panel-2);
+  border:1px dashed var(--olive-light);
+  color:var(--amber);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  letter-spacing:.03em;
+  padding:8px 16px;
+  cursor:pointer;
+}
+.note-submit:hover{border-color:var(--rust);color:var(--paper);}
+input[type=file]{display:none;}
