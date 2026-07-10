@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Prapor | Kappa Container Tasks</title>
+<title>Kappa Container | Required Items</title>
 <style>
 @font-face{font-family:'Oswald';src:url('fonts/oswald-v57-latin-500.woff2') format('woff2');font-weight:500;font-display:swap;}
 @font-face{font-family:'Oswald';src:url('fonts/oswald-v57-latin-600.woff2') format('woff2');font-weight:600;font-display:swap;}
@@ -376,7 +376,7 @@
 <div class="wrap">
 
   <div class="topbar">
-    <span class="tab">Prapor &middot; Trader</span>
+    <span class="tab">Fence &middot; Collector</span>
     <div class="topbar-right">
       <a class="trader-btn" href="index.html">Home</a>
       <a class="trader-btn" href="kappa.html">Kappa</a>
@@ -392,23 +392,23 @@
   </div>
 
   <header>
-    <h1>Prapor</h1>
-    <div class="sub">Kappa Container tasks</div>
+    <h1>Kappa Container</h1>
+    <div class="sub">Items required to find in raid for Collector</div>
   </header>
 
   <section>
-    <div class="section-label">Required tasks</div>
+    <div class="section-label">Required items</div>
     <div class="progress-wrap">
       <div class="progress-label">
-        <span id="progressText">0 of 0 complete</span>
+        <span id="progressText">0 of 0 found</span>
         <span id="progressPct">0%</span>
       </div>
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     </div>
-    <div class="task-list" id="taskList"></div>
+    <div class="task-list" id="itemList"></div>
   </section>
 
-  <footer>Task list is currently incomplete. More tasks required for Kappa will be added shortly.</footer>
+  <footer>All items are handover-only and must be Found in Raid. None are consumed elsewhere &mdash; safe to keep once found.</footer>
 </div>
 
 <div class="raid-tray" id="raidTray">
@@ -428,9 +428,23 @@ const TASKS = [
   { name: 'A Shooter Born in Heaven', trader: 'Mechanic', level: 14, url: 'a_shooter_born_in_heaven.html' }
 ];
 
-const PAGE_TRADER = 'Prapor';
-const taskList = document.getElementById('taskList');
-const traderTasks = TASKS.filter(t => t.trader === PAGE_TRADER);
+const itemList = document.getElementById('itemList');
+const KAPPA_ITEMS = [
+  'Old firesteel', 'Antique axe', 'Battered antique book', 'FireKlean gun lube',
+  'Golden rooster figurine', 'Silver Badge', "Deadlyslob's beard oil",
+  'Golden 1GPhone smartphone', 'Jar of DevilDog mayo', 'Can of sprats',
+  'Fake mustache', 'Kotton beanie', "Can of Dr. Lupo's coffee beans",
+  'Pestily plague mask', 'Raven figurine', 'Shroud half-mask',
+  'Veritas guitar pick', '42 Signature Blend English Tea', 'Smoke balaclava',
+  'Armband (Evasion)', 'Can of RatCola soda', 'Loot Lord plushie', 'WZ Wallet',
+  "LVNDMARK's rat poison", 'Missam forklift key',
+  'Video cassette with the Cyborg Killer movie', 'BakeEzy cook book',
+  'JohnB Liquid DNB glasses', 'Glorious E lightweight armored mask',
+  "Baddie's red beard", 'DRD body armor', 'Gingy keychain', 'Golden egg',
+  'Press pass (issued for NoiceGuy)', 'Axel parrot figurine',
+  'BEAR Buddy plush toy', 'Inseq gas pipe wrench', 'Viibiin sneaker',
+  'Tamatthi kunai knife replica'
+];
 
 const TASK_DETAILS = {
   'delivery_from_the_past.html': {
@@ -560,70 +574,56 @@ function updatePinButtons(){
 
 renderTray();
 
-const PROGRESS_KEY = 'easytarkov-progress';
+const KAPPA_PROGRESS_KEY = 'easytarkov-kappa-items';
 
-function loadProgress(){
+function loadItemProgress(){
   try{
-    const raw = localStorage.getItem(PROGRESS_KEY);
+    const raw = localStorage.getItem(KAPPA_PROGRESS_KEY);
     return raw ? JSON.parse(raw) : {};
   }catch(e){
     return {};
   }
 }
 
-function saveProgress(progress){
+function saveItemProgress(p){
   try{
-    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+    localStorage.setItem(KAPPA_PROGRESS_KEY, JSON.stringify(p));
   }catch(e){}
 }
 
-let progress = loadProgress();
+let itemProgress = loadItemProgress();
 
-function updateProgressBar(){
-  const total = traderTasks.length;
-  const done = traderTasks.filter(t => progress[t.url]).length;
+function updateItemProgressBar(){
+  const total = KAPPA_ITEMS.length;
+  const done = KAPPA_ITEMS.filter(name => itemProgress[name]).length;
   const pct = total ? Math.round((done / total) * 100) : 0;
-  document.getElementById('progressText').textContent = done + ' of ' + total + ' complete';
+  document.getElementById('progressText').textContent = done + ' of ' + total + ' found';
   document.getElementById('progressPct').textContent = pct + '%';
   document.getElementById('progressFill').style.width = pct + '%';
 }
 
-taskList.innerHTML = traderTasks.length
-  ? traderTasks.map(t =>
-      '<div class="task-row" data-url="'+t.url+'">' +
-        '<label class="task-check"><input type="checkbox" data-url="'+t.url+'"></label>' +
-        '<a class="task-link" href="'+t.url+'">' +
-          '<span><span class="task-name">'+t.name+'</span><br><span class="task-level">Level '+t.level+'</span></span>' +
-          '<span class="task-arrow">&rarr;</span>' +
-        '</a>' +
-        '<button class="task-pin" data-url="'+t.url+'" type="button">+ Pin</button>' +
-      '</div>'
-    ).join('')
-  : '<div class="empty-note">No Kappa-required tasks added yet for '+PAGE_TRADER+'.</div>';
+itemList.innerHTML = KAPPA_ITEMS.map((name, i) =>
+  '<div class="task-row" data-item="'+i+'">' +
+    '<label class="task-check"><input type="checkbox" data-item="'+i+'"></label>' +
+    '<span class="task-link">' +
+      '<span><span class="task-name">'+name+'</span><br><span class="task-level">Found in raid &middot; handover</span></span>' +
+    '</span>' +
+  '</div>'
+).join('');
 
-taskList.querySelectorAll('.task-check input').forEach(box => {
-  const url = box.getAttribute('data-url');
-  box.checked = !!progress[url];
+itemList.querySelectorAll('.task-check input').forEach(box => {
+  const name = KAPPA_ITEMS[parseInt(box.getAttribute('data-item'), 10)];
+  box.checked = !!itemProgress[name];
   if(box.checked) box.closest('.task-row').classList.add('done');
   box.addEventListener('change', () => {
-    progress[url] = box.checked;
-    saveProgress(progress);
+    itemProgress[name] = box.checked;
+    saveItemProgress(itemProgress);
     box.closest('.task-row').classList.toggle('done', box.checked);
-    updateProgressBar();
+    updateItemProgressBar();
   });
 });
 
-taskList.querySelectorAll('.task-pin').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    togglePin(btn.getAttribute('data-url'));
-    updatePinButtons();
-  });
-});
-
-updatePinButtons();
-updateProgressBar();
+updateItemProgressBar();
 
 const searchInput = document.getElementById('taskSearch');
 const searchResults = document.getElementById('searchResults');

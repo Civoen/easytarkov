@@ -103,6 +103,11 @@
   .search-results .none{cursor:default;}
   .search-results .none:hover{background:none;color:var(--paper-dim);}
   .trader-wrap{position:relative;display:inline-block;}
+  .btn-row{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+  }
   .trader-btn{
     background:var(--panel-2);
     border:1px solid var(--olive-light);
@@ -114,6 +119,7 @@
     letter-spacing:.02em;
   }
   .trader-btn:hover{border-color:var(--rust);color:var(--paper);}
+  a.trader-btn{display:inline-block;text-decoration:none;}
   .trader-menu{
     position:absolute;
     top:100%;left:0;right:0;
@@ -261,9 +267,12 @@
     <div class="search-results" id="searchResults"></div>
   </div>
 
-  <div class="trader-wrap">
-    <button class="trader-btn" id="traderBtn" type="button">Select trader</button>
-    <div class="trader-menu" id="traderMenu"></div>
+  <div class="btn-row">
+    <a class="trader-btn" href="kappa.html">Kappa</a>
+    <div class="trader-wrap">
+      <button class="trader-btn" id="traderBtn" type="button">Select trader</button>
+      <div class="trader-menu" id="traderMenu"></div>
+    </div>
   </div>
 </div>
 
