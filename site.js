@@ -26,7 +26,24 @@ function taskLookup(url){
   return TASKS.find(t => t.url === url) || { name: url, trader: '', level: '' };
 }
 
+function applyInfilSizing(){
+  if(!raidTrayEl.classList.contains('infil')) return;
+  const header = document.querySelector('header');
+  const barHeight = raidTrayEl.querySelector('.raid-tray-bar').getBoundingClientRect().height;
+  const panelHeight = header
+    ? Math.max(200, window.innerHeight - header.getBoundingClientRect().top - barHeight)
+    : Math.max(200, window.innerHeight - barHeight - 40);
+  raidTrayPanel.style.height = panelHeight + 'px';
+
+  const budget = panelHeight / Math.max(1, raidTray.length);
+  raidTrayEl.classList.remove('infil-lg', 'infil-md', 'infil-sm');
+  raidTrayEl.classList.add(budget >= 140 ? 'infil-lg' : budget >= 80 ? 'infil-md' : 'infil-sm');
+}
+
 function renderTray(){
+  applyInfilSizing();
+  const autoExpand = raidTrayEl.classList.contains('infil') && !raidTrayEl.classList.contains('infil-sm');
+
   raidTrayCount.textContent = raidTray.length;
   raidTrayPanel.innerHTML = raidTray.length
     ? raidTray.map((url, i) => {
@@ -39,7 +56,7 @@ function renderTray(){
           : '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>';
         const isFirst = i === 0;
         const isLast = i === raidTray.length - 1;
-        return '<div class="raid-tray-item'+(raidTrayEl.classList.contains('infil') ? ' expanded' : '')+'" data-url="'+url+'">' +
+        return '<div class="raid-tray-item'+(autoExpand ? ' expanded' : '')+'" data-url="'+url+'">' +
           '<div class="raid-tray-item-head">' +
             '<span><span class="raid-tray-item-name">'+t.name+'</span><br><span class="raid-tray-item-sub">'+t.trader+(t.level ? ' &middot; Level '+t.level : '')+'</span></span>' +
             '<span class="raid-tray-item-actions">' +
@@ -74,18 +91,13 @@ raidTrayInfil.addEventListener('click', (e) => {
   const active = raidTrayEl.classList.toggle('infil');
   if(active){
     raidTrayEl.classList.add('open');
-    const header = document.querySelector('header');
-    if(header){
-      const headerTop = header.getBoundingClientRect().top;
-      const barHeight = raidTrayEl.querySelector('.raid-tray-bar').getBoundingClientRect().height;
-      const panelHeight = Math.max(200, window.innerHeight - headerTop - barHeight);
-      raidTrayPanel.style.height = panelHeight + 'px';
-    }
   }else{
-    raidTrayEl.classList.remove('open');
+    raidTrayEl.classList.remove('open', 'infil-lg', 'infil-md', 'infil-sm');
     raidTrayPanel.style.height = '';
   }
   raidTrayInfil.textContent = active ? 'Exfil' : 'Infil';
+  const tabLabel = document.getElementById('tabLabel');
+  if(tabLabel) tabLabel.textContent = active ? 'Good Luck, Soldier' : (tabLabel.dataset.default || tabLabel.textContent);
   renderTray();
 });
 

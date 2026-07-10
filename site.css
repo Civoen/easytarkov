@@ -216,15 +216,27 @@ footer{
   cursor:pointer;
 }
 .raid-tray-infil:hover{border-color:var(--rust);color:var(--paper);}
-.raid-tray.infil .raid-tray-panel{height:calc(100vh - 120px);max-height:none;}
+.raid-tray.infil .raid-tray-panel{max-height:none;}
 .raid-tray.infil .raid-tray-infil{border-color:var(--danger);color:#e8a49c;}
 .raid-tray.infil .raid-tray-infil:hover{background:var(--danger);color:#fff;}
-.raid-tray.infil .raid-tray-item-head{padding:22px 24px;}
-.raid-tray.infil .raid-tray-item-name{font-size:20px;}
-.raid-tray.infil .raid-tray-item-sub{font-size:13px;}
-.raid-tray.infil .raid-tray-detail{font-size:14.5px;padding:0 24px 24px;line-height:1.8;}
-.raid-tray.infil .raid-tray-remove{font-size:12px;padding:5px 12px;}
-.raid-tray.infil .raid-tray-move{font-size:12px;padding:5px 12px;}
+.raid-tray.infil-lg .raid-tray-item-head{padding:22px 24px;}
+.raid-tray.infil-lg .raid-tray-item-name{font-size:20px;}
+.raid-tray.infil-lg .raid-tray-item-sub{font-size:13px;}
+.raid-tray.infil-lg .raid-tray-detail{font-size:14.5px;padding:0 24px 24px;line-height:1.8;}
+.raid-tray.infil-lg .raid-tray-remove{font-size:12px;padding:5px 12px;}
+.raid-tray.infil-lg .raid-tray-move{font-size:12px;padding:5px 12px;}
+.raid-tray.infil-md .raid-tray-item-head{padding:14px 18px;}
+.raid-tray.infil-md .raid-tray-item-name{font-size:15px;}
+.raid-tray.infil-md .raid-tray-item-sub{font-size:11px;}
+.raid-tray.infil-md .raid-tray-detail{font-size:12px;padding:0 18px 16px;line-height:1.6;}
+.raid-tray.infil-md .raid-tray-remove{font-size:10px;padding:4px 10px;}
+.raid-tray.infil-md .raid-tray-move{font-size:10px;padding:4px 10px;}
+.raid-tray.infil-sm .raid-tray-item-head{padding:8px 14px;}
+.raid-tray.infil-sm .raid-tray-item-name{font-size:12.5px;}
+.raid-tray.infil-sm .raid-tray-item-sub{font-size:9.5px;}
+.raid-tray.infil-sm .raid-tray-detail{font-size:11px;padding:0 14px 12px;line-height:1.4;}
+.raid-tray.infil-sm .raid-tray-remove{font-size:9px;padding:2px 7px;}
+.raid-tray.infil-sm .raid-tray-move{font-size:9px;padding:2px 7px;}
 .raid-tray-count{
   background:var(--rust);
   color:#1a0d08;
