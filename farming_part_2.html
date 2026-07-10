@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <title>Farming - Part 2 | Field Guide</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preload" href="site.css" as="style">
+<link rel="preload" href="task.css" as="style">
+<link rel="preload" href="data.js" as="script">
+<link rel="preload" href="site.js" as="script">
+<link rel="preload" href="task.js" as="script">
 <link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="task.css">
 </head>
@@ -38,7 +43,7 @@
 
   <section>
     <div class="section-label">Required items</div>
-    <table class="items">
+    <table class="items items-required">
       <tr><th>Item</th><th>Amount</th><th>Find in raid</th><th>Notes</th></tr>
       <tr>
         <td>Power cord</td>
@@ -63,7 +68,7 @@
 
   <section>
     <div class="section-label">Rewards</div>
-    <table class="items">
+    <table class="items items-rewards">
       <tr><th>Reward</th><th>Amount</th></tr>
       <tr><td>Experience</td><td>5,500 EXP</td></tr>
       <tr><td>Mechanic reputation</td><td>+0.02</td></tr>
