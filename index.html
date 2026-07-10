@@ -11,7 +11,7 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:24px 24px 90px;
+    padding:24px 24px 110px;
   }
   .hero{
     max-width:640px;
@@ -54,7 +54,16 @@
   }
   .btn-row .trader-btn{font-size:15px;padding:14px 26px;}
   .trader-wrap{display:inline-block;}
-  .trader-menu{text-align:left;width:100%;}
+  .trader-menu{
+    text-align:left;
+    width:100%;
+    top:auto;
+    bottom:100%;
+    margin-top:0;
+    margin-bottom:6px;
+    max-height:220px;
+    overflow-y:auto;
+  }
   .trader-menu .row{font-size:14px;padding:11px 14px;}
 </style>
 </head>
