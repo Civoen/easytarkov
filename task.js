@@ -177,7 +177,7 @@ function initTaskPage(taskUrl, initialSlotLabels){
 
   window.updatePinBtn = function(){
     const pinned = raidTray.includes(taskUrl);
-    pinBtn.textContent = pinned ? '\u2713 Pinned to raid tray' : '+ Pin to raid tray';
+    pinBtn.textContent = pinned ? '\u2713 Pinned to Current Raid' : '+ Pin to Current Raid';
     pinBtn.classList.toggle('pinned', pinned);
   };
 

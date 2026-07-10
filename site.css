@@ -216,7 +216,7 @@ footer{
   cursor:pointer;
 }
 .raid-tray-infil:hover{border-color:var(--rust);color:var(--paper);}
-.raid-tray.infil .raid-tray-panel{max-height:80vh;}
+.raid-tray.infil .raid-tray-panel{height:calc(100vh - 120px);max-height:none;}
 .raid-tray.infil .raid-tray-infil{border-color:var(--danger);color:#e8a49c;}
 .raid-tray.infil .raid-tray-infil:hover{background:var(--danger);color:#fff;}
 .raid-tray.infil .raid-tray-item-head{padding:22px 24px;}
