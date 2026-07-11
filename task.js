@@ -175,17 +175,23 @@ function initTaskPage(taskUrl, initialSlotLabels){
 
   // ---- Mark complete ----
   const PROGRESS_KEY = 'easytarkov-progress';
-  const completeCheck = document.getElementById('completeCheck');
-  if(completeCheck){
+  const completeBtn = document.getElementById('completeBtn');
+  if(completeBtn){
+    function updateCompleteBtn(isDone){
+      completeBtn.textContent = isDone ? '\u2713 Completed' : 'Mark complete';
+      completeBtn.classList.toggle('completed', isDone);
+    }
     let progress = {};
     try{ progress = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}'); }catch(e){}
-    completeCheck.checked = !!progress[taskUrl];
-    completeCheck.addEventListener('change', () => {
+    updateCompleteBtn(!!progress[taskUrl]);
+    completeBtn.addEventListener('click', () => {
       try{
         progress = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}');
       }catch(e){ progress = {}; }
-      progress[taskUrl] = completeCheck.checked;
+      const nowDone = !progress[taskUrl];
+      progress[taskUrl] = nowDone;
       try{ localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress)); }catch(e){}
+      updateCompleteBtn(nowDone);
     });
   }
 
