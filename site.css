@@ -51,6 +51,8 @@ a.tab:hover{background:var(--amber);}
 }
 .topbar-right{
   display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
   gap:8px;
   align-items:flex-start;
 }
