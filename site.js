@@ -19,6 +19,16 @@ let raidTray = loadTray();
 const raidTrayEl = document.getElementById('raidTray');
 const raidTrayToggle = document.getElementById('raidTrayToggle');
 const raidTrayInfil = document.getElementById('raidTrayInfil');
+const raidTrayCompact = document.getElementById('raidTrayCompact');
+const NAMES_ONLY_KEY = 'easytarkov-raidtray-compact';
+
+function loadNamesOnly(){
+  try{ return localStorage.getItem(NAMES_ONLY_KEY) === '1'; }catch(e){ return false; }
+}
+
+function saveNamesOnly(active){
+  try{ localStorage.setItem(NAMES_ONLY_KEY, active ? '1' : '0'); }catch(e){}
+}
 const raidTrayPanel = document.getElementById('raidTrayPanel');
 const raidTrayCount = document.getElementById('raidTrayCount');
 
@@ -100,6 +110,21 @@ raidTrayInfil.addEventListener('click', (e) => {
   if(tabLabel) tabLabel.textContent = active ? 'Good Luck, Soldier' : (tabLabel.dataset.default || tabLabel.textContent);
   renderTray();
 });
+
+if(raidTrayCompact){
+  if(loadNamesOnly()){
+    raidTrayEl.classList.add('names-only');
+    raidTrayCompact.textContent = 'Full';
+    raidTrayCompact.classList.add('active');
+  }
+  raidTrayCompact.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const active = raidTrayEl.classList.toggle('names-only');
+    raidTrayCompact.textContent = active ? 'Full' : 'Compact';
+    raidTrayCompact.classList.toggle('active', active);
+    saveNamesOnly(active);
+  });
+}
 
 raidTrayPanel.addEventListener('click', (e) => {
   const moveBtn = e.target.closest('.raid-tray-move');
