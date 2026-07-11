@@ -228,7 +228,6 @@ footer{
   cursor:pointer;
 }
 .raid-tray-compact:hover{border-color:var(--rust);color:var(--paper);}
-.raid-tray-compact.active{border-color:var(--amber);background:var(--olive);color:var(--paper);}
 .raid-tray.names-only .raid-tray-item-sub{display:none;}
 .raid-tray.names-only .raid-tray-detail{display:none !important;}
 .raid-tray.names-only .raid-tray-item-head{padding-top:10px;padding-bottom:10px;}

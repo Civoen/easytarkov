@@ -173,6 +173,36 @@ document.getElementById('newImageBtn').addEventListener('click', () => addSlot('
 function initTaskPage(taskUrl, initialSlotLabels){
   initialSlotLabels.forEach(addSlot);
 
+  // ---- Mark complete ----
+  const PROGRESS_KEY = 'easytarkov-progress';
+  const completeCheck = document.getElementById('completeCheck');
+  if(completeCheck){
+    let progress = {};
+    try{ progress = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}'); }catch(e){}
+    completeCheck.checked = !!progress[taskUrl];
+    completeCheck.addEventListener('change', () => {
+      try{
+        progress = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}');
+      }catch(e){ progress = {}; }
+      progress[taskUrl] = completeCheck.checked;
+      try{ localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress)); }catch(e){}
+    });
+  }
+
+  // ---- Recently viewed tracking ----
+  try{
+    const RECENT_KEY = 'easytarkov-recent';
+    const task = TASKS.find(t => t.url === taskUrl);
+    if(task){
+      let recent = [];
+      try{ recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); }catch(e){ recent = []; }
+      recent = recent.filter(r => r.url !== taskUrl);
+      recent.unshift({ name: task.name, trader: task.trader, url: task.url });
+      recent = recent.slice(0, 10);
+      localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
+    }
+  }catch(e){}
+
   const pinBtn = document.getElementById('pinBtn');
 
   window.updatePinBtn = function(){

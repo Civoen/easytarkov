@@ -220,3 +220,25 @@ traderMenu.addEventListener('click', (e) => {
 document.addEventListener('click', (e) => {
   if(!e.target.closest('.trader-wrap')) traderMenu.classList.remove('open');
 });
+
+// ---- Keyboard shortcuts ----
+document.addEventListener('keydown', (e) => {
+  const tag = document.activeElement.tagName;
+  const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement.isContentEditable;
+
+  if(e.key === ' ' && !isTyping){
+    e.preventDefault();
+    searchInput.focus();
+  }
+
+  if(e.key === 'Escape'){
+    raidTrayEl.classList.remove('open');
+    traderMenu.classList.remove('open');
+    searchResults.classList.remove('open');
+    if(isTyping) document.activeElement.blur();
+  }
+
+  if(e.key === 'Shift' && document.activeElement === document.body){
+    raidTrayEl.classList.add('open');
+  }
+});

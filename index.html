@@ -94,6 +94,24 @@
     flex-wrap:wrap;
     justify-content:center;
   }
+  .kappa-progress{margin-bottom:24px;}
+  .kappa-progress-label{
+    display:flex;
+    justify-content:space-between;
+    font-size:11px;
+    color:var(--paper-dim);
+    margin-bottom:6px;
+  }
+  .kappa-progress-track{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    height:8px;
+  }
+  .kappa-progress-fill{
+    background:var(--rust);
+    height:100%;
+    width:0%;
+  }
 </style>
 </head>
 <body>
@@ -101,6 +119,14 @@
   <div class="badge">Site under construction</div>
   <h1>Easy Tarkov</h1>
   <div class="sub">A quick and easy way to progress</div>
+
+  <div class="kappa-progress">
+    <div class="kappa-progress-label">
+      <span id="kappaProgressText">Overall Kappa progress: 0 of 0</span>
+      <span id="kappaProgressPct">0%</span>
+    </div>
+    <div class="kappa-progress-track"><div class="kappa-progress-fill" id="kappaProgressFill"></div></div>
+  </div>
 
   <div class="search-wrap">
     <input type="text" id="taskSearch" placeholder="Search tasks..." autocomplete="off">
@@ -112,7 +138,9 @@
       <button class="trader-btn" id="traderBtn" type="button">Traders</button>
     </div>
     <a class="trader-btn" href="maps.html">Maps</a>
+    <a class="trader-btn" href="recent.html">Recent</a>
     <a class="trader-btn" href="kappa.html">Kappa</a>
+    <a class="trader-btn" href="import.html">Export/Import</a>
     <div class="trader-menu" id="traderMenu"></div>
   </div>
 </div>
@@ -131,5 +159,28 @@
 
 <script src="data.js"></script>
 <script src="site.js"></script>
+<script>
+(function(){
+  let taskProgress = {};
+  let itemProgress = {};
+  try{ taskProgress = JSON.parse(localStorage.getItem('easytarkov-progress') || '{}'); }catch(e){}
+  try{ itemProgress = JSON.parse(localStorage.getItem('easytarkov-kappa-items') || '{}'); }catch(e){}
+
+  const totalTasks = TASKS.length;
+  const doneTasks = TASKS.filter(t => taskProgress[t.url]).length;
+  const totalItems = KAPPA_ITEMS.length;
+  const doneItems = KAPPA_ITEMS.filter(name => itemProgress[name]).length;
+
+  const total = totalTasks + totalItems;
+  const done = doneTasks + doneItems;
+  const pct = total ? Math.round((done / total) * 100) : 0;
+
+  document.getElementById('kappaProgressText').textContent = 'Overall Kappa progress: ' + done + ' of ' + total;
+  document.getElementById('kappaProgressPct').textContent = pct + '%';
+  const fill = document.getElementById('kappaProgressFill');
+  fill.style.width = pct + '%';
+  fill.style.background = pct >= 100 ? '#3cbf2d' : '';
+})();
+</script>
 </body>
 </html>
