@@ -114,13 +114,13 @@ raidTrayInfil.addEventListener('click', (e) => {
 if(raidTrayCompact){
   if(loadNamesOnly()){
     raidTrayEl.classList.add('names-only');
-    raidTrayCompact.textContent = 'Full';
+    raidTrayCompact.textContent = 'Show Full';
     raidTrayCompact.classList.add('active');
   }
   raidTrayCompact.addEventListener('click', (e) => {
     e.stopPropagation();
     const active = raidTrayEl.classList.toggle('names-only');
-    raidTrayCompact.textContent = active ? 'Full' : 'Compact';
+    raidTrayCompact.textContent = active ? 'Show Full' : 'Show Compact';
     raidTrayCompact.classList.toggle('active', active);
     saveNamesOnly(active);
   });
