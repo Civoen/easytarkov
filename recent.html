@@ -45,7 +45,8 @@
   </header>
 
   <section>
-    <div class="section-label">Recently viewed</div>
+    <button class="trader-btn" id="clearRecentBtn" type="button">Clear</button>
+    <div class="section-label" style="margin-top:16px;">Recently viewed</div>
     <div class="task-list" id="recentList"></div>
   </section>
 
@@ -71,16 +72,27 @@ let recent = [];
 try{ recent = JSON.parse(localStorage.getItem('easytarkov-recent') || '[]'); }catch(e){}
 
 const recentList = document.getElementById('recentList');
-recentList.innerHTML = recent.length
-  ? recent.map(r =>
-      '<div class="task-row">' +
-        '<a class="task-link" href="'+r.url+'" style="padding-left:16px;">' +
-          '<span><span class="task-name">'+r.name+'</span><br><span class="task-level">'+r.trader+'</span></span>' +
-          '<span class="task-arrow">&rarr;</span>' +
-        '</a>' +
-      '</div>'
-    ).join('')
-  : '<div class="empty-note">No recently viewed tasks yet &mdash; visit a task page and it\'ll show up here.</div>';
+
+function renderRecent(){
+  recentList.innerHTML = recent.length
+    ? recent.map(r =>
+        '<div class="task-row">' +
+          '<a class="task-link" href="'+r.url+'" style="padding-left:16px;">' +
+            '<span><span class="task-name">'+r.name+'</span><br><span class="task-level">'+r.trader+'</span></span>' +
+            '<span class="task-arrow">&rarr;</span>' +
+          '</a>' +
+        '</div>'
+      ).join('')
+    : '<div class="empty-note">No recently viewed tasks yet &mdash; visit a task page and it\'ll show up here.</div>';
+}
+
+renderRecent();
+
+document.getElementById('clearRecentBtn').addEventListener('click', () => {
+  recent = [];
+  try{ localStorage.removeItem('easytarkov-recent'); }catch(e){}
+  renderRecent();
+});
 </script>
 </body>
 </html>

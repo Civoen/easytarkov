@@ -46,6 +46,12 @@
   </header>
 
   <section>
+    <div class="section-label">Homepage Progress Bar</div>
+    <p class="section-hint">This site currently only covers a handful of the tasks actually required for Kappa &mdash; the true total varies by source and shifts with game updates. Turn this on only if you're comfortable with that being a partial figure, not a real completion percentage.</p>
+    <button class="trader-btn" id="toggleHomeProgress" type="button">Show on Homepage</button>
+  </section>
+
+  <section>
     <div class="section-label">Required items</div>
     <div class="progress-wrap">
       <div class="progress-label">
@@ -87,6 +93,24 @@ initChecklist({
     key: name, name: name, sub: 'Found in raid \u00b7 handover', href: null, pinnable: false
   }))
 });
+
+const HOME_PROGRESS_KEY = 'easytarkov-show-home-progress';
+const toggleHomeProgress = document.getElementById('toggleHomeProgress');
+
+function refreshToggleLabel(){
+  let shown = false;
+  try{ shown = localStorage.getItem(HOME_PROGRESS_KEY) === '1'; }catch(e){}
+  toggleHomeProgress.textContent = shown ? 'Hide from Homepage' : 'Show on Homepage';
+}
+
+toggleHomeProgress.addEventListener('click', () => {
+  let shown = false;
+  try{ shown = localStorage.getItem(HOME_PROGRESS_KEY) === '1'; }catch(e){}
+  try{ localStorage.setItem(HOME_PROGRESS_KEY, shown ? '0' : '1'); }catch(e){}
+  refreshToggleLabel();
+});
+
+refreshToggleLabel();
 </script>
 </body>
 </html>

@@ -41,12 +41,16 @@ body{
   margin-bottom:-3px;
   text-decoration:none;
 }
-a.tab:hover{background:var(--amber);}
+.tab-group{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+}
 }
 .topbar{
   display:flex;
   justify-content:space-between;
-  align-items:flex-end;
+  align-items:flex-start;
   flex-wrap:wrap;
   gap:10px;
 }

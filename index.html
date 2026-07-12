@@ -120,7 +120,7 @@
   <h1>Easy Tarkov</h1>
   <div class="sub">A quick and easy way to progress</div>
 
-  <div class="kappa-progress">
+  <div class="kappa-progress" id="kappaProgressWrap" style="display:none;">
     <div class="kappa-progress-label">
       <span id="kappaProgressText">Overall Kappa progress: 0 of 0</span>
       <span id="kappaProgressPct">0%</span>
@@ -161,6 +161,11 @@
 <script src="site.js"></script>
 <script>
 (function(){
+  let showHomeProgress = false;
+  try{ showHomeProgress = localStorage.getItem('easytarkov-show-home-progress') === '1'; }catch(e){}
+  if(!showHomeProgress) return;
+  document.getElementById('kappaProgressWrap').style.display = 'block';
+
   let taskProgress = {};
   let itemProgress = {};
   try{ taskProgress = JSON.parse(localStorage.getItem('easytarkov-progress') || '{}'); }catch(e){}
