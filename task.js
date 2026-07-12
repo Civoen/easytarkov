@@ -14,55 +14,6 @@ zoomOverlay.addEventListener('click', () => {
 const grid = document.getElementById('slotGrid');
 const MIN_SLOTS = 1;
 
-const notesList = document.getElementById('notesList');
-const noteToggleBtn = document.getElementById('noteToggleBtn');
-const noteForm = document.getElementById('noteForm');
-const noteInput = document.getElementById('noteInput');
-const noteSubmit = document.getElementById('noteSubmit');
-let notes = [];
-
-function renderNotes(){
-  notesList.innerHTML = notes.length
-    ? notes.map((n, i) =>
-        '<div class="note-row">' +
-          '<div class="note-head">' +
-            '<span class="note-meta">PMC &middot; just now</span>' +
-            '<button class="note-delete" data-index="'+i+'" type="button">Remove</button>' +
-          '</div>' +
-          '<div class="note-body"></div>' +
-        '</div>'
-      ).join('')
-    : '<div class="notes-empty">No notes yet. Be the first to leave field intel.</div>';
-  const bodies = notesList.querySelectorAll('.note-body');
-  notes.forEach((n, i) => { bodies[i].textContent = n; });
-}
-
-notesList.addEventListener('click', (e) => {
-  const btn = e.target.closest('.note-delete');
-  if(!btn) return;
-  const idx = parseInt(btn.getAttribute('data-index'), 10);
-  notes.splice(idx, 1);
-  renderNotes();
-});
-
-noteToggleBtn.addEventListener('click', () => {
-  noteToggleBtn.style.display = 'none';
-  noteForm.style.display = 'block';
-  noteInput.focus();
-});
-
-noteSubmit.addEventListener('click', () => {
-  const text = noteInput.value.trim();
-  if(!text) return;
-  notes.unshift(text);
-  noteInput.value = '';
-  noteForm.style.display = 'none';
-  noteToggleBtn.style.display = 'block';
-  renderNotes();
-});
-
-renderNotes();
-
 function updateDeleteButtons(){
   const slots = grid.querySelectorAll('.slot');
   slots.forEach(s => {
