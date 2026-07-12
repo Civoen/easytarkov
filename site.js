@@ -221,6 +221,21 @@ document.addEventListener('click', (e) => {
   if(!e.target.closest('.trader-wrap')) traderMenu.classList.remove('open');
 });
 
+// ---- Keyboard shortcuts help overlay ----
+const shortcutsOverlay = document.createElement('div');
+shortcutsOverlay.className = 'shortcuts-overlay';
+shortcutsOverlay.innerHTML =
+  '<div class="shortcuts-card">' +
+    '<div class="shortcuts-title">Keyboard Shortcuts</div>' +
+    '<div class="shortcuts-row"><span class="shortcuts-key">Space</span><span>Jump to search</span></div>' +
+    '<div class="shortcuts-row"><span class="shortcuts-key">Shift</span><span>Open Current Raid</span></div>' +
+    '<div class="shortcuts-row"><span class="shortcuts-key">Esc</span><span>Close open panels</span></div>' +
+    '<div class="shortcuts-row"><span class="shortcuts-key">?</span><span>Show this list</span></div>' +
+    '<div class="shortcuts-hint">Click anywhere to close</div>' +
+  '</div>';
+document.body.appendChild(shortcutsOverlay);
+shortcutsOverlay.addEventListener('click', () => shortcutsOverlay.classList.remove('open'));
+
 // ---- Keyboard shortcuts ----
 document.addEventListener('keydown', (e) => {
   const tag = document.activeElement.tagName;
@@ -235,10 +250,16 @@ document.addEventListener('keydown', (e) => {
     raidTrayEl.classList.remove('open');
     traderMenu.classList.remove('open');
     searchResults.classList.remove('open');
+    shortcutsOverlay.classList.remove('open');
     if(isTyping) document.activeElement.blur();
   }
 
   if(e.key === 'Shift' && document.activeElement === document.body){
     raidTrayEl.classList.add('open');
+  }
+
+  if(e.key === '?' && !isTyping){
+    e.preventDefault();
+    shortcutsOverlay.classList.toggle('open');
   }
 });

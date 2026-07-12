@@ -1,8 +1,9 @@
 const zoomOverlay = document.getElementById('zoomOverlay');
 const zoomImg = document.getElementById('zoomImg');
 
-function openZoom(dataUrl){
+function openZoom(dataUrl, altText){
   zoomImg.src = dataUrl;
+  zoomImg.alt = altText || 'Zoomed screenshot';
   zoomOverlay.classList.add('open');
 }
 
@@ -40,7 +41,9 @@ function addSlot(label){
   const clearWrap = slot.querySelector('.clear-wrap');
 
   function setImage(dataUrl){
-    drop.innerHTML = '<img src="'+dataUrl+'">';
+    const slotLabel = slot.querySelector('.slot-head').textContent.trim();
+    const altText = slotLabel ? slotLabel + ' screenshot' : 'Community-submitted task location screenshot';
+    drop.innerHTML = '<img src="'+dataUrl+'" alt="'+altText.replace(/"/g, '&quot;')+'">';
     let stamp = slot.querySelector('.stamp');
     if(!stamp){
       stamp = document.createElement('div');
@@ -60,7 +63,7 @@ function addSlot(label){
     zoomBtn.textContent = 'Zoom';
     zoomBtn.onclick = (e) => {
       e.stopPropagation();
-      openZoom(dataUrl);
+      openZoom(dataUrl, altText);
     };
 
     const replaceBtn = document.createElement('button');
