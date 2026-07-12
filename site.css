@@ -38,7 +38,7 @@ body{
   line-height:1;
   text-transform:uppercase;
   padding:6px 12px;
-  margin-bottom:-1px;
+  margin-bottom:-3px;
   text-decoration:none;
 }
 a.tab:hover{background:var(--amber);}

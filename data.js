@@ -6,7 +6,13 @@ const TASKS = [
   { name: 'Farming - Part 3', trader: 'Mechanic', level: 14, url: 'farming_part_3.html', chain: 'farming', chainOrder: 3 },
   { name: 'Farming - Part 4', trader: 'Mechanic', level: 14, url: 'farming_part_4.html', chain: 'farming', chainOrder: 4 },
   { name: 'A Shooter Born in Heaven', trader: 'Mechanic', level: 14, url: 'a_shooter_born_in_heaven.html' },
-  { name: 'Return the Favor', trader: 'Lightkeeper', level: 33, url: 'return_the_favor.html' }
+  { name: 'Return the Favor', trader: 'Lightkeeper', level: 33, url: 'return_the_favor.html' },
+  { name: 'First in Line', trader: 'Therapist', level: 1, url: 'first_in_line.html' },
+  { name: 'Chemical - Part 1', trader: 'Skier', level: 10, url: 'chemical_part_1.html' },
+  { name: 'Fishing Gear', trader: 'Peacekeeper', level: 10, url: 'fishing_gear.html' },
+  { name: 'Database - Part 1', trader: 'Ragman', level: 17, url: 'database_part_1.html' },
+  { name: 'The Tarkov Shooter - Part 1', trader: 'Jaeger', level: 2, url: 'tarkov_shooter_part_1.html' },
+  { name: 'Collector', trader: 'Fence', level: 45, url: 'collector.html' }
 ];
 
 const TASK_DETAILS = {
@@ -65,6 +71,47 @@ const TASK_DETAILS = {
       'TerraGroup "Blue Folders" materials \u00d7 2 \u2014 found in raid;',
       '15 PMC eliminations required first'
     ]
+  },
+  'first_in_line.html': {
+    location: 'Ground Zero',
+    items: [
+      'Any medical items \u00d7 3 \u2014 found in raid;',
+      'Locate the Emercom checkpoint'
+    ]
+  },
+  'chemical_part_1.html': {
+    location: 'Customs',
+    items: [
+      'Dorm room 220 key \u2014 handover, not consumed;',
+      'Secure folder \u2014 found in raid, quest item'
+    ]
+  },
+  'fishing_gear.html': {
+    location: 'Shoreline',
+    items: [
+      'SV-98 sniper rifle \u2014 sent via mail, stash in boat;',
+      'Leatherman Multitool \u2014 sent via mail, stash in boat'
+    ]
+  },
+  'database_part_1.html': {
+    location: 'Interchange',
+    items: [
+      'Goshan cargo manifests \u2014 found in raid, quest item'
+    ]
+  },
+  'tarkov_shooter_part_1.html': {
+    location: 'Any location',
+    items: [
+      'Bolt-action rifle, iron sights \u2014 not consumed;',
+      '5 Scav eliminations from 40m+'
+    ]
+  },
+  'collector.html': {
+    location: 'Any location',
+    items: [
+      '39 unique streamer items \u2014 all found in raid;',
+      'See the Kappa page for the full checklist'
+    ]
   }
 };
 
@@ -77,7 +124,6 @@ const TRADERS = [
   { name: 'Ragman', url: 'ragman.html' },
   { name: 'Jaeger', url: 'jaeger.html' },
   { name: 'Fence', url: 'fence.html' },
-  { name: 'Ref', url: 'ref.html' },
   { name: 'Lightkeeper', url: 'lightkeeper.html' }
 ];
 

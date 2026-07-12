@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Return the Favor | Field Guide</title>
+<title>Chemical - Part 1 | Field Guide</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preload" href="fonts/oswald-v57-latin-500.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/oswald-v57-latin-600.woff2" as="font" type="font/woff2" crossorigin>
@@ -22,15 +22,15 @@
 <div class="wrap">
 
   <div class="topbar">
-    <a class="tab" id="tabLabel" data-default="Lightkeeper" href="lightkeeper.html">Lightkeeper</a>
+    <a class="tab" id="tabLabel" data-default="Skier" href="skier.html">Skier</a>
     <div class="topbar-right">
       <a class="trader-btn" href="index.html">Home</a>
+      <a class="trader-btn" href="kappa.html">Kappa</a>
+      <a class="trader-btn" href="maps.html">Maps</a>
       <div class="trader-wrap">
         <button class="trader-btn" id="traderBtn" type="button">Traders</button>
         <div class="trader-menu" id="traderMenu"></div>
       </div>
-      <a class="trader-btn" href="maps.html">Maps</a>
-      <a class="trader-btn" href="kappa.html">Kappa</a>
       <a class="trader-btn" href="recent.html">Recent</a>
       <a class="trader-btn" href="import.html">Export/Import</a>
       <div class="search-wrap">
@@ -40,12 +40,12 @@
     </div>
   </div>
   <header>
-    <h1>Return the Favor</h1>
+    <h1>Chemical - Part 1</h1>
     <div class="meta-row">
-      <span><b>Level req.</b> 33</span>
-      <span><b>Location</b> Woods</span>
-      <span><b>Leads to</b> Payback</span>
-      <span><b>Previous</b> Snatch</span>
+      <span><b>Level req.</b> 10</span>
+      <span><b>Location</b> Customs</span>
+      <span><b>Leads to</b> Chemical - Part 2</span>
+      <span><b>Previous</b> Golden Swag</span>
     </div>
     <button class="pin-btn" id="pinBtn" type="button">+ Pin to Current Raid</button>
     <button class="copy-link-btn" id="copyLinkBtn" type="button">Copy Link</button>
@@ -57,16 +57,16 @@
     <table class="items items-required">
       <tr><th>Item</th><th>Amount</th><th>Find in raid</th><th>Notes</th></tr>
       <tr>
-        <td>TerraGroup "Blue Folders" materials</td>
-        <td>2</td>
-        <td class="req-yes">Yes</td>
-        <td>Rare spawn &mdash; also purchasable on the Flea Market. One hides in a black SUV, the other near crates by a satellite antenna.</td>
+        <td>Dorm room 220 key</td>
+        <td>1</td>
+        <td class="req-no">No &mdash; handover</td>
+        <td>Helps with the investigation.</td>
       </tr>
       <tr>
-        <td>PMC eliminations</td>
-        <td>15</td>
-        <td class="req-no">N/A</td>
-        <td>Around the mountain area on Woods &mdash; required before the Blue Folders objectives become available.</td>
+        <td>Secure folder</td>
+        <td>1</td>
+        <td class="req-yes">Yes</td>
+        <td>Quest item &mdash; found in a train car on the western side of Customs. Multiple spawn points inside.</td>
       </tr>
     </table>
   </section>
@@ -75,21 +75,16 @@
     <div class="section-label">Rewards</div>
     <table class="items items-rewards">
       <tr><th>Reward</th><th>Amount</th></tr>
-      <tr><td>Lightkeeper reputation</td><td>+0.03</td></tr>
-      <tr><td>Silicon Optoelectronic Integrated Circuits textbook</td><td>1</td></tr>
-      <tr><td>Crafting unlock</td><td>VPX Flash Storage Module at Intelligence Center LL2</td></tr>
+      <tr><td>Experience</td><td>4,800 EXP</td></tr>
+      <tr><td>Roubles</td><td>15,000</td></tr>
+      <tr><td>MSA ACH TC-2002 MICH Series helmet (Olive Drab)</td><td>1</td></tr>
     </table>
   </section>
 
   <section>
     <div class="section-label">Field Intel</div>
-    <div class="field-intel">Get the 15 PMC eliminations done first. The Blue Folders objectives don't appear until that kill requirement is met, so hunting for them beforehand is wasted effort.</div>
-  </section>
-
-  <section>
-    <div class="section-label">Field Intel</div>
     <p class="section-hint">Some notes from other PMCs to help you on your journey.</p>
-    <div class="field-intel">Get the 15 PMC eliminations done first. The Blue Folders objectives don't appear until that kill requirement is met, so hunting for them beforehand is wasted effort.</div>
+    <div class="field-intel-empty">No notes yet.</div>
   </section>
 
   <section>
@@ -122,7 +117,7 @@
 <script src="site.js"></script>
 <script src="task.js"></script>
 <script>
-initTaskPage('return_the_favor.html', ['Blue Folder \u2014 black SUV', 'Blue Folder \u2014 satellite antenna crates']);
+initTaskPage('chemical_part_1.html', ['Train car \u2014 western Customs', 'Dorm room 220']);
 </script>
 </body>
 </html>

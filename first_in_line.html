@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Return the Favor | Field Guide</title>
+<title>First in Line | Field Guide</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preload" href="fonts/oswald-v57-latin-500.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/oswald-v57-latin-600.woff2" as="font" type="font/woff2" crossorigin>
@@ -22,15 +22,15 @@
 <div class="wrap">
 
   <div class="topbar">
-    <a class="tab" id="tabLabel" data-default="Lightkeeper" href="lightkeeper.html">Lightkeeper</a>
+    <a class="tab" id="tabLabel" data-default="Therapist" href="therapist.html">Therapist</a>
     <div class="topbar-right">
       <a class="trader-btn" href="index.html">Home</a>
+      <a class="trader-btn" href="kappa.html">Kappa</a>
+      <a class="trader-btn" href="maps.html">Maps</a>
       <div class="trader-wrap">
         <button class="trader-btn" id="traderBtn" type="button">Traders</button>
         <div class="trader-menu" id="traderMenu"></div>
       </div>
-      <a class="trader-btn" href="maps.html">Maps</a>
-      <a class="trader-btn" href="kappa.html">Kappa</a>
       <a class="trader-btn" href="recent.html">Recent</a>
       <a class="trader-btn" href="import.html">Export/Import</a>
       <div class="search-wrap">
@@ -40,12 +40,12 @@
     </div>
   </div>
   <header>
-    <h1>Return the Favor</h1>
+    <h1>First in Line</h1>
     <div class="meta-row">
-      <span><b>Level req.</b> 33</span>
-      <span><b>Location</b> Woods</span>
-      <span><b>Leads to</b> Payback</span>
-      <span><b>Previous</b> Snatch</span>
+      <span><b>Level req.</b> 1</span>
+      <span><b>Location</b> Ground Zero</span>
+      <span><b>Leads to</b> Shortage</span>
+      <span><b>Previous</b> &mdash; starting quest</span>
     </div>
     <button class="pin-btn" id="pinBtn" type="button">+ Pin to Current Raid</button>
     <button class="copy-link-btn" id="copyLinkBtn" type="button">Copy Link</button>
@@ -57,39 +57,30 @@
     <table class="items items-required">
       <tr><th>Item</th><th>Amount</th><th>Find in raid</th><th>Notes</th></tr>
       <tr>
-        <td>TerraGroup "Blue Folders" materials</td>
-        <td>2</td>
+        <td>Any medical items</td>
+        <td>3</td>
         <td class="req-yes">Yes</td>
-        <td>Rare spawn &mdash; also purchasable on the Flea Market. One hides in a black SUV, the other near crates by a satellite antenna.</td>
-      </tr>
-      <tr>
-        <td>PMC eliminations</td>
-        <td>15</td>
-        <td class="req-no">N/A</td>
-        <td>Around the mountain area on Woods &mdash; required before the Blue Folders objectives become available.</td>
+        <td>Any consumable, medicine, or stimulant qualifies &mdash; doesn't need to be a specific item.</td>
       </tr>
     </table>
+    <p class="section-hint">Also requires locating the Emercom checkpoint on Ground Zero &mdash; no handover needed for this part, just find it.</p>
   </section>
 
   <section>
     <div class="section-label">Rewards</div>
     <table class="items items-rewards">
       <tr><th>Reward</th><th>Amount</th></tr>
-      <tr><td>Lightkeeper reputation</td><td>+0.03</td></tr>
-      <tr><td>Silicon Optoelectronic Integrated Circuits textbook</td><td>1</td></tr>
-      <tr><td>Crafting unlock</td><td>VPX Flash Storage Module at Intelligence Center LL2</td></tr>
+      <tr><td>Experience</td><td>1,200 EXP</td></tr>
+      <tr><td>Roubles</td><td>6,400</td></tr>
+      <tr><td>Factory plan map</td><td>1</td></tr>
+      <tr><td>Bottle of water (0.6L)</td><td>2</td></tr>
     </table>
   </section>
 
   <section>
     <div class="section-label">Field Intel</div>
-    <div class="field-intel">Get the 15 PMC eliminations done first. The Blue Folders objectives don't appear until that kill requirement is met, so hunting for them beforehand is wasted effort.</div>
-  </section>
-
-  <section>
-    <div class="section-label">Field Intel</div>
     <p class="section-hint">Some notes from other PMCs to help you on your journey.</p>
-    <div class="field-intel">Get the 15 PMC eliminations done first. The Blue Folders objectives don't appear until that kill requirement is met, so hunting for them beforehand is wasted effort.</div>
+    <div class="field-intel-empty">No notes yet.</div>
   </section>
 
   <section>
@@ -122,7 +113,7 @@
 <script src="site.js"></script>
 <script src="task.js"></script>
 <script>
-initTaskPage('return_the_favor.html', ['Blue Folder \u2014 black SUV', 'Blue Folder \u2014 satellite antenna crates']);
+initTaskPage('first_in_line.html', ['Emercom checkpoint \u2014 Ground Zero']);
 </script>
 </body>
 </html>

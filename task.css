@@ -34,6 +34,9 @@ table.items tr:last-child td{border-bottom:none;}
 }
 .pin-btn:hover{border-color:var(--rust);color:var(--paper);}
 .complete-btn{
+  display:inline-block;
+  min-width:112px;
+  text-align:center;
   background:var(--panel-2);
   border:1px solid var(--olive-light);
   color:var(--amber);

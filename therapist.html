@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Prapor | Kappa Container Tasks</title>
+<title>Therapist | Kappa Container Tasks</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preload" href="fonts/oswald-v57-latin-500.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/oswald-v57-latin-600.woff2" as="font" type="font/woff2" crossorigin>
@@ -41,7 +41,7 @@
   </div>
 
   <header>
-    <h1>Prapor</h1>
+    <h1>Therapist</h1>
     <div class="sub">Kappa Container tasks</div>
   </header>
 
@@ -82,8 +82,8 @@ initChecklist({
   listElId: 'taskList',
   storageKey: 'easytarkov-progress',
   countLabel: 'complete',
-  emptyMessage: 'No Kappa-required tasks added yet for Prapor.',
-  items: sortTasksForTrader(TASKS.filter(t => t.trader === 'Prapor')).map(t => ({
+  emptyMessage: 'No Kappa-required tasks added yet for Therapist.',
+  items: sortTasksForTrader(TASKS.filter(t => t.trader === 'Therapist')).map(t => ({
     key: t.url, name: t.name, sub: 'Level ' + t.level, href: t.url, pinnable: true
   }))
 });
