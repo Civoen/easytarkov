@@ -50,6 +50,8 @@ function applyInfilSizing(){
   raidTrayEl.classList.add(budget >= 140 ? 'infil-lg' : budget >= 80 ? 'infil-md' : 'infil-sm');
 }
 
+const raidTrayImages = {};
+
 function renderTray(){
   applyInfilSizing();
   const autoExpand = raidTrayEl.classList.contains('infil') && !raidTrayEl.classList.contains('infil-sm');
@@ -59,11 +61,19 @@ function renderTray(){
     ? raidTray.map((url, i) => {
         const t = taskLookup(url);
         const d = TASK_DETAILS[url];
-        const detail = d
+        const imgs = raidTrayImages[url] || [null, null];
+        const imageBoxes = '<div class="raid-tray-images">' +
+          [0, 1].map(slot =>
+            '<div class="raid-tray-img-box" data-url="'+url+'" data-slot="'+slot+'">' +
+              (imgs[slot] ? '<img src="'+imgs[slot]+'" alt="Raid screenshot">' : '<span class="rt-img-plus">+</span>') +
+            '</div>'
+          ).join('') +
+        '</div>';
+        const detail = (d
           ? '<div class="rt-row"><b>Location:</b> '+d.location+'</div>' +
             '<div class="rt-row"><b>Items:</b> '+d.items.join(';<br>')+'</div>' +
             '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>'
-          : '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>';
+          : '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>') + imageBoxes;
         const isFirst = i === 0;
         const isLast = i === raidTray.length - 1;
         return '<div class="raid-tray-item'+(autoExpand ? ' expanded' : '')+'" data-url="'+url+'">' +
@@ -127,6 +137,20 @@ if(raidTrayCompact){
 }
 
 raidTrayPanel.addEventListener('click', (e) => {
+  const imgBox = e.target.closest('.raid-tray-img-box');
+  if(imgBox){
+    const url = imgBox.getAttribute('data-url');
+    const slot = parseInt(imgBox.getAttribute('data-slot'), 10);
+    const existing = (raidTrayImages[url] || [])[slot];
+    if(existing){
+      raidImgZoomImg.src = existing;
+      raidImgZoomOverlay.classList.add('open');
+    }else{
+      pendingImgUpload = { url, slot };
+      raidImgFileInput.click();
+    }
+    return;
+  }
   const moveBtn = e.target.closest('.raid-tray-move');
   if(moveBtn){
     const url = moveBtn.getAttribute('data-url');
@@ -192,35 +216,6 @@ searchResults.addEventListener('click', (e) => {
   if(row) window.location.href = row.getAttribute('data-url');
 });
 
-// ---- Trader dropdown ----
-const traderBtn = document.getElementById('traderBtn');
-const traderMenu = document.getElementById('traderMenu');
-
-function renderTraderList(){
-  traderMenu.innerHTML = TRADERS.map(t => '<div class="row" data-url="'+t.url+'">'+t.name+'</div>').join('');
-}
-
-traderBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  const isOpen = traderMenu.classList.contains('open');
-  if(isOpen){
-    traderMenu.classList.remove('open');
-    return;
-  }
-  renderTraderList();
-  traderMenu.classList.add('open');
-});
-
-traderMenu.addEventListener('click', (e) => {
-  e.stopPropagation();
-  const row = e.target.closest('[data-url]');
-  if(row) window.location.href = row.getAttribute('data-url');
-});
-
-document.addEventListener('click', (e) => {
-  if(!e.target.closest('.trader-wrap')) traderMenu.classList.remove('open');
-});
-
 // ---- Mobile nav menu ----
 const topbarRightEl = document.querySelector('.topbar-right');
 if(topbarRightEl){
@@ -238,16 +233,14 @@ if(topbarRightEl){
 
   const staticLinks = [
     { name: 'Home', url: 'index.html' },
+    { name: 'Traders', url: 'traders.html' },
     { name: 'Maps', url: 'maps.html' },
     { name: 'Kappa', url: 'kappa.html' },
     { name: 'Recent', url: 'recent.html' },
-    { name: 'Export/Import', url: 'import.html' }
+    { name: 'Manage Data', url: 'import.html' }
   ];
 
-  mobileMenuPanel.innerHTML =
-    staticLinks.map(l => '<a href="'+l.url+'">'+l.name+'</a>').join('') +
-    '<div class="mobile-menu-divider">Traders</div>' +
-    TRADERS.map(t => '<a href="'+t.url+'">'+t.name+'</a>').join('');
+  mobileMenuPanel.innerHTML = staticLinks.map(l => '<a href="'+l.url+'">'+l.name+'</a>').join('');
 
   mobileMenuBtn.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -278,6 +271,39 @@ if(topbarRightEl){
   });
 }
 
+// ---- Current Raid image boxes: zoom overlay + upload handling ----
+const raidImgZoomOverlay = document.createElement('div');
+raidImgZoomOverlay.className = 'zoom-overlay';
+raidImgZoomOverlay.innerHTML = '<img id="raidImgZoomImg" alt="Zoomed raid screenshot">';
+document.body.appendChild(raidImgZoomOverlay);
+const raidImgZoomImg = document.getElementById('raidImgZoomImg');
+raidImgZoomOverlay.addEventListener('click', () => {
+  raidImgZoomOverlay.classList.remove('open');
+  raidImgZoomImg.src = '';
+});
+
+const raidImgFileInput = document.createElement('input');
+raidImgFileInput.type = 'file';
+raidImgFileInput.accept = 'image/*';
+raidImgFileInput.style.display = 'none';
+document.body.appendChild(raidImgFileInput);
+let pendingImgUpload = null;
+
+raidImgFileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(!file || !pendingImgUpload) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const { url, slot } = pendingImgUpload;
+    if(!raidTrayImages[url]) raidTrayImages[url] = [null, null];
+    raidTrayImages[url][slot] = ev.target.result;
+    pendingImgUpload = null;
+    renderTray();
+  };
+  reader.readAsDataURL(file);
+  raidImgFileInput.value = '';
+});
+
 // ---- Keyboard shortcuts help overlay ----
 const shortcutsOverlay = document.createElement('div');
 shortcutsOverlay.className = 'shortcuts-overlay';
@@ -305,7 +331,6 @@ document.addEventListener('keydown', (e) => {
 
   if(e.key === 'Escape'){
     raidTrayEl.classList.remove('open');
-    traderMenu.classList.remove('open');
     searchResults.classList.remove('open');
     shortcutsOverlay.classList.remove('open');
     if(isTyping) document.activeElement.blur();

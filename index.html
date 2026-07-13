@@ -73,37 +73,6 @@
     gap:10px;
   }
   .btn-row .trader-btn{font-size:clamp(12px, 3vw, 15px);padding:clamp(9px, 2.5vw, 14px) clamp(14px, 4vw, 26px);}
-  .trader-wrap{display:inline-block;}
-  .trader-menu{
-    position:absolute;
-    top:100%;left:0;right:0;
-    margin-top:10px;
-    width:auto;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:10px;
-    background:none;
-    border:none;
-    max-height:none;
-    overflow:visible;
-    z-index:45;
-  }
-  .trader-menu .row{
-    background:var(--panel-2);
-    border:1px solid var(--olive-light);
-    color:var(--amber);
-    font-family:'IBM Plex Mono',monospace;
-    font-size:14px;
-    padding:11px 20px;
-    cursor:pointer;
-    white-space:nowrap;
-  }
-  .trader-menu .row:hover{border-color:var(--rust);color:var(--paper);background:var(--panel-2);}
-  .trader-menu.open{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-  }
   .kappa-progress{margin-bottom:24px;}
   .kappa-progress-label{
     display:flex;
@@ -144,14 +113,11 @@
   </div>
 
   <div class="btn-row">
-    <div class="trader-wrap">
-      <button class="trader-btn" id="traderBtn" type="button">Traders</button>
-    </div>
+    <a class="trader-btn" href="traders.html">Traders</a>
     <a class="trader-btn" href="maps.html">Maps</a>
     <a class="trader-btn" href="kappa.html">Kappa</a>
     <a class="trader-btn" href="recent.html">Recent</a>
-    <a class="trader-btn" href="import.html">Export/Import</a>
-    <div class="trader-menu" id="traderMenu"></div>
+    <a class="trader-btn" href="import.html">Manage Data</a>
   </div>
 </div>
 

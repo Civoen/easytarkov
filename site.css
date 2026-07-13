@@ -63,7 +63,6 @@ a.tab:hover{background:var(--amber);}
   gap:8px;
   align-items:flex-start;
 }
-.trader-wrap{position:relative;}
 .trader-btn{
   background:var(--panel-2);
   border:1px solid var(--line);
@@ -76,34 +75,6 @@ a.tab:hover{background:var(--amber);}
 }
 .trader-btn:hover{border-color:var(--rust);}
 a.trader-btn{display:inline-block;text-decoration:none;}
-.trader-menu{
-  position:absolute;
-  top:100%;left:0;
-  margin-top:4px;
-  width:130px;
-  background:var(--panel-2);
-  border:1px solid var(--line);
-  z-index:5;
-  display:none;
-}
-.trader-menu.open{display:block;}
-.trader-menu .row{
-  padding:7px 10px;
-  font-size:12px;
-  cursor:pointer;
-  color:var(--paper-dim);
-}
-.trader-menu .row:hover{background:var(--olive);color:var(--paper);}
-.trader-menu .back{
-  color:var(--amber);
-  border-bottom:1px solid var(--line);
-}
-.trader-menu .empty{
-  padding:7px 10px;
-  font-size:11px;
-  color:var(--paper-dim);
-  cursor:default;
-}
 .search-wrap{
   position:relative;
   width:min(220px, 100%);
@@ -399,7 +370,6 @@ footer{
 
 @media (max-width: 480px){
   .topbar-right > a.trader-btn,
-  .topbar-right > .trader-wrap,
   .topbar-right > .search-wrap{display:none;}
   .topbar-right > .search-wrap.mobile-search-open{
     display:block;
@@ -477,3 +447,43 @@ footer{
   color:var(--paper-dim);
   text-align:center;
 }
+
+.zoom-overlay{
+  display:none;
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  background:rgba(20,23,26,.85);
+  align-items:center;
+  justify-content:center;
+  z-index:65;
+  cursor:zoom-out;
+}
+.zoom-overlay.open{display:flex;}
+.zoom-overlay img{
+  width:50vw;
+  height:50vh;
+  object-fit:contain;
+  border:1px solid var(--olive-light);
+  background:var(--panel);
+}
+.raid-tray-images{
+  display:flex;
+  gap:6px;
+  margin-top:10px;
+}
+.raid-tray-img-box{
+  width:56px;
+  height:56px;
+  flex-shrink:0;
+  border:1px dashed var(--olive-light);
+  background:var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  overflow:hidden;
+}
+.raid-tray-img-box:hover{border-color:var(--rust);}
+.raid-tray-img-box img{width:100%;height:100%;object-fit:cover;display:block;}
+.raid-tray-img-box .rt-img-plus{color:var(--olive-light);font-size:20px;}
+.raid-tray.infil-lg .raid-tray-img-box{width:80px;height:80px;}

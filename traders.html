@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Skier | Kappa Container Tasks</title>
+<title>Traders | Field Guide</title>
 <meta property="og:type" content="website">
-<meta property="og:title" content="Skier | Easy Tarkov">
-<meta property="og:description" content="Every Kappa Container task for Skier, with live progress tracking on this browser.">
+<meta property="og:title" content="Traders | Easy Tarkov">
+<meta property="og:description" content="Browse Kappa Container tasks by trader.">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Skier | Easy Tarkov">
-<meta name="twitter:description" content="Every Kappa Container task for Skier, with live progress tracking on this browser.">
+<meta name="twitter:title" content="Traders | Easy Tarkov">
+<meta name="twitter:description" content="Browse Kappa Container tasks by trader.">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#14171a">
@@ -23,7 +23,6 @@
 <link rel="preload" href="trader.css" as="style">
 <link rel="preload" href="data.js" as="script">
 <link rel="preload" href="site.js" as="script">
-<link rel="preload" href="trader.js" as="script">
 <link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="trader.css">
 </head>
@@ -45,29 +44,22 @@
     </div>
   </div>
   <div class="tab-row">
-    <span class="tab" id="tabLabel" data-default="Trader">Trader</span>
+    <span class="tab">Traders</span>
   </div>
 
   <header>
-    <h1>Skier</h1>
-    <div class="sub">Kappa Container tasks</div>
+    <h1>Traders</h1>
+    <div class="sub">Browse Kappa Container tasks by trader</div>
   </header>
 
   <section>
-    <div class="section-label">Required tasks</div>
-    <div class="progress-wrap">
-      <div class="progress-label">
-        <span id="progressText">0 of 0 complete</span>
-        <span id="progressPct">0%</span>
-      </div>
-      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-    </div>
-    <input type="text" class="task-filter" id="taskFilter" placeholder="Search tasks..." autocomplete="off">
-    <div class="task-list" id="taskList"></div>
-    <div class="task-filter-empty" id="taskFilterEmpty">No tasks match your search.</div>
+    <div class="section-label">All traders</div>
+    <input type="text" class="task-filter" id="traderFilter" placeholder="Search traders..." autocomplete="off">
+    <div class="task-list" id="traderList"></div>
+    <div class="task-filter-empty" id="traderFilterEmpty">No traders match your search.</div>
   </section>
 
-  <footer>Task list is currently incomplete. More tasks required for Kappa will be added shortly.</footer>
+  <footer>Ref has no Kappa-required tasks, so isn't listed here.</footer>
 </div>
 
 <div class="raid-tray" id="raidTray">
@@ -84,16 +76,30 @@
 
 <script src="data.js"></script>
 <script src="site.js"></script>
-<script src="trader.js"></script>
 <script>
-initChecklist({
-  listElId: 'taskList',
-  storageKey: 'easytarkov-progress',
-  countLabel: 'complete',
-  emptyMessage: 'No Kappa-required tasks added yet for Skier.',
-  items: sortTasksForTrader(TASKS.filter(t => t.trader === 'Skier')).map(t => ({
-    key: t.url, name: t.name, sub: 'Level ' + t.level, href: t.url, pinnable: true
-  }))
+const traderList = document.getElementById('traderList');
+traderList.innerHTML = TRADERS.map(t =>
+  '<div class="task-row">' +
+    '<a class="task-link" href="'+t.url+'" style="padding-left:16px;">' +
+      '<span class="task-name">'+t.name+'</span>' +
+      '<span class="task-arrow">&rarr;</span>' +
+    '</a>' +
+  '</div>'
+).join('');
+
+const traderFilter = document.getElementById('traderFilter');
+const traderFilterEmpty = document.getElementById('traderFilterEmpty');
+
+traderFilter.addEventListener('input', () => {
+  const q = traderFilter.value.trim().toLowerCase();
+  let visibleCount = 0;
+  traderList.querySelectorAll('.task-row').forEach(row => {
+    const name = row.querySelector('.task-name').textContent.toLowerCase();
+    const match = name.includes(q);
+    row.style.display = match ? '' : 'none';
+    if(match) visibleCount++;
+  });
+  traderFilterEmpty.style.display = visibleCount === 0 ? 'block' : 'none';
 });
 </script>
 </body>
