@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customs | Field Guide</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Customs | Easy Tarkov">
+<meta property="og:description" content="Points of interest, boss info, and key locations for Customs, plus community screenshots.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Customs | Easy Tarkov">
+<meta name="twitter:description" content="Points of interest, boss info, and key locations for Customs, plus community screenshots.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#14171a">
+<link rel="preload" href="fonts/oswald-v57-latin-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/oswald-v57-latin-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/oswald-v57-latin-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ibm-plex-mono-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ibm-plex-mono-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="site.css" as="style">
+<link rel="preload" href="task.css" as="style">
+<link rel="preload" href="data.js" as="script">
+<link rel="preload" href="site.js" as="script">
+<link rel="preload" href="task.js" as="script">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="task.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="topbar-right">
+      <a class="trader-btn" href="index.html">Home</a>
+      <a class="trader-btn" href="kappa.html">Kappa</a>
+      <a class="trader-btn" href="maps.html">Maps</a>
+      <div class="trader-wrap">
+        <button class="trader-btn" id="traderBtn" type="button">Traders</button>
+        <div class="trader-menu" id="traderMenu"></div>
+      </div>
+      <a class="trader-btn" href="recent.html">Recent</a>
+      <a class="trader-btn" href="import.html">Export/Import</a>
+      <div class="search-wrap">
+        <input type="text" id="taskSearch" placeholder="Search tasks..." autocomplete="off">
+        <div class="search-results" id="searchResults"></div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-row">
+    <span class="tab">Customs</span>
+    <a class="trader-btn back-btn" href="maps.html">&larr; Back</a>
+  </div>
+
+  <header>
+    <h1>Customs</h1>
+    <div class="meta-row">
+      <span><b>Duration</b> 35 minutes</span>
+      <span><b>PMC players</b> 10-12</span>
+      <span><b>Enemies</b> Scavs, Reshala, Partisan, Knight, Big Pipe, Birdeye, Cultists</span>
+    </div>
+  </header>
+
+  <section>
+    <div class="section-label">Points of Interest</div>
+    <table class="items items-required">
+      <tr><th>Location</th><th>Amount</th><th>Find in raid</th><th>Notes</th></tr>
+      <tr>
+        <td>Dorms (2 &amp; 3 storey)</td>
+        <td>&mdash;</td>
+        <td class="req-no">N/A</td>
+        <td>Reshala's most common spawn. Dense loot across many numbered rooms, but heavily contested by PMCs.</td>
+      </tr>
+      <tr>
+        <td>New Gas Station</td>
+        <td>&mdash;</td>
+        <td class="req-no">N/A</td>
+        <td>Reshala's other common spawn. Office and storage rooms nearby hold quest-relevant loot.</td>
+      </tr>
+      <tr>
+        <td>Fortress</td>
+        <td>&mdash;</td>
+        <td class="req-no">N/A</td>
+        <td>Building with mounted weapons near the crane yard. Hidden basement extraction, high Scav and boss activity.</td>
+      </tr>
+      <tr>
+        <td>Crane yard &amp; Warehouses 4/17</td>
+        <td>&mdash;</td>
+        <td class="req-no">N/A</td>
+        <td>The Cultist priest and his warriors spawn in the area between Warehouse 17 and the repair shop.</td>
+      </tr>
+      <tr>
+        <td>Trailer Park</td>
+        <td>&mdash;</td>
+        <td class="req-no">N/A</td>
+        <td>Quest-relevant portable cabins. PMC extract hidden in the trees nearby.</td>
+      </tr>
+      <tr>
+        <td>Military checkpoint / RUAF Roadblock</td>
+        <td>&mdash;</td>
+        <td class="req-no">N/A</td>
+        <td>Heavily guarded border crossing. Watch for Border Snipers in this whole area.</td>
+      </tr>
+      <tr>
+        <td>Boiler room / construction area</td>
+        <td>&mdash;</td>
+        <td class="req-no">N/A</td>
+        <td>Twin-chimney building. Co-op extract in the basement, useful mid-map cover.</td>
+      </tr>
+    </table>
+  </section>
+
+  <section>
+    <div class="section-label">Boss &mdash; Reshala</div>
+    <div class="field-intel">Reshala is Customs' resident Scav Boss, a former small-time fixer who consolidated power in the industrial zone once the city locked down. Unlike Tarkov's more militant bosses, he has no combat background and avoids direct fights, hanging back while 3-4 heavily armed guards (nicknamed the "Zavodskoy") do the fighting for him. He's identifiable by his brown sweater and civilian clothing, unlike his guards' blue jackets &mdash; and he never wears armor himself. His signature loot is a Golden TT pistol. He spawns most often around the dorms or the new gas station, occasionally at Fortress with a smaller escort.</div>
+  </section>
+
+  <section>
+    <div class="section-label">Most Important Keys</div>
+    <table class="items items-required">
+      <tr><th>Item</th><th>Amount</th><th>Find in raid</th><th>Notes</th></tr>
+      <tr>
+        <td>Dorm room 220 key</td>
+        <td>1</td>
+        <td class="req-yes">Yes</td>
+        <td>Used in Chemical - Part 1 (Skier).</td>
+      </tr>
+      <tr>
+        <td>Tarcone Director's office key</td>
+        <td>1</td>
+        <td class="req-yes">Yes</td>
+        <td>Used in Delivery From the Past (Prapor) and Farming - Part 3 (Mechanic).</td>
+      </tr>
+      <tr>
+        <td>Reshala's bunkhouse key</td>
+        <td>1</td>
+        <td class="req-yes">Yes</td>
+        <td>Opens the boss's personal stash room.</td>
+      </tr>
+      <tr>
+        <td>Machinery key</td>
+        <td>1</td>
+        <td class="req-yes">Yes</td>
+        <td>Opens the machinery room at the crane yard. Also the ZB-013 extraction requirement.</td>
+      </tr>
+      <tr>
+        <td>Dorm room 203 key</td>
+        <td>1</td>
+        <td class="req-yes">Yes</td>
+        <td>Quest-relevant dorm room.</td>
+      </tr>
+      <tr>
+        <td>Dorm room 206 key</td>
+        <td>1</td>
+        <td class="req-yes">Yes</td>
+        <td>Quest-relevant dorm room.</td>
+      </tr>
+      <tr>
+        <td>Dorm room 303 key</td>
+        <td>1</td>
+        <td class="req-yes">Yes</td>
+        <td>Quest-relevant dorm room.</td>
+      </tr>
+      <tr>
+        <td>Dorm room 314 marked key</td>
+        <td>1</td>
+        <td class="req-yes">Yes</td>
+        <td>Rare marked-room key. High-value loot, single use per raid.</td>
+      </tr>
+      <tr>
+        <td>Unknown key</td>
+        <td>1</td>
+        <td class="req-yes">Yes</td>
+        <td>Extremely rare. Opens a hidden stash location.</td>
+      </tr>
+      <tr>
+        <td>Trailer park portable cabin key</td>
+        <td>1</td>
+        <td class="req-yes">Yes</td>
+        <td>Quest-relevant cabin access at the trailer park.</td>
+      </tr>
+    </table>
+  </section>
+
+  <section>
+    <div class="section-label">Extractions</div>
+    <table class="items">
+      <tr><th>Extraction</th><th>Faction</th><th>Requirement</th></tr>
+      <tr><td>Administration Gate</td><td>Scav</td><td>None</td></tr>
+      <tr><td>Boiler Room Basement (Co-op)</td><td>All</td><td>Must extract as a Scav + PMC pair</td></tr>
+      <tr><td>Crossroads</td><td>All</td><td>None</td></tr>
+      <tr><td>Dorms V-Ex</td><td>PMC</td><td>5,000 Roubles per player (max 4 players) &mdash; fee affected by Scav karma</td></tr>
+      <tr><td>Factory Far Corner</td><td>Scav</td><td>None</td></tr>
+      <tr><td>Factory Shacks</td><td>Scav</td><td>None</td></tr>
+      <tr><td>Military Base CP</td><td>Scav</td><td>None</td></tr>
+      <tr><td>Old Gas Station</td><td>PMC</td><td>Green flare required to open (basement)</td></tr>
+      <tr><td>Old Gas Station Gate</td><td>Scav</td><td>None</td></tr>
+      <tr><td>Old Road Gate</td><td>Scav</td><td>None</td></tr>
+      <tr><td>Passage Between Rocks</td><td>Scav</td><td>None</td></tr>
+      <tr><td>Railroad Passage</td><td>PMC</td><td>Fire a green flare (RSP-30 or signal pistol) into the sky while inside the signal area &mdash; stay on the tracks</td></tr>
+      <tr><td>Railroad to Military Base</td><td>Scav</td><td>None</td></tr>
+      <tr><td>Railroad to Port</td><td>Scav</td><td>None</td></tr>
+      <tr><td>Railroad to Tarkov</td><td>Scav</td><td>None</td></tr>
+      <tr><td>RUAF Roadblock</td><td>All</td><td>None &mdash; PvE only</td></tr>
+      <tr><td>Scav Checkpoint</td><td>Scav</td><td>None</td></tr>
+      <tr><td>Smugglers' Boat</td><td>All</td><td>Note with code word Voron</td></tr>
+      <tr><td>Smugglers' Bunker (ZB-1012)</td><td>All</td><td>Note with code word Voron</td></tr>
+      <tr><td>Sniper Roadblock</td><td>Scav</td><td>None</td></tr>
+      <tr><td>Trailer Park</td><td>PMC</td><td>None</td></tr>
+      <tr><td>Trailer Park Workers' Shack</td><td>Scav</td><td>None</td></tr>
+      <tr><td>Warehouse 4</td><td>Scav</td><td>None</td></tr>
+      <tr><td>Warehouse 17</td><td>Scav</td><td>None</td></tr>
+      <tr><td>ZB-013</td><td>PMC</td><td>Activate the lever in Warehouse 4 (crane yard), then unlock with the Factory emergency exit key</td></tr>
+      <tr><td>ZB-1011</td><td>PMC</td><td>None</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <div class="section-label">Field intel &mdash; community screenshots</div>
+    <p class="section-hint">Open to everyone. Click a box to upload, use &times; to remove a box, or the label to rename it.</p>
+    <div class="slot-grid" id="slotGrid"></div>
+    <button class="new-image-btn" id="newImageBtn" type="button">+ New image</button>
+  </section>
+
+  <footer>Demo only. Field Intel is currently inactive.</footer>
+</div>
+
+<div class="zoom-overlay" id="zoomOverlay">
+  <img id="zoomImg" src="" alt="Zoomed screenshot">
+</div>
+
+<div class="raid-tray" id="raidTray">
+  <div class="raid-tray-bar">
+    <div class="raid-tray-toggle" id="raidTrayToggle" role="button" tabindex="0">
+      <span>Current Raid</span>
+      <button class="raid-tray-infil" id="raidTrayInfil" type="button">Infil</button>
+      <button class="raid-tray-compact" id="raidTrayCompact" type="button">Show Compact</button>
+      <span class="raid-tray-count" id="raidTrayCount">0</span>
+    </div>
+  </div>
+  <div class="raid-tray-panel" id="raidTrayPanel"></div>
+</div>
+
+<script src="data.js"></script>
+<script src="site.js"></script>
+<script src="task.js"></script>
+<script>
+initTaskPage('customs.html', ['Dorms overview', 'New Gas Station']);
+</script>
+</body>
+</html>

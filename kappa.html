@@ -56,10 +56,9 @@
     <div class="sub">Items required to find in raid for Collector</div>
   </header>
 
-  <button class="trader-btn" id="toggleHomeProgress" type="button" style="margin-bottom:20px;">Show on Homepage</button>
-
   <section>
-    <div class="section-label">Required items</div>
+    <button class="trader-btn" id="toggleHomeProgress" type="button">Show Progress on Homepage</button>
+    <div class="section-label" style="margin-top:16px;">Required items</div>
     <div class="progress-wrap">
       <div class="progress-label">
         <span id="progressText">0 of 0 found</span>
@@ -107,7 +106,7 @@ const toggleHomeProgress = document.getElementById('toggleHomeProgress');
 function refreshToggleLabel(){
   let shown = false;
   try{ shown = localStorage.getItem(HOME_PROGRESS_KEY) === '1'; }catch(e){}
-  toggleHomeProgress.textContent = shown ? 'Hide from Homepage' : 'Show on Homepage';
+  toggleHomeProgress.textContent = shown ? 'Hide Progress from Homepage' : 'Show Progress on Homepage';
 }
 
 toggleHomeProgress.addEventListener('click', () => {

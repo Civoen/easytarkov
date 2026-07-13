@@ -164,19 +164,20 @@ function initTaskPage(taskUrl, initialSlotLabels){
   }catch(e){}
 
   const pinBtn = document.getElementById('pinBtn');
+  if(pinBtn){
+    window.updatePinBtn = function(){
+      const pinned = raidTray.includes(taskUrl);
+      pinBtn.textContent = pinned ? '\u2713 Pinned to Current Raid' : '+ Pin to Current Raid';
+      pinBtn.classList.toggle('pinned', pinned);
+    };
 
-  window.updatePinBtn = function(){
-    const pinned = raidTray.includes(taskUrl);
-    pinBtn.textContent = pinned ? '\u2713 Pinned to Current Raid' : '+ Pin to Current Raid';
-    pinBtn.classList.toggle('pinned', pinned);
-  };
+    pinBtn.addEventListener('click', () => {
+      togglePin(taskUrl);
+      updatePinBtn();
+    });
 
-  pinBtn.addEventListener('click', () => {
-    togglePin(taskUrl);
     updatePinBtn();
-  });
-
-  updatePinBtn();
+  }
 
   const copyLinkBtn = document.getElementById('copyLinkBtn');
   if(copyLinkBtn){

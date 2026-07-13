@@ -221,6 +221,63 @@ document.addEventListener('click', (e) => {
   if(!e.target.closest('.trader-wrap')) traderMenu.classList.remove('open');
 });
 
+// ---- Mobile nav menu ----
+const topbarRightEl = document.querySelector('.topbar-right');
+if(topbarRightEl){
+  const mobileMenuWrap = document.createElement('div');
+  mobileMenuWrap.className = 'mobile-menu-wrap';
+
+  const mobileMenuBtn = document.createElement('button');
+  mobileMenuBtn.type = 'button';
+  mobileMenuBtn.className = 'mobile-menu-btn';
+  mobileMenuBtn.setAttribute('aria-label', 'Open navigation menu');
+  mobileMenuBtn.textContent = '\u2630 Menu';
+
+  const mobileMenuPanel = document.createElement('div');
+  mobileMenuPanel.className = 'mobile-menu-panel';
+
+  const staticLinks = [
+    { name: 'Home', url: 'index.html' },
+    { name: 'Maps', url: 'maps.html' },
+    { name: 'Kappa', url: 'kappa.html' },
+    { name: 'Recent', url: 'recent.html' },
+    { name: 'Export/Import', url: 'import.html' }
+  ];
+
+  mobileMenuPanel.innerHTML =
+    staticLinks.map(l => '<a href="'+l.url+'">'+l.name+'</a>').join('') +
+    '<div class="mobile-menu-divider">Traders</div>' +
+    TRADERS.map(t => '<a href="'+t.url+'">'+t.name+'</a>').join('');
+
+  mobileMenuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    mobileMenuPanel.classList.toggle('open');
+  });
+
+  mobileMenuWrap.appendChild(mobileMenuBtn);
+  mobileMenuWrap.appendChild(mobileMenuPanel);
+  topbarRightEl.appendChild(mobileMenuWrap);
+
+  const mobileSearchBtn = document.createElement('button');
+  mobileSearchBtn.type = 'button';
+  mobileSearchBtn.className = 'mobile-search-btn';
+  mobileSearchBtn.setAttribute('aria-label', 'Search tasks');
+  mobileSearchBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+  mobileSearchBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = document.querySelector('.search-wrap').classList.toggle('mobile-search-open');
+    if(open) searchInput.focus();
+  });
+  topbarRightEl.appendChild(mobileSearchBtn);
+
+  document.addEventListener('click', (e) => {
+    if(!e.target.closest('.mobile-menu-wrap')) mobileMenuPanel.classList.remove('open');
+    if(!e.target.closest('.search-wrap') && !e.target.closest('.mobile-search-btn')){
+      document.querySelector('.search-wrap').classList.remove('mobile-search-open');
+    }
+  });
+}
+
 // ---- Keyboard shortcuts help overlay ----
 const shortcutsOverlay = document.createElement('div');
 shortcutsOverlay.className = 'shortcuts-overlay';
