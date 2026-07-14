@@ -13,6 +13,7 @@ zoomOverlay.addEventListener('click', () => {
 });
 
 const grid = document.getElementById('slotGrid');
+let draggedSlot = null;
 const MIN_SLOTS = 0;
 let CURRENT_TASK_URL = '';
 
@@ -21,10 +22,6 @@ function updateDeleteButtons(){
   slots.forEach((s, i) => {
     const btn = s.querySelector('.del-slot');
     btn.style.visibility = slots.length > MIN_SLOTS ? 'visible' : 'hidden';
-    const upBtn = s.querySelector('.slot-move-btn[data-dir="up"]');
-    const downBtn = s.querySelector('.slot-move-btn[data-dir="down"]');
-    if(upBtn) upBtn.disabled = i === 0;
-    if(downBtn) downBtn.disabled = i === slots.length - 1;
   });
 }
 
@@ -81,13 +78,9 @@ function addSlot(label, existing){
   slot.className = 'slot';
   slot.innerHTML =
     '<button class="del-slot" title="Remove this box">&times;</button>' +
-    '<div class="slot-head" contenteditable="true" data-placeholder="Label this location"></div>' +
+    '<div class="slot-head" contenteditable="true" draggable="false" data-placeholder="Label this location"></div>' +
     '<div class="drop" tabindex="0">' +
       '<div class="drop-empty"><span class="icon">&#9635;</span>No image yet<br>click to select, then paste &mdash; or drag, or double-click to browse</div>' +
-      '<div class="slot-move">' +
-        '<button class="slot-move-btn" data-dir="up" title="Move left" type="button">&uarr;</button>' +
-        '<button class="slot-move-btn" data-dir="down" title="Move right" type="button">&darr;</button>' +
-      '</div>' +
     '</div>' +
     '<div class="slot-foot"><span class="uploader"></span><span class="clear-wrap"></span></div>' +
     '<input type="file" accept="image/*" hidden>';
@@ -103,7 +96,7 @@ function addSlot(label, existing){
 
   function renderFilled(url, uploadedLabel){
     const altText = (uploadedLabel || slot.querySelector('.slot-head').textContent.trim()) + ' screenshot';
-    drop.innerHTML = '<img src="'+url+'" alt="'+altText.replace(/"/g, '&quot;')+'">';
+    drop.innerHTML = '<img src="'+url+'" alt="'+altText.replace(/"/g, '&quot;')+'" draggable="false">';
     let stamp = slot.querySelector('.stamp');
     if(!stamp){
       stamp = document.createElement('div');
@@ -213,17 +206,37 @@ function addSlot(label, existing){
     persistSlotOrder();
   });
 
-  slot.querySelectorAll('.slot-move-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const dir = btn.getAttribute('data-dir');
-      if(dir === 'up' && slot.previousElementSibling){
-        grid.insertBefore(slot, slot.previousElementSibling);
-      }else if(dir === 'down' && slot.nextElementSibling){
-        grid.insertBefore(slot.nextElementSibling, slot);
-      }
-      updateDeleteButtons();
-      persistSlotOrder();
-    });
+  slot.draggable = true;
+
+  slot.addEventListener('dragstart', (e) => {
+    draggedSlot = slot;
+    slot.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+
+  slot.addEventListener('dragend', () => {
+    slot.classList.remove('dragging');
+    grid.querySelectorAll('.slot').forEach(s => s.classList.remove('drag-over'));
+    draggedSlot = null;
+    updateDeleteButtons();
+    persistSlotOrder();
+  });
+
+  slot.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    if(!draggedSlot || draggedSlot === slot) return;
+    slot.classList.add('drag-over');
+  });
+
+  slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
+
+  slot.addEventListener('drop', (e) => {
+    e.preventDefault();
+    slot.classList.remove('drag-over');
+    if(!draggedSlot || draggedSlot === slot) return;
+    const rect = slot.getBoundingClientRect();
+    const insertAfter = (e.clientX - rect.left) > rect.width / 2;
+    grid.insertBefore(draggedSlot, insertAfter ? slot.nextSibling : slot);
   });
 
   grid.appendChild(slot);
@@ -252,7 +265,7 @@ async function initTaskPage(taskUrl){
     // start empty rather than guessing.
   }
 
-  // ---- Dismissible Field Intel notes ----
+  // ---- Dismissible Field Intel notes (static, hand-written per page) ----
   const DISMISSED_KEY = 'easytarkov-dismissed-notes';
   let dismissed = [];
   try{ dismissed = JSON.parse(localStorage.getItem(DISMISSED_KEY) || '[]'); }catch(e){}
@@ -262,8 +275,8 @@ async function initTaskPage(taskUrl){
 
   function refreshEmptyState(){
     if(!emptyEl) return;
-    const anyVisible = Array.from(noteEls).some(n => !n.classList.contains('dismissed'));
-    emptyEl.style.display = anyVisible ? 'none' : 'block';
+    const anyStaticVisible = Array.from(document.querySelectorAll('.field-intel-note')).some(n => !n.classList.contains('dismissed'));
+    emptyEl.style.display = anyStaticVisible ? 'none' : 'block';
   }
 
   noteEls.forEach(note => {
@@ -287,6 +300,103 @@ async function initTaskPage(taskUrl){
     }
   });
   refreshEmptyState();
+
+  // ---- Dynamically-added Field Intel notes (owner-added, stored on the backend) ----
+  // Temporary authoring tool: lets notes be added without editing code directly.
+  // Separate from the static notes above - these are fetched fresh from R2 on every load.
+  const fieldIntelSection = emptyEl ? emptyEl.closest('section') : document.querySelector('.field-intel-empty, .field-intel-list')?.closest('section');
+  if(fieldIntelSection){
+    function getOrCreateList(){
+      let list = fieldIntelSection.querySelector('.field-intel-list');
+      if(!list){
+        list = document.createElement('div');
+        list.className = 'field-intel-list';
+        const hint = fieldIntelSection.querySelector('.section-hint');
+        (hint || fieldIntelSection.querySelector('.section-label')).after(list);
+      }
+      return list;
+    }
+
+    function renderDynamicNote(note){
+      const list = getOrCreateList();
+      const el = document.createElement('div');
+      el.className = 'field-intel-note';
+      el.dataset.dynamicId = note.id;
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'field-intel-remove';
+      removeBtn.type = 'button';
+      removeBtn.setAttribute('aria-label', 'Delete this note');
+      removeBtn.textContent = '\u00d7';
+      removeBtn.addEventListener('click', async () => {
+        try{
+          await fetch('/api/notes?task='+encodeURIComponent(CURRENT_TASK_URL)+'&id='+encodeURIComponent(note.id), { method: 'DELETE' });
+        }catch(err){}
+        el.remove();
+        if(emptyEl) refreshEmptyState();
+      });
+      el.appendChild(removeBtn);
+      el.appendChild(document.createTextNode(note.text));
+      list.appendChild(el);
+      if(emptyEl) emptyEl.style.display = 'none';
+    }
+
+    (async () => {
+      try{
+        const res = await fetch('/api/notes?task='+encodeURIComponent(CURRENT_TASK_URL));
+        if(res.ok){
+          const data = await res.json();
+          (data.notes || []).forEach(renderDynamicNote);
+        }
+      }catch(err){}
+    })();
+
+    const newNoteBtn = document.createElement('button');
+    newNoteBtn.className = 'trader-btn';
+    newNoteBtn.type = 'button';
+    newNoteBtn.textContent = '+ New Note';
+    newNoteBtn.style.marginTop = '10px';
+    fieldIntelSection.appendChild(newNoteBtn);
+
+    newNoteBtn.addEventListener('click', () => {
+      if(fieldIntelSection.querySelector('.new-note-form')) return;
+      const form = document.createElement('div');
+      form.className = 'new-note-form';
+      form.innerHTML =
+        '<textarea placeholder="Write a note for other PMCs..." maxlength="500"></textarea>' +
+        '<div class="new-note-actions">' +
+          '<button class="trader-btn" type="button" data-action="submit">Post Note</button>' +
+          '<button class="trader-btn" type="button" data-action="cancel">Cancel</button>' +
+        '</div>';
+      fieldIntelSection.insertBefore(form, newNoteBtn);
+      newNoteBtn.style.display = 'none';
+      const textarea = form.querySelector('textarea');
+      textarea.focus();
+
+      form.querySelector('[data-action="cancel"]').addEventListener('click', () => {
+        form.remove();
+        newNoteBtn.style.display = '';
+      });
+
+      form.querySelector('[data-action="submit"]').addEventListener('click', async () => {
+        const text = textarea.value.trim();
+        if(!text) return;
+        try{
+          const res = await fetch('/api/notes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task: CURRENT_TASK_URL, text })
+          });
+          if(!res.ok) throw new Error('Failed');
+          const note = await res.json();
+          renderDynamicNote(note);
+          form.remove();
+          newNoteBtn.style.display = '';
+        }catch(err){
+          alert('Could not post note. Please try again.');
+        }
+      });
+    });
+  }
 
   // ---- Mark complete ----
   const PROGRESS_KEY = 'easytarkov-progress';

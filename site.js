@@ -78,12 +78,10 @@ function renderTray(){
           : '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>') + imageBoxes;
         const isFirst = i === 0;
         const isLast = i === raidTray.length - 1;
-        return '<div class="raid-tray-item'+(autoExpand ? ' expanded' : '')+'" data-url="'+url+'">' +
+        return '<div class="raid-tray-item'+(autoExpand ? ' expanded' : '')+'" data-url="'+url+'" draggable="true">' +
           '<div class="raid-tray-item-head">' +
             '<span><span class="raid-tray-item-name">'+t.name+'</span><br><span class="raid-tray-item-sub">'+t.trader+(t.level ? ' &middot; Level '+t.level : '')+'</span></span>' +
             '<span class="raid-tray-item-actions">' +
-              '<button class="raid-tray-move" data-url="'+url+'" data-dir="up" type="button" title="Move up"'+(isFirst ? ' disabled' : '')+'>&uarr;</button>' +
-              '<button class="raid-tray-move" data-url="'+url+'" data-dir="down" type="button" title="Move down"'+(isLast ? ' disabled' : '')+'>&darr;</button>' +
               '<button class="raid-tray-remove" data-url="'+url+'" type="button">Remove</button>' +
             '</span>' +
           '</div>' +
@@ -162,21 +160,6 @@ raidTrayPanel.addEventListener('click', (e) => {
     }
     return;
   }
-  const moveBtn = e.target.closest('.raid-tray-move');
-  if(moveBtn){
-    const url = moveBtn.getAttribute('data-url');
-    const dir = moveBtn.getAttribute('data-dir');
-    const idx = raidTray.indexOf(url);
-    const swapIdx = dir === 'up' ? idx - 1 : idx + 1;
-    if(idx !== -1 && swapIdx >= 0 && swapIdx < raidTray.length){
-      const tmp = raidTray[idx];
-      raidTray[idx] = raidTray[swapIdx];
-      raidTray[swapIdx] = tmp;
-      saveTray(raidTray);
-      renderTray();
-    }
-    return;
-  }
   const removeBtn = e.target.closest('.raid-tray-remove');
   if(removeBtn){
     const url = removeBtn.getAttribute('data-url');
@@ -189,6 +172,57 @@ raidTrayPanel.addEventListener('click', (e) => {
   }
   const head = e.target.closest('.raid-tray-item-head');
   if(head) head.closest('.raid-tray-item').classList.toggle('expanded');
+});
+
+let draggedRaidUrl = null;
+
+raidTrayPanel.addEventListener('dragstart', (e) => {
+  const item = e.target.closest('.raid-tray-item');
+  if(!item) return;
+  draggedRaidUrl = item.getAttribute('data-url');
+  item.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+});
+
+raidTrayPanel.addEventListener('dragend', (e) => {
+  const item = e.target.closest('.raid-tray-item');
+  if(item) item.classList.remove('dragging');
+  raidTrayPanel.querySelectorAll('.raid-tray-item').forEach(el => el.classList.remove('drag-over'));
+  draggedRaidUrl = null;
+});
+
+raidTrayPanel.addEventListener('dragover', (e) => {
+  const item = e.target.closest('.raid-tray-item');
+  if(!item || !draggedRaidUrl) return;
+  e.preventDefault();
+  if(item.getAttribute('data-url') !== draggedRaidUrl) item.classList.add('drag-over');
+});
+
+raidTrayPanel.addEventListener('dragleave', (e) => {
+  const item = e.target.closest('.raid-tray-item');
+  if(item) item.classList.remove('drag-over');
+});
+
+raidTrayPanel.addEventListener('drop', (e) => {
+  const item = e.target.closest('.raid-tray-item');
+  if(!item || !draggedRaidUrl) return;
+  e.preventDefault();
+  item.classList.remove('drag-over');
+  const targetUrl = item.getAttribute('data-url');
+  if(targetUrl === draggedRaidUrl) return;
+
+  const fromIdx = raidTray.indexOf(draggedRaidUrl);
+  let toIdx = raidTray.indexOf(targetUrl);
+  if(fromIdx === -1 || toIdx === -1) return;
+
+  raidTray.splice(fromIdx, 1);
+  toIdx = raidTray.indexOf(targetUrl);
+  const rect = item.getBoundingClientRect();
+  const insertAfter = (e.clientY - rect.top) > rect.height / 2;
+  raidTray.splice(insertAfter ? toIdx + 1 : toIdx, 0, draggedRaidUrl);
+
+  saveTray(raidTray);
+  renderTray();
 });
 
 function togglePin(url){

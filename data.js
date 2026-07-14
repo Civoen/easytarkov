@@ -13,7 +13,10 @@ const TASKS = [
   { name: 'Database - Part 1', trader: 'Ragman', level: 17, url: 'database_part_1.html' },
   { name: 'The Tarkov Shooter - Part 1', trader: 'Jaeger', level: 2, url: 'tarkov_shooter_part_1.html' },
   { name: 'Collector', trader: 'Fence', level: 45, url: 'collector.html' },
-  { name: 'Postman Pat - Part 1', trader: 'Prapor', level: 10, url: 'postman_pat_part_1.html' }
+  { name: 'Postman Pat - Part 1', trader: 'Prapor', level: 10, url: 'postman_pat_part_1.html' },
+  { name: 'Background Check', trader: 'Prapor', level: 2, url: 'background_check.html' },
+  { name: 'Shootout Picnic', trader: 'Prapor', level: 3, url: 'shootout_picnic.html' },
+  { name: 'BP Depot', trader: 'Prapor', level: 5, url: 'bp_depot.html' }
 ];
 
 const TASK_DETAILS = {
@@ -119,6 +122,26 @@ const TASK_DETAILS = {
     items: [
       'Sealed letter \u2014 found in raid, quest item;',
       'Located in a bunker marked "1986" on the wall'
+    ]
+  },
+  'background_check.html': {
+    location: 'Customs',
+    items: [
+      'Bronze pocket watch on a chain \u2014 found in raid, quest item;',
+      'Machinery key \u2014 handover, opens the fuel tanker'
+    ]
+  },
+  'shootout_picnic.html': {
+    location: 'Woods',
+    items: [
+      '15 Scav eliminations \u2014 no restrictions'
+    ]
+  },
+  'bp_depot.html': {
+    location: 'Customs',
+    items: [
+      'MS2000 Marker \u00d7 4 \u2014 sent via mail;',
+      'Mark all 4 fuel tanks and extract Survived, not Run Through'
     ]
   }
 };
