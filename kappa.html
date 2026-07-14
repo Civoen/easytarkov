@@ -54,7 +54,7 @@
   </header>
 
   <section>
-    <button class="trader-btn" id="toggleHomeProgress" type="button">Show Progress on Homepage</button>
+    <button class="trader-btn" id="toggleHomeProgress" type="button">Show Task Progress on Homepage</button>
     <div class="section-label" style="margin-top:16px;">Required items</div>
     <div class="progress-wrap">
       <div class="progress-label">
@@ -103,7 +103,7 @@ const toggleHomeProgress = document.getElementById('toggleHomeProgress');
 function refreshToggleLabel(){
   let shown = false;
   try{ shown = localStorage.getItem(HOME_PROGRESS_KEY) === '1'; }catch(e){}
-  toggleHomeProgress.textContent = shown ? 'Hide Progress from Homepage' : 'Show Progress on Homepage';
+  toggleHomeProgress.textContent = shown ? 'Hide Task Progress from Homepage' : 'Show Task Progress on Homepage';
 }
 
 toggleHomeProgress.addEventListener('click', () => {

@@ -460,8 +460,8 @@ footer{
 }
 .zoom-overlay.open{display:flex;}
 .zoom-overlay img{
-  width:50vw;
-  height:50vh;
+  width:min(90vw, 160vh);
+  aspect-ratio:16/9;
   object-fit:contain;
   border:1px solid var(--olive-light);
   background:var(--panel);
@@ -472,6 +472,7 @@ footer{
   margin-top:10px;
 }
 .raid-tray-img-box{
+  position:relative;
   width:56px;
   height:56px;
   flex-shrink:0;
@@ -485,5 +486,18 @@ footer{
 }
 .raid-tray-img-box:hover{border-color:var(--rust);}
 .raid-tray-img-box img{width:100%;height:100%;object-fit:cover;display:block;}
+.rt-img-remove{
+  position:absolute;
+  top:2px;right:2px;
+  width:16px;height:16px;
+  line-height:14px;
+  padding:0;
+  background:rgba(20,23,26,.8);
+  border:1px solid var(--olive-light);
+  color:var(--paper);
+  font-size:12px;
+  cursor:pointer;
+}
+.rt-img-remove:hover{background:var(--danger);border-color:var(--danger);color:#fff;}
 .raid-tray-img-box .rt-img-plus{color:var(--olive-light);font-size:20px;}
 .raid-tray.infil-lg .raid-tray-img-box{width:80px;height:80px;}

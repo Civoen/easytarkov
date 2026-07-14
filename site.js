@@ -65,7 +65,9 @@ function renderTray(){
         const imageBoxes = '<div class="raid-tray-images">' +
           [0, 1].map(slot =>
             '<div class="raid-tray-img-box" data-url="'+url+'" data-slot="'+slot+'">' +
-              (imgs[slot] ? '<img src="'+imgs[slot]+'" alt="Raid screenshot">' : '<span class="rt-img-plus">+</span>') +
+              (imgs[slot]
+                ? '<img src="'+imgs[slot]+'" alt="Raid screenshot"><button class="rt-img-remove" data-url="'+url+'" data-slot="'+slot+'" type="button" aria-label="Remove image">&times;</button>'
+                : '<span class="rt-img-plus">+</span>') +
             '</div>'
           ).join('') +
         '</div>';
@@ -137,6 +139,15 @@ if(raidTrayCompact){
 }
 
 raidTrayPanel.addEventListener('click', (e) => {
+  const removeImgBtn = e.target.closest('.rt-img-remove');
+  if(removeImgBtn){
+    e.stopPropagation();
+    const url = removeImgBtn.getAttribute('data-url');
+    const slot = parseInt(removeImgBtn.getAttribute('data-slot'), 10);
+    if(raidTrayImages[url]) raidTrayImages[url][slot] = null;
+    renderTray();
+    return;
+  }
   const imgBox = e.target.closest('.raid-tray-img-box');
   if(imgBox){
     const url = imgBox.getAttribute('data-url');

@@ -12,7 +12,8 @@ const TASKS = [
   { name: 'Fishing Gear', trader: 'Peacekeeper', level: 10, url: 'fishing_gear.html' },
   { name: 'Database - Part 1', trader: 'Ragman', level: 17, url: 'database_part_1.html' },
   { name: 'The Tarkov Shooter - Part 1', trader: 'Jaeger', level: 2, url: 'tarkov_shooter_part_1.html' },
-  { name: 'Collector', trader: 'Fence', level: 45, url: 'collector.html' }
+  { name: 'Collector', trader: 'Fence', level: 45, url: 'collector.html' },
+  { name: 'Postman Pat - Part 1', trader: 'Prapor', level: 10, url: 'postman_pat_part_1.html' }
 ];
 
 const TASK_DETAILS = {
@@ -111,6 +112,13 @@ const TASK_DETAILS = {
     items: [
       '39 unique streamer items \u2014 all found in raid;',
       'See the Kappa page for the full checklist'
+    ]
+  },
+  'postman_pat_part_1.html': {
+    location: 'Factory',
+    items: [
+      'Sealed letter \u2014 found in raid, quest item;',
+      'Located in a bunker marked "1986" on the wall'
     ]
   }
 };

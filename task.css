@@ -209,13 +209,41 @@ table.items tr:last-child td{border-bottom:none;}
 }
 .zoom-overlay.open{display:flex;}
 .zoom-overlay img{
-  width:50vw;
-  height:50vh;
+  width:min(90vw, 160vh);
+  aspect-ratio:16/9;
   object-fit:contain;
   border:1px solid var(--olive-light);
   background:var(--panel);
 }
 
+.field-intel-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.field-intel-note{
+  position:relative;
+  background:var(--panel-2);
+  border:1px solid var(--line);
+  border-left:3px solid var(--olive-light);
+  padding:14px 34px 14px 16px;
+  font-size:12.5px;
+  line-height:1.7;
+  color:var(--paper);
+}
+.field-intel-remove{
+  position:absolute;
+  top:8px;right:8px;
+  width:20px;height:20px;
+  line-height:18px;
+  padding:0;
+  background:none;
+  border:1px solid var(--olive-light);
+  color:var(--paper-dim);
+  font-size:13px;
+  cursor:pointer;
+}
+.field-intel-remove:hover{background:var(--danger);border-color:var(--danger);color:#fff;}
 .field-intel{
   background:var(--panel-2);
   border:1px solid var(--line);

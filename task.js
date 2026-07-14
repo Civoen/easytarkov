@@ -100,7 +100,14 @@ function addSlot(label){
     reader.readAsDataURL(file);
   }
 
-  drop.addEventListener('click', () => input.click());
+  drop.addEventListener('click', () => {
+    const img = drop.querySelector('img');
+    if(img){
+      openZoom(img.src, img.alt);
+    }else{
+      input.click();
+    }
+  });
   input.addEventListener('change', (e) => handleFile(e.target.files[0]));
   drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('dragover'); });
   drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
@@ -126,6 +133,42 @@ document.getElementById('newImageBtn').addEventListener('click', () => addSlot('
 // initTaskPage('this_page.html', ['Initial slot label 1', 'Initial slot label 2']);
 function initTaskPage(taskUrl, initialSlotLabels){
   initialSlotLabels.forEach(addSlot);
+
+  // ---- Dismissible Field Intel notes ----
+  const DISMISSED_KEY = 'easytarkov-dismissed-notes';
+  let dismissed = [];
+  try{ dismissed = JSON.parse(localStorage.getItem(DISMISSED_KEY) || '[]'); }catch(e){}
+
+  const noteEls = document.querySelectorAll('.field-intel-note');
+  const emptyEl = document.querySelector('.field-intel-empty');
+
+  function refreshEmptyState(){
+    if(!emptyEl) return;
+    const anyVisible = Array.from(noteEls).some(n => !n.classList.contains('dismissed'));
+    emptyEl.style.display = anyVisible ? 'none' : 'block';
+  }
+
+  noteEls.forEach(note => {
+    const id = note.getAttribute('data-note-id');
+    if(dismissed.includes(id)){
+      note.classList.add('dismissed');
+      note.style.display = 'none';
+    }
+    const removeBtn = note.querySelector('.field-intel-remove');
+    if(removeBtn){
+      removeBtn.addEventListener('click', () => {
+        note.classList.add('dismissed');
+        note.style.display = 'none';
+        try{
+          dismissed = JSON.parse(localStorage.getItem(DISMISSED_KEY) || '[]');
+        }catch(e){ dismissed = []; }
+        if(!dismissed.includes(id)) dismissed.push(id);
+        try{ localStorage.setItem(DISMISSED_KEY, JSON.stringify(dismissed)); }catch(e){}
+        refreshEmptyState();
+      });
+    }
+  });
+  refreshEmptyState();
 
   // ---- Mark complete ----
   const PROGRESS_KEY = 'easytarkov-progress';
