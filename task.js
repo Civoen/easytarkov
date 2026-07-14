@@ -14,6 +14,7 @@ zoomOverlay.addEventListener('click', () => {
 
 const grid = document.getElementById('slotGrid');
 const MIN_SLOTS = 1;
+let CURRENT_TASK_URL = '';
 
 function updateDeleteButtons(){
   const slots = grid.querySelectorAll('.slot');
@@ -23,7 +24,41 @@ function updateDeleteButtons(){
   });
 }
 
-function addSlot(label){
+// Resizes to a max 1600px edge and re-encodes as WebP before upload.
+// This is the single biggest lever for image performance: a raw phone/game
+// screenshot can be several MB; compressed WebP is typically 100-400KB.
+function compressImage(file){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = (e) => { img.src = e.target.result; };
+    reader.onerror = reject;
+    img.onload = () => {
+      const MAX_EDGE = 1600;
+      let { width, height } = img;
+      if(width > height && width > MAX_EDGE){
+        height = Math.round(height * (MAX_EDGE / width));
+        width = MAX_EDGE;
+      }else if(height > MAX_EDGE){
+        width = Math.round(width * (MAX_EDGE / height));
+        height = MAX_EDGE;
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      canvas.toBlob(
+        blob => blob ? resolve(blob) : reject(new Error('Compression failed')),
+        'image/webp',
+        0.82
+      );
+    };
+    img.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function addSlot(label, existing){
   const slot = document.createElement('div');
   slot.className = 'slot';
   slot.innerHTML =
@@ -33,17 +68,17 @@ function addSlot(label){
     '<div class="slot-foot"><span class="uploader"></span><span class="clear-wrap"></span></div>' +
     '<input type="file" accept="image/*" hidden>';
 
-  slot.querySelector('.slot-head').textContent = label;
+  slot.querySelector('.slot-head').textContent = existing ? existing.label : label;
+  let slotId = existing ? existing.id : null;
 
   const drop = slot.querySelector('.drop');
   const input = slot.querySelector('input[type=file]');
   const uploaderTag = slot.querySelector('.uploader');
   const clearWrap = slot.querySelector('.clear-wrap');
 
-  function setImage(dataUrl){
-    const slotLabel = slot.querySelector('.slot-head').textContent.trim();
-    const altText = slotLabel ? slotLabel + ' screenshot' : 'Community-submitted task location screenshot';
-    drop.innerHTML = '<img src="'+dataUrl+'" alt="'+altText.replace(/"/g, '&quot;')+'">';
+  function renderFilled(url, uploadedLabel){
+    const altText = (uploadedLabel || slot.querySelector('.slot-head').textContent.trim()) + ' screenshot';
+    drop.innerHTML = '<img src="'+url+'" alt="'+altText.replace(/"/g, '&quot;')+'">';
     let stamp = slot.querySelector('.stamp');
     if(!stamp){
       stamp = document.createElement('div');
@@ -52,7 +87,7 @@ function addSlot(label){
       slot.appendChild(stamp);
     }
     slot.classList.add('filled');
-    uploaderTag.textContent = 'uploaded by you, just now';
+    uploaderTag.textContent = 'uploaded by you';
     clearWrap.innerHTML = '';
 
     const actions = document.createElement('div');
@@ -63,7 +98,7 @@ function addSlot(label){
     zoomBtn.textContent = 'Zoom';
     zoomBtn.onclick = (e) => {
       e.stopPropagation();
-      openZoom(dataUrl, altText);
+      openZoom(url, altText);
     };
 
     const replaceBtn = document.createElement('button');
@@ -77,8 +112,14 @@ function addSlot(label){
     const removeBtn = document.createElement('button');
     removeBtn.className = 'remove-btn';
     removeBtn.textContent = 'Remove';
-    removeBtn.onclick = (e) => {
+    removeBtn.onclick = async (e) => {
       e.stopPropagation();
+      if(slotId){
+        try{
+          await fetch('/api/images?task='+encodeURIComponent(CURRENT_TASK_URL)+'&id='+encodeURIComponent(slotId), { method: 'DELETE' });
+        }catch(err){}
+      }
+      slotId = null;
       slot.classList.remove('filled');
       const oldStamp = slot.querySelector('.stamp');
       if(oldStamp) oldStamp.remove();
@@ -93,11 +134,25 @@ function addSlot(label){
     clearWrap.appendChild(actions);
   }
 
-  function handleFile(file){
-    if(!file || !file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onload = (e) => setImage(e.target.result);
-    reader.readAsDataURL(file);
+  async function uploadFile(file){
+    uploaderTag.textContent = 'Uploading\u2026';
+    try{
+      const compressed = await compressImage(file);
+      const label = slot.querySelector('.slot-head').textContent.trim();
+      const form = new FormData();
+      form.append('task', CURRENT_TASK_URL);
+      form.append('label', label);
+      form.append('file', compressed, 'screenshot.webp');
+
+      const res = await fetch('/api/images', { method: 'POST', body: form });
+      if(!res.ok) throw new Error('Upload failed');
+      const savedSlot = await res.json();
+      slotId = savedSlot.id;
+      renderFilled(savedSlot.url, savedSlot.label);
+    }catch(err){
+      uploaderTag.textContent = '';
+      alert('Upload failed. Please try again.');
+    }
   }
 
   drop.addEventListener('click', () => {
@@ -108,31 +163,64 @@ function addSlot(label){
       input.click();
     }
   });
-  input.addEventListener('change', (e) => handleFile(e.target.files[0]));
+  input.addEventListener('change', (e) => { if(e.target.files[0]) uploadFile(e.target.files[0]); });
   drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('dragover'); });
   drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
   drop.addEventListener('drop', (e) => {
     e.preventDefault();
     drop.classList.remove('dragover');
-    handleFile(e.dataTransfer.files[0]);
+    if(e.dataTransfer.files[0]) uploadFile(e.dataTransfer.files[0]);
   });
 
-  slot.querySelector('.del-slot').addEventListener('click', () => {
+  slot.querySelector('.slot-head').addEventListener('blur', async () => {
+    if(!slotId) return;
+    const newLabel = slot.querySelector('.slot-head').textContent.trim();
+    try{
+      await fetch('/api/images', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ task: CURRENT_TASK_URL, id: slotId, label: newLabel })
+      });
+    }catch(err){}
+  });
+
+  slot.querySelector('.del-slot').addEventListener('click', async () => {
     if(grid.querySelectorAll('.slot').length <= MIN_SLOTS) return;
+    if(slotId){
+      try{
+        await fetch('/api/images?task='+encodeURIComponent(CURRENT_TASK_URL)+'&id='+encodeURIComponent(slotId), { method: 'DELETE' });
+      }catch(err){}
+    }
     slot.remove();
     updateDeleteButtons();
   });
 
   grid.appendChild(slot);
   updateDeleteButtons();
+
+  if(existing) renderFilled(existing.url, existing.label);
 }
 
 document.getElementById('newImageBtn').addEventListener('click', () => addSlot(''));
 
 // Call this from each task page's own small inline script:
 // initTaskPage('this_page.html', ['Initial slot label 1', 'Initial slot label 2']);
-function initTaskPage(taskUrl, initialSlotLabels){
-  initialSlotLabels.forEach(addSlot);
+async function initTaskPage(taskUrl, initialSlotLabels){
+  CURRENT_TASK_URL = taskUrl;
+
+  try{
+    const res = await fetch('/api/images?task='+encodeURIComponent(taskUrl));
+    const data = res.ok ? await res.json() : { slots: [] };
+    if(data.slots && data.slots.length){
+      data.slots.forEach(s => addSlot('', s));
+    }else{
+      initialSlotLabels.forEach(label => addSlot(label));
+    }
+  }catch(err){
+    // Backend unreachable (e.g. local testing without Cloudflare Pages) -
+    // fall back to empty labeled slots so the page still works.
+    initialSlotLabels.forEach(label => addSlot(label));
+  }
 
   // ---- Dismissible Field Intel notes ----
   const DISMISSED_KEY = 'easytarkov-dismissed-notes';
