@@ -93,6 +93,7 @@ function initChecklist(config){
       saveProgress(progress);
       box.closest('.task-row').classList.toggle('done', box.checked);
       updateProgressBar();
+      applyFilters();
     });
   });
 
@@ -110,17 +111,44 @@ function initChecklist(config){
 
   const filterInput = document.getElementById('taskFilter');
   const filterEmpty = document.getElementById('taskFilterEmpty');
-  if(filterInput){
-    filterInput.addEventListener('input', () => {
-      const q = filterInput.value.trim().toLowerCase();
-      let visibleCount = 0;
-      listEl.querySelectorAll('.task-row').forEach(row => {
-        const name = row.querySelector('.task-name').textContent.toLowerCase();
-        const match = name.includes(q);
-        row.style.display = match ? '' : 'none';
-        if(match) visibleCount++;
-      });
-      if(filterEmpty) filterEmpty.style.display = visibleCount === 0 ? 'block' : 'none';
-    });
+  const SHOW_COMPLETED_KEY = 'easytarkov-show-completed-tasks';
+  const showCompletedBtn = document.getElementById('showCompletedBtn');
+
+  function loadShowCompleted(){
+    if(!config.hideCompletedToggle) return true;
+    try{ return localStorage.getItem(SHOW_COMPLETED_KEY) === '1'; }catch(e){ return false; }
   }
+
+  function applyFilters(){
+    const q = filterInput ? filterInput.value.trim().toLowerCase() : '';
+    const showCompleted = loadShowCompleted();
+    let visibleCount = 0;
+    listEl.querySelectorAll('.task-row').forEach(row => {
+      const name = row.querySelector('.task-name').textContent.toLowerCase();
+      const matchesSearch = name.includes(q);
+      const isDone = row.classList.contains('done');
+      const hiddenByCompletion = config.hideCompletedToggle && isDone && !showCompleted;
+      const visible = matchesSearch && !hiddenByCompletion;
+      row.style.display = visible ? '' : 'none';
+      if(visible) visibleCount++;
+    });
+    if(filterEmpty) filterEmpty.style.display = visibleCount === 0 ? 'block' : 'none';
+  }
+
+  if(filterInput) filterInput.addEventListener('input', applyFilters);
+
+  if(showCompletedBtn){
+    function refreshShowCompletedLabel(){
+      showCompletedBtn.textContent = loadShowCompleted() ? 'Hide Completed' : 'Show Completed';
+    }
+    showCompletedBtn.addEventListener('click', () => {
+      const next = !loadShowCompleted();
+      try{ localStorage.setItem(SHOW_COMPLETED_KEY, next ? '1' : '0'); }catch(e){}
+      refreshShowCompletedLabel();
+      applyFilters();
+    });
+    refreshShowCompletedLabel();
+  }
+
+  applyFilters();
 }

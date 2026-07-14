@@ -54,7 +54,8 @@
   </header>
 
   <section>
-    <div class="section-label">Required tasks</div>
+    <button class="trader-btn" id="showCompletedBtn" type="button">Show Completed</button>
+    <div class="section-label" style="margin-top:16px;">Required tasks</div>
     <div class="progress-wrap">
       <div class="progress-label">
         <span id="progressText">0 of 0 complete</span>
@@ -89,6 +90,7 @@
 initChecklist({
   listElId: 'taskList',
   storageKey: 'easytarkov-progress',
+  hideCompletedToggle: true,
   countLabel: 'complete',
   emptyMessage: 'No Kappa-required tasks added yet for Mechanic.',
   items: sortTasksForTrader(TASKS.filter(t => t.trader === 'Mechanic')).map(t => ({

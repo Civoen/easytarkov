@@ -175,7 +175,7 @@ function initTaskPage(taskUrl, initialSlotLabels){
   const completeBtn = document.getElementById('completeBtn');
   if(completeBtn){
     function updateCompleteBtn(isDone){
-      completeBtn.textContent = isDone ? '\u2713 Completed' : 'Mark complete';
+      completeBtn.textContent = isDone ? '\u2713 Completed' : 'Mark Complete';
       completeBtn.classList.toggle('completed', isDone);
     }
     let progress = {};
