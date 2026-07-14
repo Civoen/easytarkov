@@ -80,13 +80,15 @@ function addSlot(label, existing){
   const slot = document.createElement('div');
   slot.className = 'slot';
   slot.innerHTML =
-    '<div class="slot-move">' +
-      '<button class="slot-move-btn" data-dir="up" title="Move left" type="button">&uarr;</button>' +
-      '<button class="slot-move-btn" data-dir="down" title="Move right" type="button">&darr;</button>' +
-    '</div>' +
     '<button class="del-slot" title="Remove this box">&times;</button>' +
     '<div class="slot-head" contenteditable="true" data-placeholder="Label this location"></div>' +
-    '<div class="drop" tabindex="0"><div class="drop-empty"><span class="icon">&#9635;</span>No image yet<br>click to select, then paste &mdash; or drag, or double-click to browse</div></div>' +
+    '<div class="drop" tabindex="0">' +
+      '<div class="drop-empty"><span class="icon">&#9635;</span>No image yet<br>click to select, then paste &mdash; or drag, or double-click to browse</div>' +
+      '<div class="slot-move">' +
+        '<button class="slot-move-btn" data-dir="up" title="Move left" type="button">&uarr;</button>' +
+        '<button class="slot-move-btn" data-dir="down" title="Move right" type="button">&darr;</button>' +
+      '</div>' +
+    '</div>' +
     '<div class="slot-foot"><span class="uploader"></span><span class="clear-wrap"></span></div>' +
     '<input type="file" accept="image/*" hidden>';
 

@@ -95,7 +95,7 @@ table.items tr:last-child td{border-bottom:none;}
 }
 .slot-move{
   position:absolute;
-  top:6px;left:6px;
+  bottom:6px;left:6px;
   z-index:2;
   display:flex;
   gap:3px;
