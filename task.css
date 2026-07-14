@@ -138,6 +138,7 @@ table.items tr:last-child td{border-bottom:none;}
   min-height:110px;
 }
 .drop.dragover{border-color:var(--rust);}
+.drop:focus{outline:2px solid var(--amber);outline-offset:2px;}
 .drop-empty{color:var(--paper-dim);font-size:11px;line-height:1.6;}
 .drop-empty .icon{font-size:20px;display:block;margin-bottom:6px;color:var(--olive-light);}
 .drop img{width:100%;height:100%;object-fit:cover;display:block;}

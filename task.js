@@ -64,7 +64,7 @@ function addSlot(label, existing){
   slot.innerHTML =
     '<button class="del-slot" title="Remove this box">&times;</button>' +
     '<div class="slot-head" contenteditable="true" data-placeholder="Label this location"></div>' +
-    '<div class="drop"><div class="drop-empty"><span class="icon">&#9635;</span>No image yet<br>click or drag to upload</div></div>' +
+    '<div class="drop" tabindex="0"><div class="drop-empty"><span class="icon">&#9635;</span>No image yet<br>click, drag, or paste to upload</div></div>' +
     '<div class="slot-foot"><span class="uploader"></span><span class="clear-wrap"></span></div>' +
     '<input type="file" accept="image/*" hidden>';
 
@@ -123,7 +123,7 @@ function addSlot(label, existing){
       slot.classList.remove('filled');
       const oldStamp = slot.querySelector('.stamp');
       if(oldStamp) oldStamp.remove();
-      drop.innerHTML = '<div class="drop-empty"><span class="icon">&#9635;</span>No image yet<br>click or drag to upload</div>';
+      drop.innerHTML = '<div class="drop-empty"><span class="icon">&#9635;</span>No image yet<br>click, drag, or paste to upload</div>';
       uploaderTag.textContent = '';
       clearWrap.innerHTML = '';
     };
@@ -170,6 +170,18 @@ function addSlot(label, existing){
     e.preventDefault();
     drop.classList.remove('dragover');
     if(e.dataTransfer.files[0]) uploadFile(e.dataTransfer.files[0]);
+  });
+  drop.addEventListener('paste', (e) => {
+    const items = e.clipboardData && e.clipboardData.items;
+    if(!items) return;
+    for(const item of items){
+      if(item.type.startsWith('image/')){
+        e.preventDefault();
+        const file = item.getAsFile();
+        if(file) uploadFile(file);
+        break;
+      }
+    }
   });
 
   slot.querySelector('.slot-head').addEventListener('blur', async () => {
