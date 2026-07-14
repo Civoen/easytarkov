@@ -120,11 +120,23 @@ export async function onRequestPatch(context) {
     return badRequest('Expected JSON body.');
   }
 
-  const { task, id, label } = body;
+  const { task, id, label, reorder } = body;
   if (!validTask(task)) return badRequest('Missing or invalid task parameter.');
-  if (!id) return badRequest('Missing id.');
 
   const manifest = await readManifest(env.IMAGES_BUCKET, task);
+
+  if (Array.isArray(reorder)) {
+    const byId = new Map(manifest.slots.map(s => [s.id, s]));
+    const reordered = reorder.map(rid => byId.get(rid)).filter(Boolean);
+    // Keep any slots not mentioned (shouldn't normally happen) appended at the end,
+    // so nothing is ever silently dropped by a reorder request.
+    const mentioned = new Set(reorder);
+    manifest.slots = reordered.concat(manifest.slots.filter(s => !mentioned.has(s.id)));
+    await writeManifest(env.IMAGES_BUCKET, task, manifest);
+    return json({ ok: true });
+  }
+
+  if (!id) return badRequest('Missing id.');
   const slot = manifest.slots.find(s => s.id === id);
   if (!slot) return badRequest('Slot not found.');
 

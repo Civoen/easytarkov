@@ -13,15 +13,33 @@ zoomOverlay.addEventListener('click', () => {
 });
 
 const grid = document.getElementById('slotGrid');
-const MIN_SLOTS = 1;
+const MIN_SLOTS = 0;
 let CURRENT_TASK_URL = '';
 
 function updateDeleteButtons(){
   const slots = grid.querySelectorAll('.slot');
-  slots.forEach(s => {
+  slots.forEach((s, i) => {
     const btn = s.querySelector('.del-slot');
     btn.style.visibility = slots.length > MIN_SLOTS ? 'visible' : 'hidden';
+    const upBtn = s.querySelector('.slot-move-btn[data-dir="up"]');
+    const downBtn = s.querySelector('.slot-move-btn[data-dir="down"]');
+    if(upBtn) upBtn.disabled = i === 0;
+    if(downBtn) downBtn.disabled = i === slots.length - 1;
   });
+}
+
+async function persistSlotOrder(){
+  const ids = Array.from(grid.querySelectorAll('.slot'))
+    .map(s => s.dataset.slotId)
+    .filter(Boolean);
+  if(!ids.length) return;
+  try{
+    await fetch('/api/images', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ task: CURRENT_TASK_URL, reorder: ids })
+    });
+  }catch(err){}
 }
 
 // Resizes to a max 1600px edge and re-encodes as WebP before upload.
@@ -62,14 +80,19 @@ function addSlot(label, existing){
   const slot = document.createElement('div');
   slot.className = 'slot';
   slot.innerHTML =
+    '<div class="slot-move">' +
+      '<button class="slot-move-btn" data-dir="up" title="Move left" type="button">&uarr;</button>' +
+      '<button class="slot-move-btn" data-dir="down" title="Move right" type="button">&darr;</button>' +
+    '</div>' +
     '<button class="del-slot" title="Remove this box">&times;</button>' +
     '<div class="slot-head" contenteditable="true" data-placeholder="Label this location"></div>' +
-    '<div class="drop" tabindex="0"><div class="drop-empty"><span class="icon">&#9635;</span>No image yet<br>click, drag, or paste to upload</div></div>' +
+    '<div class="drop" tabindex="0"><div class="drop-empty"><span class="icon">&#9635;</span>No image yet<br>click to select, then paste &mdash; or drag, or double-click to browse</div></div>' +
     '<div class="slot-foot"><span class="uploader"></span><span class="clear-wrap"></span></div>' +
     '<input type="file" accept="image/*" hidden>';
 
   slot.querySelector('.slot-head').textContent = existing ? existing.label : label;
   let slotId = existing ? existing.id : null;
+  if(slotId) slot.dataset.slotId = slotId;
 
   const drop = slot.querySelector('.drop');
   const input = slot.querySelector('input[type=file]');
@@ -84,22 +107,14 @@ function addSlot(label, existing){
       stamp = document.createElement('div');
       stamp.className = 'stamp';
       stamp.textContent = 'CONFIRMED';
-      slot.appendChild(stamp);
+      drop.appendChild(stamp);
     }
     slot.classList.add('filled');
-    uploaderTag.textContent = 'uploaded by you';
+    uploaderTag.textContent = '';
     clearWrap.innerHTML = '';
 
     const actions = document.createElement('div');
     actions.className = 'img-actions';
-
-    const zoomBtn = document.createElement('button');
-    zoomBtn.className = 'img-btn';
-    zoomBtn.textContent = 'Zoom';
-    zoomBtn.onclick = (e) => {
-      e.stopPropagation();
-      openZoom(url, altText);
-    };
 
     const replaceBtn = document.createElement('button');
     replaceBtn.className = 'img-btn';
@@ -109,32 +124,12 @@ function addSlot(label, existing){
       input.click();
     };
 
-    const removeBtn = document.createElement('button');
-    removeBtn.className = 'remove-btn';
-    removeBtn.textContent = 'Remove';
-    removeBtn.onclick = async (e) => {
-      e.stopPropagation();
-      if(slotId){
-        try{
-          await fetch('/api/images?task='+encodeURIComponent(CURRENT_TASK_URL)+'&id='+encodeURIComponent(slotId), { method: 'DELETE' });
-        }catch(err){}
-      }
-      slotId = null;
-      slot.classList.remove('filled');
-      const oldStamp = slot.querySelector('.stamp');
-      if(oldStamp) oldStamp.remove();
-      drop.innerHTML = '<div class="drop-empty"><span class="icon">&#9635;</span>No image yet<br>click, drag, or paste to upload</div>';
-      uploaderTag.textContent = '';
-      clearWrap.innerHTML = '';
-    };
-
-    actions.appendChild(zoomBtn);
     actions.appendChild(replaceBtn);
-    actions.appendChild(removeBtn);
     clearWrap.appendChild(actions);
   }
 
   async function uploadFile(file){
+    const previousSlotId = slotId;
     uploaderTag.textContent = 'Uploading\u2026';
     try{
       const compressed = await compressImage(file);
@@ -148,7 +143,14 @@ function addSlot(label, existing){
       if(!res.ok) throw new Error('Upload failed');
       const savedSlot = await res.json();
       slotId = savedSlot.id;
+      slot.dataset.slotId = slotId;
       renderFilled(savedSlot.url, savedSlot.label);
+
+      if(previousSlotId && previousSlotId !== slotId){
+        try{
+          await fetch('/api/images?task='+encodeURIComponent(CURRENT_TASK_URL)+'&id='+encodeURIComponent(previousSlotId), { method: 'DELETE' });
+        }catch(err){}
+      }
     }catch(err){
       uploaderTag.textContent = '';
       alert('Upload failed. Please try again.');
@@ -157,11 +159,12 @@ function addSlot(label, existing){
 
   drop.addEventListener('click', () => {
     const img = drop.querySelector('img');
-    if(img){
-      openZoom(img.src, img.alt);
-    }else{
-      input.click();
-    }
+    if(img) openZoom(img.src, img.alt);
+    // If empty, clicking simply focuses the box (native behavior via tabindex)
+    // so it's armed and ready for a paste - no file picker on single click.
+  });
+  drop.addEventListener('dblclick', () => {
+    if(!drop.querySelector('img')) input.click();
   });
   input.addEventListener('change', (e) => { if(e.target.files[0]) uploadFile(e.target.files[0]); });
   drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('dragover'); });
@@ -205,6 +208,20 @@ function addSlot(label, existing){
     }
     slot.remove();
     updateDeleteButtons();
+    persistSlotOrder();
+  });
+
+  slot.querySelectorAll('.slot-move-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dir = btn.getAttribute('data-dir');
+      if(dir === 'up' && slot.previousElementSibling){
+        grid.insertBefore(slot, slot.previousElementSibling);
+      }else if(dir === 'down' && slot.nextElementSibling){
+        grid.insertBefore(slot.nextElementSibling, slot);
+      }
+      updateDeleteButtons();
+      persistSlotOrder();
+    });
   });
 
   grid.appendChild(slot);
@@ -217,7 +234,7 @@ document.getElementById('newImageBtn').addEventListener('click', () => addSlot('
 
 // Call this from each task page's own small inline script:
 // initTaskPage('this_page.html', ['Initial slot label 1', 'Initial slot label 2']);
-async function initTaskPage(taskUrl, initialSlotLabels){
+async function initTaskPage(taskUrl){
   CURRENT_TASK_URL = taskUrl;
 
   try{
@@ -225,13 +242,12 @@ async function initTaskPage(taskUrl, initialSlotLabels){
     const data = res.ok ? await res.json() : { slots: [] };
     if(data.slots && data.slots.length){
       data.slots.forEach(s => addSlot('', s));
-    }else{
-      initialSlotLabels.forEach(label => addSlot(label));
     }
+    // Otherwise: start with zero boxes. Not every task needs images -
+    // "+ New image" adds the first box, and each click after that adds another.
   }catch(err){
     // Backend unreachable (e.g. local testing without Cloudflare Pages) -
-    // fall back to empty labeled slots so the page still works.
-    initialSlotLabels.forEach(label => addSlot(label));
+    // start empty rather than guessing.
   }
 
   // ---- Dismissible Field Intel notes ----
