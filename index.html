@@ -27,9 +27,20 @@
   body{
     min-height:100vh;
     display:flex;
+    flex-direction:column;
+    padding:24px 24px 110px;
+  }
+  .center-wrap{
+    flex:1;
+    display:flex;
     align-items:center;
     justify-content:center;
-    padding:24px 24px 110px;
+  }
+  .page-footer{
+    text-align:center;
+    font-size:11px;
+    color:var(--paper-dim);
+    padding-top:16px;
   }
   .hero{
     max-width:640px;
@@ -94,8 +105,9 @@
 </style>
 </head>
 <body>
+<div class="center-wrap">
 <div class="hero">
-  <div class="badge">Site under construction v.03</div>
+  <div class="badge">Site under construction v.04</div>
   <h1>Easy Tarkov</h1>
   <div class="sub">A quick and easy companion app</div>
 
@@ -120,6 +132,9 @@
     <a class="trader-btn" href="import.html">Manage Data</a>
   </div>
 </div>
+</div>
+
+<footer class="page-footer">Site is still a work in progress. Some pages are still being added and all pages are subject to change.<br>Easy Tarkov is an unofficial, fan-made resource and claims no ownership over the game data referenced on this site. All information has been sourced from escapefromtarkov.fandom.com and remains the property of its respective owners.<br>Need help? Message 'Civoen' on Discord.</footer>
 
 <div class="raid-tray" id="raidTray">
   <div class="raid-tray-bar">

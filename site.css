@@ -303,6 +303,23 @@ footer{
   font-size:11px;
   color:var(--paper-dim);
 }
+.rt-merge-list{padding:4px 0;}
+.rt-merge-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:12px;
+  padding:9px 16px;
+  border-bottom:1px solid var(--line);
+  font-size:12px;
+}
+.rt-merge-item{color:var(--paper);}
+.rt-merge-task{
+  flex-shrink:0;
+  font-size:10px;
+  color:var(--amber);
+  white-space:nowrap;
+}
 
 .mobile-menu-wrap{position:relative;display:none;}
 .mobile-menu-btn{

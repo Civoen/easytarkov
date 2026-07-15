@@ -77,6 +77,22 @@ function renderTray(){
   const autoExpand = raidTrayEl.classList.contains('infil') && !raidTrayEl.classList.contains('infil-sm');
 
   raidTrayCount.textContent = raidTray.length;
+
+  if(raidTrayEl.classList.contains('merged') && raidTray.length){
+    const rows = raidTray.map(url => {
+      const t = taskLookup(url);
+      const d = TASK_DETAILS[url];
+      if(!d) return '';
+      return d.items.map(item =>
+        '<div class="rt-merge-row"><span class="rt-merge-item">'+item.replace(/;$/, '')+'</span><span class="rt-merge-task">'+t.name+'</span></div>'
+      ).join('');
+    }).join('');
+    raidTrayPanel.innerHTML = '<div class="rt-merge-list">' +
+      (rows || '<div class="raid-tray-empty">No item data available for the pinned tasks.</div>') +
+      '</div>';
+    return;
+  }
+
   raidTrayPanel.innerHTML = raidTray.length
     ? raidTray.map((url, i) => {
         const t = taskLookup(url);
@@ -155,6 +171,35 @@ if(raidTrayCompact){
     raidTrayCompact.textContent = active ? 'Show Full' : 'Show Compact';
     raidTrayCompact.classList.toggle('active', active);
     saveNamesOnly(active);
+  });
+
+  const raidMergeBtn = document.createElement('button');
+  raidMergeBtn.className = 'raid-tray-compact';
+  raidMergeBtn.type = 'button';
+  raidMergeBtn.id = 'raidTrayMerge';
+  raidTrayCompact.after(raidMergeBtn);
+
+  const MERGE_KEY = 'easytarkov-raidtray-merge';
+  function loadMerge(){
+    try{ return localStorage.getItem(MERGE_KEY) === '1'; }catch(e){ return false; }
+  }
+  function saveMerge(active){
+    try{ localStorage.setItem(MERGE_KEY, active ? '1' : '0'); }catch(e){}
+  }
+  if(loadMerge()){
+    raidTrayEl.classList.add('merged');
+    raidMergeBtn.textContent = 'Unmerge';
+    raidMergeBtn.classList.add('active');
+  }else{
+    raidMergeBtn.textContent = 'Merge';
+  }
+  raidMergeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const active = raidTrayEl.classList.toggle('merged');
+    raidMergeBtn.textContent = active ? 'Unmerge' : 'Merge';
+    raidMergeBtn.classList.toggle('active', active);
+    saveMerge(active);
+    renderTray();
   });
 }
 

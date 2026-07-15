@@ -25,8 +25,19 @@
   body{
     min-height:100vh;
     display:flex;
+    flex-direction:column;
+  }
+  .center-wrap{
+    flex:1;
+    display:flex;
     align-items:center;
     justify-content:center;
+  }
+  .page-footer{
+    text-align:center;
+    font-size:11px;
+    color:var(--paper-dim);
+    padding:16px;
   }
   .card{
     max-width:420px;
@@ -72,11 +83,14 @@
 </style>
 </head>
 <body>
+<div class="center-wrap">
   <div class="card">
     <p class="code">404</p>
     <h1>This page isn't in the dossier</h1>
     <p>The page you're looking for hasn't been added yet, or the link is broken.</p>
     <a class="back-btn" href="index.html">&larr; Back to Homepage</a>
   </div>
+</div>
+<footer class="page-footer">Site is still a work in progress. Some pages are still being added and all pages are subject to change.<br>Easy Tarkov is an unofficial, fan-made resource and claims no ownership over the game data referenced on this site. All information has been sourced from escapefromtarkov.fandom.com and remains the property of its respective owners.<br>Need help? Message 'Civoen' on Discord.</footer>
 </body>
 </html>

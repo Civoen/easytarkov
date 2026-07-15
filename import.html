@@ -25,9 +25,20 @@
   body{
     min-height:100vh;
     display:flex;
+    flex-direction:column;
+    padding:24px;
+  }
+  .center-wrap{
+    flex:1;
+    display:flex;
     align-items:center;
     justify-content:center;
-    padding:24px;
+  }
+  .page-footer{
+    text-align:center;
+    font-size:11px;
+    color:var(--paper-dim);
+    padding-top:16px;
   }
   .hero{
     max-width:480px;
@@ -107,6 +118,7 @@
 </style>
 </head>
 <body>
+<div class="center-wrap">
 <div class="hero">
   <h1>Manage Data</h1>
   <div class="sub">Back up or restore your progress on this browser</div>
@@ -126,6 +138,9 @@
 
   <a class="home-link" href="index.html">&larr; Back to Homepage</a>
 </div>
+</div>
+
+<footer class="page-footer">Site is still a work in progress. Some pages are still being added and all pages are subject to change.<br>Easy Tarkov is an unofficial, fan-made resource and claims no ownership over the game data referenced on this site. All information has been sourced from escapefromtarkov.fandom.com and remains the property of its respective owners.<br>Need help? Message 'Civoen' on Discord.</footer>
 
 <script>
 const EASYTARKOV_PREFIX = 'easytarkov-';
