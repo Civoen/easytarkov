@@ -40,9 +40,15 @@ function applyInfilSizing(){
   if(!raidTrayEl.classList.contains('infil')) return;
   const header = document.querySelector('header');
   const barHeight = raidTrayEl.querySelector('.raid-tray-bar').getBoundingClientRect().height;
-  const panelHeight = header
-    ? Math.max(200, window.innerHeight - header.getBoundingClientRect().top - barHeight)
-    : Math.max(200, window.innerHeight - barHeight - 40);
+  // Hard ceiling: the bar must always stay on-screen, regardless of scroll position.
+  // (If the header has scrolled out of view - e.g. on a tall mobile page - its
+  // position can go negative, which would otherwise blow up the calculation below.)
+  const maxPanelHeight = window.innerHeight - barHeight - 8;
+  let panelHeight = header
+    ? window.innerHeight - header.getBoundingClientRect().top - barHeight
+    : window.innerHeight - barHeight - 40;
+  panelHeight = Math.max(200, panelHeight);
+  panelHeight = Math.min(panelHeight, maxPanelHeight);
   raidTrayPanel.style.height = panelHeight + 'px';
 
   const budget = panelHeight / Math.max(1, raidTray.length);
@@ -50,7 +56,21 @@ function applyInfilSizing(){
   raidTrayEl.classList.add(budget >= 140 ? 'infil-lg' : budget >= 80 ? 'infil-md' : 'infil-sm');
 }
 
-const raidTrayImages = {};
+const raidImageCache = {};
+
+function fetchRaidImages(url){
+  if(raidImageCache[url]) return; // already loaded or loading - don't re-fetch
+  raidImageCache[url] = { status: 'loading', slots: [] };
+  fetch('/api/images?task='+encodeURIComponent(url))
+    .then(res => res.ok ? res.json() : { slots: [] })
+    .then(data => {
+      raidImageCache[url] = { status: 'loaded', slots: (data.slots || []).slice(0, 4) };
+      renderTray();
+    })
+    .catch(() => {
+      raidImageCache[url] = { status: 'loaded', slots: [] };
+    });
+}
 
 function renderTray(){
   applyInfilSizing();
@@ -61,16 +81,18 @@ function renderTray(){
     ? raidTray.map((url, i) => {
         const t = taskLookup(url);
         const d = TASK_DETAILS[url];
-        const imgs = raidTrayImages[url] || [null, null];
-        const imageBoxes = '<div class="raid-tray-images">' +
-          [0, 1].map(slot =>
-            '<div class="raid-tray-img-box" data-url="'+url+'" data-slot="'+slot+'">' +
-              (imgs[slot]
-                ? '<img src="'+imgs[slot]+'" alt="Raid screenshot"><button class="rt-img-remove" data-url="'+url+'" data-slot="'+slot+'" type="button" aria-label="Remove image">&times;</button>'
-                : '<span class="rt-img-plus">+</span>') +
+        const cached = raidImageCache[url];
+        if(!cached) fetchRaidImages(url);
+        const imgSlots = (cached && cached.status === 'loaded') ? cached.slots : [];
+        const imageBoxes = imgSlots.length
+          ? '<div class="raid-tray-images">' +
+              imgSlots.map(s =>
+                '<div class="raid-tray-img-box" data-src="'+s.url+'" data-alt="'+(s.label || t.name).replace(/"/g, '&quot;')+'">' +
+                  '<img src="'+s.url+'" alt="'+(s.label || t.name).replace(/"/g, '&quot;')+'">' +
+                '</div>'
+              ).join('') +
             '</div>'
-          ).join('') +
-        '</div>';
+          : '';
         const detail = (d
           ? '<div class="rt-row"><b>Location:</b> '+d.location+'</div>' +
             '<div class="rt-row"><b>Items:</b> '+d.items.join(';<br>')+'</div>' +
@@ -137,27 +159,11 @@ if(raidTrayCompact){
 }
 
 raidTrayPanel.addEventListener('click', (e) => {
-  const removeImgBtn = e.target.closest('.rt-img-remove');
-  if(removeImgBtn){
-    e.stopPropagation();
-    const url = removeImgBtn.getAttribute('data-url');
-    const slot = parseInt(removeImgBtn.getAttribute('data-slot'), 10);
-    if(raidTrayImages[url]) raidTrayImages[url][slot] = null;
-    renderTray();
-    return;
-  }
   const imgBox = e.target.closest('.raid-tray-img-box');
   if(imgBox){
-    const url = imgBox.getAttribute('data-url');
-    const slot = parseInt(imgBox.getAttribute('data-slot'), 10);
-    const existing = (raidTrayImages[url] || [])[slot];
-    if(existing){
-      raidImgZoomImg.src = existing;
-      raidImgZoomOverlay.classList.add('open');
-    }else{
-      pendingImgUpload = { url, slot };
-      raidImgFileInput.click();
-    }
+    raidImgZoomImg.src = imgBox.getAttribute('data-src');
+    raidImgZoomImg.alt = imgBox.getAttribute('data-alt') || 'Raid screenshot';
+    raidImgZoomOverlay.classList.add('open');
     return;
   }
   const removeBtn = e.target.closest('.raid-tray-remove');
@@ -316,7 +322,7 @@ if(topbarRightEl){
   });
 }
 
-// ---- Current Raid image boxes: zoom overlay + upload handling ----
+// ---- Current Raid image boxes: zoom overlay for viewing each task's real uploaded images ----
 const raidImgZoomOverlay = document.createElement('div');
 raidImgZoomOverlay.className = 'zoom-overlay';
 raidImgZoomOverlay.innerHTML = '<img id="raidImgZoomImg" alt="Zoomed raid screenshot">';
@@ -325,28 +331,6 @@ const raidImgZoomImg = document.getElementById('raidImgZoomImg');
 raidImgZoomOverlay.addEventListener('click', () => {
   raidImgZoomOverlay.classList.remove('open');
   raidImgZoomImg.src = '';
-});
-
-const raidImgFileInput = document.createElement('input');
-raidImgFileInput.type = 'file';
-raidImgFileInput.accept = 'image/*';
-raidImgFileInput.style.display = 'none';
-document.body.appendChild(raidImgFileInput);
-let pendingImgUpload = null;
-
-raidImgFileInput.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if(!file || !pendingImgUpload) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    const { url, slot } = pendingImgUpload;
-    if(!raidTrayImages[url]) raidTrayImages[url] = [null, null];
-    raidTrayImages[url][slot] = ev.target.result;
-    pendingImgUpload = null;
-    renderTray();
-  };
-  reader.readAsDataURL(file);
-  raidImgFileInput.value = '';
 });
 
 // ---- Keyboard shortcuts help overlay ----

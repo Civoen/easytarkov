@@ -15,7 +15,6 @@ const TASKS = [
   { name: 'Collector', trader: 'Fence', level: 45, url: 'collector.html' },
   { name: 'Postman Pat - Part 1', trader: 'Prapor', level: 10, url: 'postman_pat_part_1.html' },
   { name: 'Background Check', trader: 'Prapor', level: 2, url: 'background_check.html' },
-  { name: 'Shootout Picnic', trader: 'Prapor', level: 3, url: 'shootout_picnic.html' },
   { name: 'BP Depot', trader: 'Prapor', level: 5, url: 'bp_depot.html' }
 ];
 
@@ -129,12 +128,6 @@ const TASK_DETAILS = {
     items: [
       'Bronze pocket watch on a chain \u2014 found in raid, quest item;',
       'Machinery key \u2014 handover, opens the fuel tanker'
-    ]
-  },
-  'shootout_picnic.html': {
-    location: 'Woods',
-    items: [
-      '15 Scav eliminations \u2014 no restrictions'
     ]
   },
   'bp_depot.html': {
