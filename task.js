@@ -1,15 +1,136 @@
 const zoomOverlay = document.getElementById('zoomOverlay');
 const zoomImg = document.getElementById('zoomImg');
+zoomImg.crossOrigin = 'anonymous'; // needed so the canvas can read/export the image without tainting
+
+// ---- Annotation canvas, drawn on top of the zoomed image ----
+const zoomCanvas = document.createElement('canvas');
+zoomCanvas.className = 'zoom-canvas';
+zoomOverlay.appendChild(zoomCanvas);
+
+const zoomToolbar = document.createElement('div');
+zoomToolbar.className = 'zoom-toolbar';
+zoomToolbar.innerHTML =
+  '<button class="zoom-tool active" data-tool="marker" type="button">&#9998; Marker</button>' +
+  '<button class="zoom-tool" data-tool="eraser" type="button">Eraser</button>' +
+  '<button class="zoom-tool" data-action="clear" type="button">Clear</button>' +
+  '<button class="zoom-tool zoom-tool-copy" data-action="copy" type="button">Copy Image</button>';
+zoomOverlay.appendChild(zoomToolbar);
+
+let zoomCtx = null;
+let zoomDrawing = false;
+let zoomTool = 'marker';
+
+function resizeZoomCanvas(){
+  const rect = zoomImg.getBoundingClientRect();
+  if(!rect.width || !rect.height) return;
+  zoomCanvas.style.width = rect.width + 'px';
+  zoomCanvas.style.height = rect.height + 'px';
+  zoomCanvas.style.left = rect.left + 'px';
+  zoomCanvas.style.top = rect.top + 'px';
+  zoomCanvas.width = rect.width;
+  zoomCanvas.height = rect.height;
+  zoomCtx = zoomCanvas.getContext('2d');
+  zoomCtx.lineCap = 'round';
+  zoomCtx.lineJoin = 'round';
+}
+
+zoomImg.addEventListener('load', resizeZoomCanvas);
+window.addEventListener('resize', () => { if(zoomOverlay.classList.contains('open')) resizeZoomCanvas(); });
+
+function zoomPos(e){
+  const rect = zoomCanvas.getBoundingClientRect();
+  const t = e.touches && e.touches[0];
+  return { x: (t ? t.clientX : e.clientX) - rect.left, y: (t ? t.clientY : e.clientY) - rect.top };
+}
+
+function zoomStartDraw(e){
+  e.preventDefault();
+  e.stopPropagation();
+  if(!zoomCtx) return;
+  zoomDrawing = true;
+  const p = zoomPos(e);
+  zoomCtx.beginPath();
+  zoomCtx.moveTo(p.x, p.y);
+}
+function zoomDraw(e){
+  if(!zoomDrawing || !zoomCtx) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const p = zoomPos(e);
+  if(zoomTool === 'marker'){
+    zoomCtx.globalCompositeOperation = 'source-over';
+    zoomCtx.strokeStyle = '#ff3b3b';
+    zoomCtx.lineWidth = 4;
+  }else{
+    zoomCtx.globalCompositeOperation = 'destination-out';
+    zoomCtx.lineWidth = 26;
+  }
+  zoomCtx.lineTo(p.x, p.y);
+  zoomCtx.stroke();
+}
+function zoomStopDraw(e){
+  if(e) e.stopPropagation();
+  zoomDrawing = false;
+}
+
+zoomCanvas.addEventListener('mousedown', zoomStartDraw);
+zoomCanvas.addEventListener('mousemove', zoomDraw);
+zoomCanvas.addEventListener('mouseup', zoomStopDraw);
+zoomCanvas.addEventListener('mouseleave', zoomStopDraw);
+zoomCanvas.addEventListener('click', (e) => e.stopPropagation());
+zoomCanvas.addEventListener('touchstart', zoomStartDraw, { passive: false });
+zoomCanvas.addEventListener('touchmove', zoomDraw, { passive: false });
+zoomCanvas.addEventListener('touchend', zoomStopDraw);
+
+zoomToolbar.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const toolBtn = e.target.closest('.zoom-tool[data-tool]');
+  if(toolBtn){
+    zoomTool = toolBtn.getAttribute('data-tool');
+    zoomToolbar.querySelectorAll('.zoom-tool[data-tool]').forEach(b => b.classList.remove('active'));
+    toolBtn.classList.add('active');
+    return;
+  }
+  const actionBtn = e.target.closest('.zoom-tool[data-action]');
+  if(!actionBtn) return;
+  const action = actionBtn.getAttribute('data-action');
+  if(action === 'clear'){
+    if(zoomCtx) zoomCtx.clearRect(0, 0, zoomCanvas.width, zoomCanvas.height);
+  }else if(action === 'copy'){
+    copyAnnotatedZoomImage(actionBtn);
+  }
+});
+
+async function copyAnnotatedZoomImage(btn){
+  const original = btn.textContent;
+  try{
+    const composite = document.createElement('canvas');
+    composite.width = zoomImg.naturalWidth || zoomCanvas.width;
+    composite.height = zoomImg.naturalHeight || zoomCanvas.height;
+    const cctx = composite.getContext('2d');
+    cctx.drawImage(zoomImg, 0, 0, composite.width, composite.height);
+    cctx.drawImage(zoomCanvas, 0, 0, composite.width, composite.height);
+    const blob = await new Promise(resolve => composite.toBlob(resolve, 'image/png'));
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+    btn.textContent = 'Copied!';
+  }catch(err){
+    btn.textContent = 'Could not copy';
+  }
+  setTimeout(() => { btn.textContent = original; }, 1600);
+}
 
 function openZoom(dataUrl, altText){
   zoomImg.src = dataUrl;
   zoomImg.alt = altText || 'Zoomed screenshot';
   zoomOverlay.classList.add('open');
+  zoomTool = 'marker';
+  zoomToolbar.querySelectorAll('.zoom-tool[data-tool]').forEach(b => b.classList.toggle('active', b.getAttribute('data-tool') === 'marker'));
 }
 
 zoomOverlay.addEventListener('click', () => {
   zoomOverlay.classList.remove('open');
   zoomImg.src = '';
+  if(zoomCtx) zoomCtx.clearRect(0, 0, zoomCanvas.width, zoomCanvas.height);
 });
 
 const grid = document.getElementById('slotGrid');

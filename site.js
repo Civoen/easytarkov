@@ -16,6 +16,51 @@ function saveTray(list){
 
 let raidTray = loadTray();
 
+// ---- Custom items (not tied to any task page) ----
+const CUSTOM_ITEMS_KEY = 'easytarkov-custom-items';
+function loadCustomItems(){
+  try{
+    const raw = localStorage.getItem(CUSTOM_ITEMS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){
+    return {};
+  }
+}
+function saveCustomItems(obj){
+  try{ localStorage.setItem(CUSTOM_ITEMS_KEY, JSON.stringify(obj)); }catch(e){}
+}
+let customItems = loadCustomItems();
+
+// ---- Starred (pinned-to-top) items within Current Raid ----
+const STARRED_KEY = 'easytarkov-raidtray-starred';
+function loadStarred(){
+  try{
+    const raw = localStorage.getItem(STARRED_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){
+    return [];
+  }
+}
+function saveStarred(list){
+  try{ localStorage.setItem(STARRED_KEY, JSON.stringify(list)); }catch(e){}
+}
+let starredItems = loadStarred();
+
+// ---- Team count: how many squad members are doing each pinned item (0-5) ----
+const TEAM_COUNT_KEY = 'easytarkov-raidtray-teamcount';
+function loadTeamCounts(){
+  try{
+    const raw = localStorage.getItem(TEAM_COUNT_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){
+    return {};
+  }
+}
+function saveTeamCounts(obj){
+  try{ localStorage.setItem(TEAM_COUNT_KEY, JSON.stringify(obj)); }catch(e){}
+}
+let teamCounts = loadTeamCounts();
+
 const raidTrayEl = document.getElementById('raidTray');
 const raidTrayToggle = document.getElementById('raidTrayToggle');
 const raidTrayInfil = document.getElementById('raidTrayInfil');
@@ -33,6 +78,10 @@ const raidTrayPanel = document.getElementById('raidTrayPanel');
 const raidTrayCount = document.getElementById('raidTrayCount');
 
 function taskLookup(url){
+  if(url.indexOf('custom:') === 0){
+    const item = customItems[url];
+    return { name: item ? item.name : 'Custom item', trader: 'Custom', level: null, custom: true };
+  }
   return TASKS.find(t => t.url === url) || { name: url, trader: '', level: '' };
 }
 
@@ -78,10 +127,21 @@ function renderTray(){
 
   raidTrayCount.textContent = raidTray.length;
 
+  // Starred items always float to the top; stable sort keeps relative order within each group.
+  const displayOrder = raidTray.slice().sort((a, b) => {
+    const aStar = starredItems.indexOf(a) !== -1 ? 1 : 0;
+    const bStar = starredItems.indexOf(b) !== -1 ? 1 : 0;
+    return bStar - aStar;
+  });
+
   if(raidTrayEl.classList.contains('merged') && raidTray.length){
-    const rows = raidTray.map(url => {
+    const rows = displayOrder.map(url => {
       const t = taskLookup(url);
       const d = TASK_DETAILS[url];
+      if(t.custom){
+        const item = customItems[url];
+        return '<div class="rt-merge-row"><span class="rt-merge-item">'+t.name+(item && item.note ? ' &mdash; '+item.note : '')+'</span><span class="rt-merge-task">Custom</span></div>';
+      }
       if(!d) return '';
       return d.items.map(item =>
         '<div class="rt-merge-row"><span class="rt-merge-item">'+item.replace(/;$/, '')+'</span><span class="rt-merge-task">'+t.name+'</span></div>'
@@ -94,11 +154,12 @@ function renderTray(){
   }
 
   raidTrayPanel.innerHTML = raidTray.length
-    ? raidTray.map((url, i) => {
+    ? displayOrder.map((url, i) => {
         const t = taskLookup(url);
         const d = TASK_DETAILS[url];
+        const isStarred = starredItems.indexOf(url) !== -1;
         const cached = raidImageCache[url];
-        if(!cached) fetchRaidImages(url);
+        if(!t.custom && !cached) fetchRaidImages(url);
         const imgSlots = (cached && cached.status === 'loaded') ? cached.slots : [];
         const imageBoxes = imgSlots.length
           ? '<div class="raid-tray-images">' +
@@ -109,24 +170,36 @@ function renderTray(){
               ).join('') +
             '</div>'
           : '';
-        const detail = (d
-          ? '<div class="rt-row"><b>Location:</b> '+d.location+'</div>' +
-            '<div class="rt-row"><b>Items:</b> '+d.items.join(';<br>')+'</div>' +
-            '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>'
-          : '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>') + imageBoxes;
-        const isFirst = i === 0;
-        const isLast = i === raidTray.length - 1;
-        return '<div class="raid-tray-item'+(autoExpand ? ' expanded' : '')+'" data-url="'+url+'" draggable="true">' +
+        let detail;
+        if(t.custom){
+          const item = customItems[url];
+          detail = '<div class="rt-row">'+(item && item.note ? item.note : '<em>No note added.</em>')+'</div>' + imageBoxes;
+        }else{
+          detail = (d
+            ? '<div class="rt-row"><b>Location:</b> '+d.location+'</div>' +
+              '<div class="rt-row"><b>Items:</b> '+d.items.join(';<br>')+'</div>' +
+              '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>'
+            : '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>') + imageBoxes;
+        }
+        const count = teamCounts[url] || 0;
+        const dots = '<span class="raid-tray-team" data-url="'+url+'" title="How many of your squad are doing this">' +
+          [1,2,3,4,5].map(n => '<button class="rt-dot'+(n <= count ? ' filled' : '')+'" data-url="'+url+'" data-n="'+n+'" type="button"></button>').join('') +
+        '</span>';
+        return '<div class="raid-tray-item'+(autoExpand ? ' expanded' : '')+(isStarred ? ' starred' : '')+'" data-url="'+url+'" draggable="true">' +
           '<div class="raid-tray-item-head">' +
-            '<span><span class="raid-tray-item-name">'+t.name+'</span><br><span class="raid-tray-item-sub">'+t.trader+(t.level ? ' &middot; Level '+t.level : '')+'</span></span>' +
+            '<span class="raid-tray-item-title">' +
+              '<button class="raid-tray-star'+(isStarred ? ' active' : '')+'" data-url="'+url+'" type="button" title="Pin to top">&#9733;</button>' +
+              '<span><span class="raid-tray-item-name">'+t.name+'</span><br><span class="raid-tray-item-sub">'+t.trader+(d && d.location ? ' &middot; '+d.location+(d.subLocation ? ' ('+d.subLocation+')' : '') : '')+'</span></span>' +
+            '</span>' +
             '<span class="raid-tray-item-actions">' +
+              dots +
               '<button class="raid-tray-remove" data-url="'+url+'" type="button">Remove</button>' +
             '</span>' +
           '</div>' +
           '<div class="raid-tray-detail">'+detail+'</div>' +
         '</div>';
       }).join('')
-    : '<div class="raid-tray-empty">No tasks pinned yet. Pin tasks you\'re running together this raid.</div>';
+    : '<div class="raid-tray-empty">Nothing here yet. Use "+ Add Item" above to add something for this raid.</div>';
 }
 
 raidTrayToggle.addEventListener('click', () => raidTrayEl.classList.toggle('open'));
@@ -201,9 +274,62 @@ if(raidTrayCompact){
     saveMerge(active);
     renderTray();
   });
+
+  const raidAddBtn = document.createElement('button');
+  raidAddBtn.className = 'raid-tray-compact';
+  raidAddBtn.type = 'button';
+  raidAddBtn.textContent = '+ Add Item';
+  raidMergeBtn.after(raidAddBtn);
+
+  raidAddBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if(document.getElementById('rtAddForm')) return;
+    raidTrayEl.classList.add('open');
+    const form = document.createElement('div');
+    form.id = 'rtAddForm';
+    form.className = 'rt-add-form';
+    form.innerHTML =
+      '<input type="text" placeholder="Item name" maxlength="80" id="rtAddName">' +
+      '<textarea placeholder="Note (optional)" maxlength="300" id="rtAddNote"></textarea>' +
+      '<div class="rt-add-actions">' +
+        '<button class="trader-btn" type="button" data-action="submit">Add</button>' +
+        '<button class="trader-btn" type="button" data-action="cancel">Cancel</button>' +
+      '</div>';
+    raidTrayPanel.before(form);
+    document.getElementById('rtAddName').focus();
+
+    form.querySelector('[data-action="cancel"]').addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      form.remove();
+    });
+
+    form.querySelector('[data-action="submit"]').addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      const name = document.getElementById('rtAddName').value.trim();
+      if(!name) return;
+      const note = document.getElementById('rtAddNote').value.trim();
+      const id = 'custom:' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+      customItems[id] = { name, note };
+      saveCustomItems(customItems);
+      raidTray.push(id);
+      saveTray(raidTray);
+      form.remove();
+      renderTray();
+    });
+  });
 }
 
 raidTrayPanel.addEventListener('click', (e) => {
+  const dotBtn = e.target.closest('.rt-dot');
+  if(dotBtn){
+    const url = dotBtn.getAttribute('data-url');
+    const n = parseInt(dotBtn.getAttribute('data-n'), 10);
+    const current = teamCounts[url] || 0;
+    teamCounts[url] = (current === n) ? 0 : n;
+    saveTeamCounts(teamCounts);
+    renderTray();
+    return;
+  }
   const imgBox = e.target.closest('.raid-tray-img-box');
   if(imgBox){
     raidImgZoomImg.src = imgBox.getAttribute('data-src');
@@ -211,11 +337,28 @@ raidTrayPanel.addEventListener('click', (e) => {
     raidImgZoomOverlay.classList.add('open');
     return;
   }
+  const starBtn = e.target.closest('.raid-tray-star');
+  if(starBtn){
+    const url = starBtn.getAttribute('data-url');
+    const idx = starredItems.indexOf(url);
+    if(idx === -1) starredItems.push(url); else starredItems.splice(idx, 1);
+    saveStarred(starredItems);
+    renderTray();
+    return;
+  }
   const removeBtn = e.target.closest('.raid-tray-remove');
   if(removeBtn){
     const url = removeBtn.getAttribute('data-url');
     raidTray = raidTray.filter(u => u !== url);
     saveTray(raidTray);
+    starredItems = starredItems.filter(u => u !== url);
+    saveStarred(starredItems);
+    delete teamCounts[url];
+    saveTeamCounts(teamCounts);
+    if(url.indexOf('custom:') === 0){
+      delete customItems[url];
+      saveCustomItems(customItems);
+    }
     renderTray();
     if(typeof updatePinBtn === 'function') updatePinBtn();
     if(typeof updatePinButtons === 'function') updatePinButtons();
@@ -262,16 +405,20 @@ raidTrayPanel.addEventListener('drop', (e) => {
   const targetUrl = item.getAttribute('data-url');
   if(targetUrl === draggedRaidUrl) return;
 
-  const fromIdx = raidTray.indexOf(draggedRaidUrl);
-  let toIdx = raidTray.indexOf(targetUrl);
+  // Read the current on-screen order directly, since it may reflect star-sorting
+  // rather than the raw stored order.
+  const currentOrder = Array.from(raidTrayPanel.querySelectorAll('.raid-tray-item')).map(el => el.getAttribute('data-url'));
+  const fromIdx = currentOrder.indexOf(draggedRaidUrl);
+  let toIdx = currentOrder.indexOf(targetUrl);
   if(fromIdx === -1 || toIdx === -1) return;
 
-  raidTray.splice(fromIdx, 1);
-  toIdx = raidTray.indexOf(targetUrl);
+  currentOrder.splice(fromIdx, 1);
+  toIdx = currentOrder.indexOf(targetUrl);
   const rect = item.getBoundingClientRect();
   const insertAfter = (e.clientY - rect.top) > rect.height / 2;
-  raidTray.splice(insertAfter ? toIdx + 1 : toIdx, 0, draggedRaidUrl);
+  currentOrder.splice(insertAfter ? toIdx + 1 : toIdx, 0, draggedRaidUrl);
 
+  raidTray = currentOrder;
   saveTray(raidTray);
   renderTray();
 });

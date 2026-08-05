@@ -262,6 +262,11 @@ footer{
   padding:10px 16px;
   cursor:pointer;
 }
+.raid-tray-item-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
 .raid-tray-item-name{
   font-family:'Oswald',sans-serif;
   font-weight:600;
@@ -287,6 +292,53 @@ footer{
   cursor:pointer;
 }
 .raid-tray-remove:hover{background:var(--danger);color:#fff;}
+.raid-tray-star{
+  background:none;
+  border:1px solid var(--olive-light);
+  color:var(--paper-dim);
+  font-size:11px;
+  line-height:1;
+  padding:3px 6px;
+  cursor:pointer;
+}
+.raid-tray-star:hover{border-color:var(--amber);color:var(--amber);}
+.raid-tray-star.active{border-color:var(--amber);color:var(--amber);background:rgba(212,160,58,.12);}
+.raid-tray-item.starred{border-left:3px solid var(--amber);}
+.rt-add-form{
+  margin:0 16px 12px;
+  padding:12px;
+  background:var(--panel-2);
+  border:1px solid var(--line);
+}
+.rt-add-form input, .rt-add-form textarea{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--line);
+  color:var(--paper);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  padding:9px 10px;
+  outline:none;
+  margin-bottom:8px;
+}
+.rt-add-form textarea{min-height:60px;resize:vertical;}
+.rt-add-form input:focus, .rt-add-form textarea:focus{border-color:var(--rust);}
+.rt-add-actions{display:flex;gap:8px;}
+.raid-tray-team{
+  display:inline-flex;
+  gap:5px;
+  align-items:center;
+}
+.rt-dot{
+  width:13px;
+  height:13px;
+  padding:0;
+  border:1px solid var(--olive-light);
+  background:var(--bg);
+  cursor:pointer;
+}
+.rt-dot:hover{border-color:var(--amber);}
+.rt-dot.filled{background:var(--amber);border-color:var(--amber);}
 .raid-tray-detail{
   display:none;
   padding:0 16px 14px;
@@ -354,14 +406,6 @@ footer{
   border-bottom:1px solid var(--line);
 }
 .mobile-menu-panel a:hover{background:var(--olive);color:var(--paper);}
-.mobile-menu-divider{
-  padding:8px 14px 5px;
-  font-size:10px;
-  text-transform:uppercase;
-  letter-spacing:.06em;
-  color:var(--amber);
-  border-top:1px solid var(--line);
-}
 .mobile-search-btn{
   display:none;
   align-items:center;
@@ -390,7 +434,6 @@ footer{
   .trader-btn{font-size:13px;padding:9px 13px;}
   .search-wrap input{font-size:16px;padding:10px 12px;}
   .search-results div{font-size:13px;padding:9px 12px;}
-  .trader-menu .row{font-size:13px;padding:9px 12px;}
   .tab{font-size:13px;padding:7px 13px;}
   h1{font-size:26px;}
   .section-label{font-size:14px;}

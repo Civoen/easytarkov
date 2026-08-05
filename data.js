@@ -1,142 +1,9 @@
 const TASKS = [
-  { name: 'Debut', trader: 'Prapor', level: 1, url: 'debut.html' },
-  { name: 'Delivery From the Past', trader: 'Prapor', level: 5, url: 'delivery_from_the_past.html' },
-  { name: 'Farming - Part 1', trader: 'Mechanic', level: 12, url: 'farming_part_1.html', chain: 'farming', chainOrder: 1 },
-  { name: 'Farming - Part 2', trader: 'Mechanic', level: 12, url: 'farming_part_2.html', chain: 'farming', chainOrder: 2 },
-  { name: 'Farming - Part 3', trader: 'Mechanic', level: 14, url: 'farming_part_3.html', chain: 'farming', chainOrder: 3 },
-  { name: 'Farming - Part 4', trader: 'Mechanic', level: 14, url: 'farming_part_4.html', chain: 'farming', chainOrder: 4 },
-  { name: 'A Shooter Born in Heaven', trader: 'Mechanic', level: 14, url: 'a_shooter_born_in_heaven.html' },
-  { name: 'Return the Favor', trader: 'Lightkeeper', level: 33, url: 'return_the_favor.html' },
-  { name: 'First in Line', trader: 'Therapist', level: 1, url: 'first_in_line.html' },
-  { name: 'Chemical - Part 1', trader: 'Skier', level: 10, url: 'chemical_part_1.html' },
-  { name: 'Fishing Gear', trader: 'Peacekeeper', level: 10, url: 'fishing_gear.html' },
-  { name: 'Database - Part 1', trader: 'Ragman', level: 17, url: 'database_part_1.html' },
-  { name: 'The Tarkov Shooter - Part 1', trader: 'Jaeger', level: 2, url: 'tarkov_shooter_part_1.html' },
-  { name: 'Collector', trader: 'Fence', level: 45, url: 'collector.html' },
-  { name: 'Postman Pat - Part 1', trader: 'Prapor', level: 10, url: 'postman_pat_part_1.html' },
-  { name: 'Background Check', trader: 'Prapor', level: 2, url: 'background_check.html' },
-  { name: 'BP Depot', trader: 'Prapor', level: 5, url: 'bp_depot.html' }
+  // Task pages removed for now - will be reintroduced for tasks required for Collector.
 ];
 
 const TASK_DETAILS = {
-  'debut.html': {
-    location: 'Any location',
-    items: [
-      'MP-133 12ga shotgun \u00d7 2 \u2014 handover only, not found in raid;',
-      '5 Scav eliminations, any map'
-    ]
-  },
-  'delivery_from_the_past.html': {
-    location: 'Customs, Factory',
-    items: [
-      "Tarcone Director's office key \u2014 needed to enter, not consumed",
-      'Secure folder / documents case \u2014 quest item, lost on death'
-    ]
-  },
-  'farming_part_1.html': {
-    location: 'Factory',
-    items: [
-      'Toolset \u00d7 2 \u2014 consumed on use, not found in raid'
-    ]
-  },
-  'farming_part_2.html': {
-    location: 'Any location',
-    items: [
-      'Power cord \u00d7 2 \u2014 found in raid;',
-      'T-Shaped Plug \u00d7 4 \u2014 found in raid;',
-      'Printed circuit board \u00d7 2 \u2014 found in raid'
-    ]
-  },
-  'farming_part_3.html': {
-    location: 'Customs',
-    items: [
-      'Customs office key \u2014 needed to enter, not consumed;',
-      'Package with graphics cards \u2014 found in raid, quest item'
-    ]
-  },
-  'farming_part_4.html': {
-    location: 'Any location',
-    items: [
-      'Graphics card \u00d7 3 \u2014 found in raid;',
-      'CPU fan \u00d7 15 \u2014 found in raid'
-    ]
-  },
-  'a_shooter_born_in_heaven.html': {
-    location: 'Woods, Reserve, Shoreline, Customs, Lighthouse, Streets of Tarkov, Interchange, Ground Zero',
-    items: [
-      'Bolt-action rifle \u2014 not consumed;',
-      '5 PMC headshots required on each of the 8 maps'
-    ]
-  },
-  'return_the_favor.html': {
-    location: 'Woods',
-    items: [
-      'TerraGroup "Blue Folders" materials \u00d7 2 \u2014 found in raid;',
-      '15 PMC eliminations required first'
-    ]
-  },
-  'first_in_line.html': {
-    location: 'Ground Zero',
-    items: [
-      'Any medical items \u00d7 3 \u2014 found in raid;',
-      'Locate the Emercom checkpoint'
-    ]
-  },
-  'chemical_part_1.html': {
-    location: 'Customs',
-    items: [
-      'Dorm room 220 key \u2014 handover, not consumed;',
-      'Secure folder \u2014 found in raid, quest item'
-    ]
-  },
-  'fishing_gear.html': {
-    location: 'Shoreline',
-    items: [
-      'SV-98 sniper rifle \u2014 sent via mail, stash in boat;',
-      'Leatherman Multitool \u2014 sent via mail, stash in boat'
-    ]
-  },
-  'database_part_1.html': {
-    location: 'Interchange',
-    items: [
-      'Goshan cargo manifests \u2014 found in raid, quest item'
-    ]
-  },
-  'tarkov_shooter_part_1.html': {
-    location: 'Any location',
-    items: [
-      'Bolt-action rifle, iron sights \u2014 not consumed;',
-      '5 Scav eliminations from 40m+'
-    ]
-  },
-  'collector.html': {
-    location: 'Any location',
-    items: [
-      '39 unique streamer items \u2014 all found in raid;',
-      'See the Kappa page for the full checklist'
-    ]
-  },
-  'postman_pat_part_1.html': {
-    location: 'Factory',
-    items: [
-      'Sealed letter \u2014 found in raid, quest item;',
-      'Located in a bunker marked "1986" on the wall'
-    ]
-  },
-  'background_check.html': {
-    location: 'Customs',
-    items: [
-      'Bronze pocket watch on a chain \u2014 found in raid, quest item;',
-      'Machinery key \u2014 handover, opens the fuel tanker'
-    ]
-  },
-  'bp_depot.html': {
-    location: 'Customs',
-    items: [
-      'MS2000 Marker \u00d7 4 \u2014 sent via mail;',
-      'Mark all 4 fuel tanks and extract Survived, not Run Through'
-    ]
-  }
+  // Task pages removed for now - will be reintroduced for tasks required for Collector.
 };
 
 const TRADERS = [
@@ -147,8 +14,7 @@ const TRADERS = [
   { name: 'Mechanic', url: 'mechanic.html' },
   { name: 'Ragman', url: 'ragman.html' },
   { name: 'Jaeger', url: 'jaeger.html' },
-  { name: 'Fence', url: 'fence.html' },
-  { name: 'Lightkeeper', url: 'lightkeeper.html' }
+  { name: 'Fence', url: 'fence.html' }
 ];
 
 const KAPPA_ITEMS = [
