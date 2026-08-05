@@ -143,6 +143,13 @@ function renderTray(){
   applyInfilSizing();
   const autoExpand = raidTrayEl.classList.contains('infil') && !raidTrayEl.classList.contains('infil-sm');
 
+  // FLIP animation setup: record each item's current on-screen position before
+  // the re-render, so we can smoothly animate it from old to new position after.
+  const firstRects = {};
+  raidTrayPanel.querySelectorAll('.raid-tray-item').forEach(el => {
+    firstRects[el.getAttribute('data-url')] = el.getBoundingClientRect();
+  });
+
   raidTrayCount.textContent = raidTray.length;
 
   // Starred items always float to the top; stable sort keeps relative order within each group.
@@ -217,6 +224,24 @@ function renderTray(){
         '</div>';
       }).join('')
     : '<div class="raid-tray-empty">Nothing here yet. Type a name above and hit "+ Task" to add something for this raid.</div>';
+
+  // FLIP animation: for each item that existed before, jump it back to its old
+  // position with no transition, then release it into a smooth transition to
+  // its real (new) position - reads as a natural slide rather than an instant jump.
+  raidTrayPanel.querySelectorAll('.raid-tray-item').forEach(el => {
+    const url = el.getAttribute('data-url');
+    const first = firstRects[url];
+    if(!first) return;
+    const last = el.getBoundingClientRect();
+    const deltaY = first.top - last.top;
+    if(Math.abs(deltaY) < 1) return;
+    el.style.transition = 'none';
+    el.style.transform = 'translateY('+deltaY+'px)';
+    requestAnimationFrame(() => {
+      el.style.transition = 'transform 220ms ease';
+      el.style.transform = '';
+    });
+  });
 }
 
 raidTrayToggle.addEventListener('click', () => raidTrayEl.classList.toggle('open'));
@@ -292,6 +317,9 @@ if(raidTrayCompact){
     renderTray();
   });
 
+  const raidAddWrap = document.createElement('div');
+  raidAddWrap.className = 'rt-quick-add-wrap';
+
   const raidAddInput = document.createElement('input');
   raidAddInput.type = 'text';
   raidAddInput.id = 'rtQuickAdd';
@@ -300,11 +328,13 @@ if(raidTrayCompact){
   raidAddInput.maxLength = 80;
 
   const raidAddBtn = document.createElement('button');
-  raidAddBtn.className = 'raid-tray-compact';
+  raidAddBtn.className = 'rt-quick-add-btn';
   raidAddBtn.type = 'button';
   raidAddBtn.textContent = '+ Task';
 
-  raidMergeBtn.after(raidAddInput, raidAddBtn);
+  raidAddWrap.appendChild(raidAddInput);
+  raidAddWrap.appendChild(raidAddBtn);
+  raidMergeBtn.after(raidAddWrap);
 
   function findSimilarItem(name){
     const target = name.toLowerCase();

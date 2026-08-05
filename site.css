@@ -304,9 +304,16 @@ footer{
 .raid-tray-star:hover{border-color:var(--rust);color:var(--rust);}
 .raid-tray-star.active{border-color:var(--rust);color:var(--rust);background:rgba(193,80,46,.15);}
 .raid-tray-item.starred{border-left:3px solid var(--rust);}
-.rt-quick-add{
-  background:var(--panel-2);
+.rt-quick-add-wrap{
+  display:flex;
+  align-items:stretch;
   border:1px solid var(--line);
+  background:var(--panel-2);
+}
+.rt-quick-add-wrap:focus-within{border-color:var(--rust);}
+.rt-quick-add{
+  background:none;
+  border:none;
   color:var(--paper);
   font-family:'IBM Plex Mono',monospace;
   font-size:12px;
@@ -314,7 +321,18 @@ footer{
   width:140px;
   outline:none;
 }
-.rt-quick-add:focus{border-color:var(--rust);}
+.rt-quick-add-btn{
+  background:none;
+  border:none;
+  border-left:1px solid var(--line);
+  color:var(--amber);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  padding:7px 12px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.rt-quick-add-btn:hover{background:var(--olive);color:var(--paper);}
 .raid-tray-team{
   display:inline-flex;
   gap:5px;
