@@ -82,7 +82,10 @@ function taskLookup(url){
     const item = customItems[url];
     return { name: item ? item.name : 'Custom item', trader: 'Custom', level: null, custom: true };
   }
-  return TASKS.find(t => t.url === url) || { name: url, trader: '', level: '' };
+  const found = TASKS.find(t => t.url === url);
+  if(found) return found;
+  const readable = url.replace(/\.html$/, '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  return { name: readable, trader: '', level: '' };
 }
 
 function applyInfilSizing(){
@@ -121,6 +124,21 @@ function fetchRaidImages(url){
     });
 }
 
+// Repositions raidTray by star + dot-count priority. Called only when a star or
+// dot is toggled, so the new arrangement becomes the order - after that, dragging
+// is free to rearrange things again until priority is next touched.
+function resortByPriority(){
+  raidTray = raidTray.slice().sort((a, b) => {
+    const aStar = starredItems.indexOf(a) !== -1 ? 1 : 0;
+    const bStar = starredItems.indexOf(b) !== -1 ? 1 : 0;
+    if(aStar !== bStar) return bStar - aStar;
+    const aCount = teamCounts[a] || 0;
+    const bCount = teamCounts[b] || 0;
+    return bCount - aCount;
+  });
+  saveTray(raidTray);
+}
+
 function renderTray(){
   applyInfilSizing();
   const autoExpand = raidTrayEl.classList.contains('infil') && !raidTrayEl.classList.contains('infil-sm');
@@ -128,11 +146,10 @@ function renderTray(){
   raidTrayCount.textContent = raidTray.length;
 
   // Starred items always float to the top; stable sort keeps relative order within each group.
-  const displayOrder = raidTray.slice().sort((a, b) => {
-    const aStar = starredItems.indexOf(a) !== -1 ? 1 : 0;
-    const bStar = starredItems.indexOf(b) !== -1 ? 1 : 0;
-    return bStar - aStar;
-  });
+  // raidTray's stored order IS the display order - this lets manual drag reordering
+  // always stick. Star/dot-count only reposition an item at the moment they're
+  // changed (see resortByPriority), not continuously on every render.
+  const displayOrder = raidTray;
 
   if(raidTrayEl.classList.contains('merged') && raidTray.length){
     const rows = displayOrder.map(url => {
@@ -199,7 +216,7 @@ function renderTray(){
           '<div class="raid-tray-detail">'+detail+'</div>' +
         '</div>';
       }).join('')
-    : '<div class="raid-tray-empty">Nothing here yet. Use "+ Add Item" above to add something for this raid.</div>';
+    : '<div class="raid-tray-empty">Nothing here yet. Type a name above and hit "+ Task" to add something for this raid.</div>';
 }
 
 raidTrayToggle.addEventListener('click', () => raidTrayEl.classList.toggle('open'));
@@ -275,47 +292,58 @@ if(raidTrayCompact){
     renderTray();
   });
 
+  const raidAddInput = document.createElement('input');
+  raidAddInput.type = 'text';
+  raidAddInput.id = 'rtQuickAdd';
+  raidAddInput.className = 'rt-quick-add';
+  raidAddInput.placeholder = 'Add item...';
+  raidAddInput.maxLength = 80;
+
   const raidAddBtn = document.createElement('button');
   raidAddBtn.className = 'raid-tray-compact';
   raidAddBtn.type = 'button';
-  raidAddBtn.textContent = '+ Add Item';
-  raidMergeBtn.after(raidAddBtn);
+  raidAddBtn.textContent = '+ Task';
+
+  raidMergeBtn.after(raidAddInput, raidAddBtn);
+
+  function findSimilarItem(name){
+    const target = name.toLowerCase();
+    for(const url of raidTray){
+      const existingName = taskLookup(url).name;
+      const existing = existingName.toLowerCase();
+      if(existing === target || existing.indexOf(target) !== -1 || target.indexOf(existing) !== -1){
+        return existingName;
+      }
+    }
+    return null;
+  }
+
+  function submitQuickAdd(){
+    const name = raidAddInput.value.trim();
+    if(!name) return;
+    const similar = findSimilarItem(name);
+    if(similar && !confirm('This looks similar to "'+similar+'", already in your list. Add anyway?')){
+      return;
+    }
+    const id = 'custom:' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+    customItems[id] = { name, note: '' };
+    saveCustomItems(customItems);
+    raidTray.push(id);
+    saveTray(raidTray);
+    raidAddInput.value = '';
+    renderTray();
+  }
 
   raidAddBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    if(document.getElementById('rtAddForm')) return;
-    raidTrayEl.classList.add('open');
-    const form = document.createElement('div');
-    form.id = 'rtAddForm';
-    form.className = 'rt-add-form';
-    form.innerHTML =
-      '<input type="text" placeholder="Item name" maxlength="80" id="rtAddName">' +
-      '<textarea placeholder="Note (optional)" maxlength="300" id="rtAddNote"></textarea>' +
-      '<div class="rt-add-actions">' +
-        '<button class="trader-btn" type="button" data-action="submit">Add</button>' +
-        '<button class="trader-btn" type="button" data-action="cancel">Cancel</button>' +
-      '</div>';
-    raidTrayPanel.before(form);
-    document.getElementById('rtAddName').focus();
-
-    form.querySelector('[data-action="cancel"]').addEventListener('click', (ev) => {
-      ev.stopPropagation();
-      form.remove();
-    });
-
-    form.querySelector('[data-action="submit"]').addEventListener('click', (ev) => {
-      ev.stopPropagation();
-      const name = document.getElementById('rtAddName').value.trim();
-      if(!name) return;
-      const note = document.getElementById('rtAddNote').value.trim();
-      const id = 'custom:' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
-      customItems[id] = { name, note };
-      saveCustomItems(customItems);
-      raidTray.push(id);
-      saveTray(raidTray);
-      form.remove();
-      renderTray();
-    });
+    submitQuickAdd();
+  });
+  raidAddInput.addEventListener('click', (e) => e.stopPropagation());
+  raidAddInput.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      submitQuickAdd();
+    }
   });
 }
 
@@ -327,6 +355,7 @@ raidTrayPanel.addEventListener('click', (e) => {
     const current = teamCounts[url] || 0;
     teamCounts[url] = (current === n) ? 0 : n;
     saveTeamCounts(teamCounts);
+    resortByPriority();
     renderTray();
     return;
   }
@@ -343,6 +372,7 @@ raidTrayPanel.addEventListener('click', (e) => {
     const idx = starredItems.indexOf(url);
     if(idx === -1) starredItems.push(url); else starredItems.splice(idx, 1);
     saveStarred(starredItems);
+    resortByPriority();
     renderTray();
     return;
   }

@@ -301,29 +301,20 @@ footer{
   padding:3px 6px;
   cursor:pointer;
 }
-.raid-tray-star:hover{border-color:var(--amber);color:var(--amber);}
-.raid-tray-star.active{border-color:var(--amber);color:var(--amber);background:rgba(212,160,58,.12);}
-.raid-tray-item.starred{border-left:3px solid var(--amber);}
-.rt-add-form{
-  margin:0 16px 12px;
-  padding:12px;
+.raid-tray-star:hover{border-color:var(--rust);color:var(--rust);}
+.raid-tray-star.active{border-color:var(--rust);color:var(--rust);background:rgba(193,80,46,.15);}
+.raid-tray-item.starred{border-left:3px solid var(--rust);}
+.rt-quick-add{
   background:var(--panel-2);
-  border:1px solid var(--line);
-}
-.rt-add-form input, .rt-add-form textarea{
-  width:100%;
-  background:var(--bg);
   border:1px solid var(--line);
   color:var(--paper);
   font-family:'IBM Plex Mono',monospace;
-  font-size:12.5px;
-  padding:9px 10px;
+  font-size:12px;
+  padding:7px 10px;
+  width:140px;
   outline:none;
-  margin-bottom:8px;
 }
-.rt-add-form textarea{min-height:60px;resize:vertical;}
-.rt-add-form input:focus, .rt-add-form textarea:focus{border-color:var(--rust);}
-.rt-add-actions{display:flex;gap:8px;}
+.rt-quick-add:focus{border-color:var(--rust);}
 .raid-tray-team{
   display:inline-flex;
   gap:5px;
@@ -337,8 +328,8 @@ footer{
   background:var(--bg);
   cursor:pointer;
 }
-.rt-dot:hover{border-color:var(--amber);}
-.rt-dot.filled{background:var(--amber);border-color:var(--amber);}
+.rt-dot:hover{border-color:var(--rust);}
+.rt-dot.filled{background:var(--rust);border-color:var(--rust);}
 .raid-tray-detail{
   display:none;
   padding:0 16px 14px;
