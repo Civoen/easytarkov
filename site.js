@@ -95,8 +95,9 @@ async function fetchTarkovPrice(name){
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query, variables: { name } })
   });
-  if(!res.ok) throw new Error('Price lookup failed');
+  if(!res.ok) throw new Error('HTTP ' + res.status);
   const data = await res.json();
+  if(data.errors && data.errors.length) throw new Error(data.errors[0].message || 'API returned an error');
   return (data.data && data.data.itemsByName) ? data.data.itemsByName : [];
 }
 
@@ -367,7 +368,7 @@ if(raidTrayCompact){
   raidAddMic.className = 'rt-mic-btn';
   raidAddMic.type = 'button';
   raidAddMic.title = 'Add by voice (or press ' + loadVoiceKeybinds().add.toUpperCase() + ' anywhere)';
-  raidAddMic.innerHTML = '&#127908;';
+  raidAddMic.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
   raidAddMic.addEventListener('click', (e) => {
     e.stopPropagation();
     startVoiceCapture('add');
@@ -468,8 +469,8 @@ raidTrayPanel.addEventListener('click', (e) => {
         '<div class="rt-row"><b>Flea (avg 24h):</b> '+(found.avg24hPrice ? found.avg24hPrice.toLocaleString()+' \u20bd' : 'No recent data')+'</div>' +
         (best ? '<div class="rt-row"><b>Best trader sell:</b> '+best.source+' &mdash; '+best.price.toLocaleString()+' \u20bd</div>' : '') +
         '<div class="rt-row" style="font-size:10.5px;">PvP flea data via tarkov.dev &mdash; treat as a general guide.</div>';
-    }).catch(() => {
-      target.innerHTML = '<div class="rt-row">Could not reach the price service.</div>';
+    }).catch(err => {
+      target.innerHTML = '<div class="rt-row">Price service error: '+(err && err.message ? err.message : 'unknown')+'</div>';
     });
     return;
   }
@@ -667,11 +668,31 @@ function loadVoiceKeybinds(){
 
 const voicePopup = document.createElement('div');
 voicePopup.className = 'voice-popup';
-voicePopup.innerHTML = '<div class="voice-icon">&#127908;</div><div class="voice-status"></div>';
+voicePopup.innerHTML = '<div class="voice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div><div class="voice-status"></div>';
 document.body.appendChild(voicePopup);
 
 function speechSupported(){
   return ('SpeechRecognition' in window) || ('webkitSpeechRecognition' in window);
+}
+
+function describeSpeechError(code){
+  switch(code){
+    case 'not-allowed':
+    case 'permission-denied':
+      return 'Microphone access is blocked - check your browser/site permissions.';
+    case 'no-speech':
+      return 'No speech detected - try again and speak right after it starts listening.';
+    case 'audio-capture':
+      return 'No microphone found on this device.';
+    case 'network':
+      return 'Network error reaching the speech service.';
+    case 'service-not-allowed':
+      return 'Speech recognition is blocked in this context (may need HTTPS).';
+    case 'aborted':
+      return 'Cancelled.';
+    default:
+      return 'Voice input error (' + (code || 'unknown') + ') - try again.';
+  }
 }
 
 function startVoiceCapture(mode){
@@ -711,14 +732,14 @@ function startVoiceCapture(mode){
         const best = bestTraderSell(found);
         const price = found.avg24hPrice || (best ? best.price : 0);
         statusEl.textContent = found.name + ': ' + (price ? price.toLocaleString()+'\u20bd' : 'No recent data');
-      }).catch(() => { statusEl.textContent = 'Could not reach the price service.'; });
+      }).catch(err => { statusEl.textContent = 'Price service error: ' + (err && err.message ? err.message : 'unknown'); });
     }
     setTimeout(() => voicePopup.classList.remove('open'), 3200);
   };
-  recognition.onerror = () => {
+  recognition.onerror = (e) => {
     voicePopup.classList.remove('listening');
-    statusEl.textContent = 'Didn\'t catch that - try again.';
-    setTimeout(() => voicePopup.classList.remove('open'), 2200);
+    statusEl.textContent = describeSpeechError(e.error);
+    setTimeout(() => voicePopup.classList.remove('open'), 3200);
   };
   recognition.onspeechend = () => recognition.stop();
   recognition.start();

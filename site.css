@@ -353,10 +353,11 @@ footer{
   border:none;
   border-left:1px solid var(--line);
   color:var(--paper-dim);
-  font-size:14px;
   padding:7px 10px;
   cursor:pointer;
-  line-height:1;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
 }
 .rt-mic-btn:hover{color:var(--amber);}
 .rt-mic-btn.listening{color:var(--rust);animation:rt-mic-pulse 1s ease-in-out infinite;}
@@ -379,7 +380,7 @@ footer{
   max-width:90vw;
 }
 .voice-popup.open{display:flex;}
-.voice-popup .voice-icon{font-size:20px;}
+.voice-popup .voice-icon{display:flex;align-items:center;}
 .voice-popup.listening .voice-icon{animation:rt-mic-pulse 1s ease-in-out infinite;}
 .voice-popup .voice-status{font-size:12.5px;color:var(--paper);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .raid-tray-team{

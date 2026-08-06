@@ -1,6 +1,5 @@
 const zoomOverlay = document.getElementById('zoomOverlay');
 const zoomImg = document.getElementById('zoomImg');
-zoomImg.crossOrigin = 'anonymous'; // needed so the canvas can read/export the image without tainting
 
 // ---- Annotation canvas, drawn on top of the zoomed image ----
 const zoomCanvas = document.createElement('canvas');
@@ -104,19 +103,30 @@ zoomToolbar.addEventListener('click', (e) => {
 async function copyAnnotatedZoomImage(btn){
   const original = btn.textContent;
   try{
+    // Load a fresh, CORS-mode copy of the image just for this export - the
+    // visible zoomImg is never loaded with crossOrigin, so normal viewing,
+    // marking, and erasing always work regardless of whether R2 CORS is set up.
+    const corsImg = await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error('load-failed'));
+      img.src = zoomImg.src;
+    });
+
     const composite = document.createElement('canvas');
-    composite.width = zoomImg.naturalWidth || zoomCanvas.width;
-    composite.height = zoomImg.naturalHeight || zoomCanvas.height;
+    composite.width = corsImg.naturalWidth || zoomCanvas.width;
+    composite.height = corsImg.naturalHeight || zoomCanvas.height;
     const cctx = composite.getContext('2d');
-    cctx.drawImage(zoomImg, 0, 0, composite.width, composite.height);
+    cctx.drawImage(corsImg, 0, 0, composite.width, composite.height);
     cctx.drawImage(zoomCanvas, 0, 0, composite.width, composite.height);
     const blob = await new Promise(resolve => composite.toBlob(resolve, 'image/png'));
     await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
     btn.textContent = 'Copied!';
   }catch(err){
-    btn.textContent = 'Could not copy';
+    btn.textContent = 'Needs R2 CORS setup';
   }
-  setTimeout(() => { btn.textContent = original; }, 1600);
+  setTimeout(() => { btn.textContent = original; }, 2200);
 }
 
 function openZoom(dataUrl, altText){

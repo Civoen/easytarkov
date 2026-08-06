@@ -86,7 +86,7 @@
     <div class="price-disclaimer">Prices are pulled live from tarkov.dev's community API and reflect the PvP flea market &mdash; PvE runs a separate economy with different prices. Treat these as a general reference point, not an exact PvE value.</div>
     <div class="price-search-wrap">
       <input type="text" class="task-filter" id="priceSearchInput" placeholder="Search for an item..." autocomplete="off">
-      <button class="rt-mic-btn" id="priceMicBtn" type="button" title="Search by voice">&#127908;</button>
+      <button class="rt-mic-btn" id="priceMicBtn" type="button" title="Search by voice"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
     </div>
     <div class="price-results" id="priceResults"></div>
   </section>
@@ -122,8 +122,9 @@ async function runPriceSearch(name){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query, variables: { name } })
     });
-    if(!res.ok) throw new Error('Request failed');
+    if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
+    if(data.errors && data.errors.length) throw new Error(data.errors[0].message || 'API returned an error');
     const items = (data.data && data.data.itemsByName) || [];
     if(!items.length){
       priceResults.innerHTML = '<div class="price-status">No items found for that search.</div>';
@@ -148,7 +149,7 @@ async function runPriceSearch(name){
       '</div>';
     }).join('');
   }catch(err){
-    priceResults.innerHTML = '<div class="price-status">Could not reach the price service. Please try again.</div>';
+    priceResults.innerHTML = '<div class="price-status">Price service error: '+(err && err.message ? err.message : 'unknown')+'</div>';
   }
 }
 
@@ -175,7 +176,7 @@ priceMicBtn.addEventListener('click', () => {
     priceInput.value = transcript;
     runPriceSearch(transcript);
   };
-  recognition.onerror = () => { priceResults.innerHTML = '<div class="price-status">Didn\'t catch that - try again.</div>'; };
+  recognition.onerror = (e) => { priceResults.innerHTML = '<div class="price-status">' + describeSpeechError(e.error) + '</div>'; };
   recognition.onend = () => priceMicBtn.classList.remove('listening');
   recognition.start();
 });
