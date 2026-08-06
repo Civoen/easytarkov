@@ -231,8 +231,15 @@ table.items tr:last-child td{border-bottom:none;}
 }
 .zoom-tool:hover{border-color:var(--rust);color:var(--paper);}
 .zoom-tool.active{border-color:var(--amber);color:var(--amber);background:rgba(212,160,58,.12);}
-.zoom-tool-copy{border-color:var(--rust);color:var(--amber);}
-.zoom-tool-copy:hover{background:var(--rust);color:#fff;}
+.zoom-color{
+  width:32px;
+  height:32px;
+  padding:0;
+  border:2px solid var(--olive-light);
+  cursor:pointer;
+}
+.zoom-color:hover{border-color:var(--paper);}
+.zoom-color.active{border-color:var(--paper);box-shadow:0 0 0 2px var(--panel), 0 0 0 4px var(--amber);}
 
 .field-intel-list{
   display:flex;

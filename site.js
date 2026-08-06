@@ -90,11 +90,8 @@ const raidTrayCount = document.getElementById('raidTrayCount');
 // guide rather than exact PvE values.
 async function fetchTarkovPrice(name){
   const query = 'query($name: String!){ itemsByName(name: $name) { name shortName avg24hPrice basePrice iconLink wikiLink sellFor { price source } } }';
-  const res = await fetch('https://api.tarkov.dev/graphql', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, variables: { name } })
-  });
+  const url = 'https://api.tarkov.dev/graphql?query=' + encodeURIComponent(query) + '&variables=' + encodeURIComponent(JSON.stringify({ name }));
+  const res = await fetch(url);
   if(!res.ok) throw new Error('HTTP ' + res.status);
   const data = await res.json();
   if(data.errors && data.errors.length) throw new Error(data.errors[0].message || 'API returned an error');

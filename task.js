@@ -10,14 +10,17 @@ const zoomToolbar = document.createElement('div');
 zoomToolbar.className = 'zoom-toolbar';
 zoomToolbar.innerHTML =
   '<button class="zoom-tool active" data-tool="marker" type="button">&#9998; Marker</button>' +
+  '<button class="zoom-color active" data-color="#ff3b3b" type="button" title="Red" style="background:#ff3b3b;"></button>' +
+  '<button class="zoom-color" data-color="#3ecf5f" type="button" title="Green" style="background:#3ecf5f;"></button>' +
+  '<button class="zoom-color" data-color="#3b82f6" type="button" title="Blue" style="background:#3b82f6;"></button>' +
   '<button class="zoom-tool" data-tool="eraser" type="button">Eraser</button>' +
-  '<button class="zoom-tool" data-action="clear" type="button">Clear</button>' +
-  '<button class="zoom-tool zoom-tool-copy" data-action="copy" type="button">Copy Image</button>';
+  '<button class="zoom-tool" data-action="clear" type="button">Clear</button>';
 zoomOverlay.appendChild(zoomToolbar);
 
 let zoomCtx = null;
 let zoomDrawing = false;
 let zoomTool = 'marker';
+let zoomMarkerColor = '#ff3b3b';
 
 function resizeZoomCanvas(){
   const rect = zoomImg.getBoundingClientRect();
@@ -58,7 +61,7 @@ function zoomDraw(e){
   const p = zoomPos(e);
   if(zoomTool === 'marker'){
     zoomCtx.globalCompositeOperation = 'source-over';
-    zoomCtx.strokeStyle = '#ff3b3b';
+    zoomCtx.strokeStyle = zoomMarkerColor;
     zoomCtx.lineWidth = 4;
   }else{
     zoomCtx.globalCompositeOperation = 'destination-out';
@@ -83,6 +86,15 @@ zoomCanvas.addEventListener('touchend', zoomStopDraw);
 
 zoomToolbar.addEventListener('click', (e) => {
   e.stopPropagation();
+  const colorBtn = e.target.closest('.zoom-color');
+  if(colorBtn){
+    zoomMarkerColor = colorBtn.getAttribute('data-color');
+    zoomTool = 'marker';
+    zoomToolbar.querySelectorAll('.zoom-color').forEach(b => b.classList.remove('active'));
+    colorBtn.classList.add('active');
+    zoomToolbar.querySelectorAll('.zoom-tool[data-tool]').forEach(b => b.classList.toggle('active', b.getAttribute('data-tool') === 'marker'));
+    return;
+  }
   const toolBtn = e.target.closest('.zoom-tool[data-tool]');
   if(toolBtn){
     zoomTool = toolBtn.getAttribute('data-tool');
@@ -95,39 +107,8 @@ zoomToolbar.addEventListener('click', (e) => {
   const action = actionBtn.getAttribute('data-action');
   if(action === 'clear'){
     if(zoomCtx) zoomCtx.clearRect(0, 0, zoomCanvas.width, zoomCanvas.height);
-  }else if(action === 'copy'){
-    copyAnnotatedZoomImage(actionBtn);
   }
 });
-
-async function copyAnnotatedZoomImage(btn){
-  const original = btn.textContent;
-  try{
-    // Load a fresh, CORS-mode copy of the image just for this export - the
-    // visible zoomImg is never loaded with crossOrigin, so normal viewing,
-    // marking, and erasing always work regardless of whether R2 CORS is set up.
-    const corsImg = await new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => resolve(img);
-      img.onerror = () => reject(new Error('load-failed'));
-      img.src = zoomImg.src;
-    });
-
-    const composite = document.createElement('canvas');
-    composite.width = corsImg.naturalWidth || zoomCanvas.width;
-    composite.height = corsImg.naturalHeight || zoomCanvas.height;
-    const cctx = composite.getContext('2d');
-    cctx.drawImage(corsImg, 0, 0, composite.width, composite.height);
-    cctx.drawImage(zoomCanvas, 0, 0, composite.width, composite.height);
-    const blob = await new Promise(resolve => composite.toBlob(resolve, 'image/png'));
-    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-    btn.textContent = 'Copied!';
-  }catch(err){
-    btn.textContent = 'Needs R2 CORS setup';
-  }
-  setTimeout(() => { btn.textContent = original; }, 2200);
-}
 
 function openZoom(dataUrl, altText){
   zoomImg.src = dataUrl;

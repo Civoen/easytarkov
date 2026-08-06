@@ -501,6 +501,9 @@ footer{
   .raid-tray-item-name{font-size:13.5px;}
   .raid-tray-item-sub{font-size:11px;}
   .raid-tray-detail{font-size:12px;}
+  .raid-tray-toggle{flex-wrap:wrap;row-gap:8px;}
+  .rt-quick-add{width:90px;}
+  .raid-tray-bar{padding:10px 12px;}
 }
 
 .shortcuts-overlay{
