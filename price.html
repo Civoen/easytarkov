@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Price Check | Field Guide</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Price Check | Easy Tarkov">
+<meta property="og:description" content="Look up current flea market prices for any item.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Price Check | Easy Tarkov">
+<meta name="twitter:description" content="Look up current flea market prices for any item.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#14171a">
+<link rel="preload" href="fonts/oswald-v57-latin-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/oswald-v57-latin-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/oswald-v57-latin-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ibm-plex-mono-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ibm-plex-mono-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="site.css" as="style">
+<link rel="preload" href="trader.css" as="style">
+<link rel="preload" href="data.js" as="script">
+<link rel="preload" href="site.js" as="script">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="trader.css">
+<style>
+.price-results{display:flex;flex-direction:column;gap:1px;}
+.price-row{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:12px 16px;
+  background:var(--panel-2);
+  border:1px solid var(--line);
+}
+.price-icon{width:48px;height:48px;background:var(--bg);border:1px solid var(--line);flex-shrink:0;object-fit:contain;}
+.price-info{flex:1;min-width:0;}
+.price-name{font-family:'Oswald',sans-serif;font-weight:600;font-size:14px;color:var(--paper);}
+.price-sub{font-size:10.5px;color:var(--paper-dim);margin-top:2px;}
+.price-value{text-align:right;flex-shrink:0;}
+.price-amount{font-family:'Oswald',sans-serif;font-weight:600;font-size:16px;color:var(--amber);}
+.price-label{font-size:10px;color:var(--paper-dim);}
+.price-status{padding:16px;text-align:center;font-size:11.5px;color:var(--paper-dim);}
+.price-search-wrap{display:flex;align-items:stretch;border:1px solid var(--line);background:var(--panel-2);margin-bottom:16px;}
+.price-search-wrap .task-filter{border:none;margin:0;flex:1;}
+.price-search-wrap:focus-within{border-color:var(--rust);}
+.price-disclaimer{
+  font-size:10.5px;
+  color:var(--paper-dim);
+  border:1px dashed var(--olive-light);
+  padding:10px 14px;
+  margin-bottom:16px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="topbar-right">
+      <a class="trader-btn" href="index.html">Home</a>
+      <a class="trader-btn" href="traders.html">Traders</a>
+      <a class="trader-btn" href="maps.html">Maps</a>
+      <a class="trader-btn" href="kappa.html">Kappa</a>
+      <a class="trader-btn" href="price.html">Price</a>
+      <a class="trader-btn" href="recent.html">Recent</a>
+      <a class="trader-btn settings-btn" href="import.html" title="Settings">&#9881;</a>
+      <div class="search-wrap">
+        <input type="text" id="taskSearch" placeholder="Search tasks..." autocomplete="off">
+        <div class="search-results" id="searchResults"></div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-row">
+    <span class="tab">Price</span>
+  </div>
+
+  <header>
+    <h1>Price Check</h1>
+    <div class="sub">Look up current flea market prices</div>
+  </header>
+
+  <section>
+    <div class="price-disclaimer">Prices are pulled live from tarkov.dev's community API and reflect the PvP flea market &mdash; PvE runs a separate economy with different prices. Treat these as a general reference point, not an exact PvE value.</div>
+    <div class="price-search-wrap">
+      <input type="text" class="task-filter" id="priceSearchInput" placeholder="Search for an item..." autocomplete="off">
+      <button class="rt-mic-btn" id="priceMicBtn" type="button" title="Search by voice">&#127908;</button>
+    </div>
+    <div class="price-results" id="priceResults"></div>
+  </section>
+
+  <footer>Site is still a work in progress. Some pages are still being added and all pages are subject to change.<br>Easy Tarkov is an unofficial, fan-made resource and claims no ownership over the game data referenced on this site. All information has been sourced from escapefromtarkov.fandom.com and remains the property of its respective owners. Price data provided by tarkov.dev.<br>Need help? Message 'Civoen' on Discord.</footer>
+</div>
+
+<div class="raid-tray" id="raidTray">
+  <div class="raid-tray-bar">
+    <div class="raid-tray-toggle" id="raidTrayToggle" role="button" tabindex="0">
+      <span>Current Raid</span>
+      <button class="raid-tray-infil" id="raidTrayInfil" type="button">Infil</button>
+      <button class="raid-tray-compact" id="raidTrayCompact" type="button">Show Compact</button>
+      <span class="raid-tray-count" id="raidTrayCount">0</span>
+    </div>
+  </div>
+  <div class="raid-tray-panel" id="raidTrayPanel"></div>
+</div>
+
+<script src="data.js"></script>
+<script src="site.js"></script>
+<script>
+const priceInput = document.getElementById('priceSearchInput');
+const priceResults = document.getElementById('priceResults');
+let priceDebounce = null;
+
+async function runPriceSearch(name){
+  priceResults.innerHTML = '<div class="price-status">Searching...</div>';
+  try{
+    const query = `query($name: String!){ itemsByName(name: $name) { id name shortName iconLink avg24hPrice basePrice sellFor { price source } } }`;
+    const res = await fetch('https://api.tarkov.dev/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, variables: { name } })
+    });
+    if(!res.ok) throw new Error('Request failed');
+    const data = await res.json();
+    const items = (data.data && data.data.itemsByName) || [];
+    if(!items.length){
+      priceResults.innerHTML = '<div class="price-status">No items found for that search.</div>';
+      return;
+    }
+    priceResults.innerHTML = items.slice(0, 20).map(item => {
+      const flea = item.avg24hPrice || 0;
+      const bestTrader = (item.sellFor || []).filter(s => s.source !== 'fleaMarket').sort((a,b) => b.price - a.price)[0];
+      const useTrader = bestTrader && bestTrader.price > flea;
+      const price = useTrader ? bestTrader.price : flea;
+      const label = useTrader ? ('Best: ' + bestTrader.source) : 'Flea (24h avg)';
+      return '<div class="price-row">' +
+        '<img class="price-icon" src="'+(item.iconLink || '')+'" alt="" loading="lazy">' +
+        '<div class="price-info">' +
+          '<div class="price-name">'+item.name+'</div>' +
+          '<div class="price-sub">'+(item.shortName || '')+'</div>' +
+        '</div>' +
+        '<div class="price-value">' +
+          '<div class="price-amount">'+(price ? price.toLocaleString()+'\u20bd' : '\u2014')+'</div>' +
+          '<div class="price-label">'+label+'</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }catch(err){
+    priceResults.innerHTML = '<div class="price-status">Could not reach the price service. Please try again.</div>';
+  }
+}
+
+priceInput.addEventListener('input', () => {
+  clearTimeout(priceDebounce);
+  const q = priceInput.value.trim();
+  if(!q){ priceResults.innerHTML = ''; return; }
+  priceDebounce = setTimeout(() => runPriceSearch(q), 400);
+});
+
+const priceMicBtn = document.getElementById('priceMicBtn');
+priceMicBtn.addEventListener('click', () => {
+  if(!(('SpeechRecognition' in window) || ('webkitSpeechRecognition' in window))){
+    alert('Voice input isn\'t supported in this browser. Try Chrome or Edge.');
+    return;
+  }
+  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new Recognition();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  priceMicBtn.classList.add('listening');
+  recognition.onresult = (e) => {
+    const transcript = e.results[0][0].transcript;
+    priceInput.value = transcript;
+    runPriceSearch(transcript);
+  };
+  recognition.onerror = () => { priceResults.innerHTML = '<div class="price-status">Didn\'t catch that - try again.</div>'; };
+  recognition.onend = () => priceMicBtn.classList.remove('listening');
+  recognition.start();
+});
+
+// Auto-run a search if arriving with ?q= from a Price button elsewhere on the site
+const params = new URLSearchParams(window.location.search);
+const initialQuery = params.get('q');
+if(initialQuery){
+  priceInput.value = initialQuery;
+  runPriceSearch(initialQuery);
+}
+</script>
+</body>
+</html>

@@ -1,3 +1,10 @@
+// ---- Service Worker registration (offline support) ----
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+  });
+}
+
 // ---- Raid Tray ----
 const RAID_TRAY_KEY = 'easytarkov-raidtray';
 
@@ -76,6 +83,28 @@ function saveNamesOnly(active){
 }
 const raidTrayPanel = document.getElementById('raidTrayPanel');
 const raidTrayCount = document.getElementById('raidTrayCount');
+
+// ---- Flea market price lookup (tarkov.dev public API) ----
+// Note: this data is PvP flea market pricing. tarkov.dev does not currently
+// expose a confirmed PvE-specific price feed, so treat results as a general
+// guide rather than exact PvE values.
+async function fetchTarkovPrice(name){
+  const query = 'query($name: String!){ itemsByName(name: $name) { name shortName avg24hPrice basePrice iconLink wikiLink sellFor { price source } } }';
+  const res = await fetch('https://api.tarkov.dev/graphql', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query, variables: { name } })
+  });
+  if(!res.ok) throw new Error('Price lookup failed');
+  const data = await res.json();
+  return (data.data && data.data.itemsByName) ? data.data.itemsByName : [];
+}
+
+function bestTraderSell(item){
+  const traderOffers = (item.sellFor || []).filter(s => s.source && s.source.toLowerCase() !== 'fleamarket');
+  if(!traderOffers.length) return null;
+  return traderOffers.reduce((best, cur) => cur.price > best.price ? cur : best);
+}
 
 function taskLookup(url){
   if(url.indexOf('custom:') === 0){
@@ -205,6 +234,7 @@ function renderTray(){
               '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>'
             : '<div class="rt-row"><a href="'+url+'" style="color:var(--amber)">Open full page &rarr;</a></div>') + imageBoxes;
         }
+        detail += '<div class="rt-price-result" id="rtPrice-'+btoa(url).replace(/=/g, '')+'"></div>';
         const count = teamCounts[url] || 0;
         const dots = '<span class="raid-tray-team" data-url="'+url+'" title="How many of your squad are doing this">' +
           [1,2,3,4,5].map(n => '<button class="rt-dot'+(n <= count ? ' filled' : '')+'" data-url="'+url+'" data-n="'+n+'" type="button"></button>').join('') +
@@ -217,6 +247,7 @@ function renderTray(){
             '</span>' +
             '<span class="raid-tray-item-actions">' +
               dots +
+              '<button class="raid-tray-price" data-url="'+url+'" type="button">Price</button>' +
               '<button class="raid-tray-remove" data-url="'+url+'" type="button">Remove</button>' +
             '</span>' +
           '</div>' +
@@ -332,7 +363,18 @@ if(raidTrayCompact){
   raidAddBtn.type = 'button';
   raidAddBtn.textContent = '+ Task';
 
+  const raidAddMic = document.createElement('button');
+  raidAddMic.className = 'rt-mic-btn';
+  raidAddMic.type = 'button';
+  raidAddMic.title = 'Add by voice (or press ' + loadVoiceKeybinds().add.toUpperCase() + ' anywhere)';
+  raidAddMic.innerHTML = '&#127908;';
+  raidAddMic.addEventListener('click', (e) => {
+    e.stopPropagation();
+    startVoiceCapture('add');
+  });
+
   raidAddWrap.appendChild(raidAddInput);
+  raidAddWrap.appendChild(raidAddMic);
   raidAddWrap.appendChild(raidAddBtn);
   raidMergeBtn.after(raidAddWrap);
 
@@ -404,6 +446,31 @@ raidTrayPanel.addEventListener('click', (e) => {
     saveStarred(starredItems);
     resortByPriority();
     renderTray();
+    return;
+  }
+  const priceBtn = e.target.closest('.raid-tray-price');
+  if(priceBtn){
+    const url = priceBtn.getAttribute('data-url');
+    const item = priceBtn.closest('.raid-tray-item');
+    if(item && !item.classList.contains('expanded')) item.classList.add('expanded');
+    const target = document.getElementById('rtPrice-' + btoa(url).replace(/=/g, ''));
+    if(!target) return;
+    const t = taskLookup(url);
+    target.innerHTML = '<div class="rt-row">Checking price\u2026</div>';
+    fetchTarkovPrice(t.name).then(items => {
+      if(!items.length){
+        target.innerHTML = '<div class="rt-row">No flea market match found for "'+t.name+'".</div>';
+        return;
+      }
+      const found = items[0];
+      const best = bestTraderSell(found);
+      target.innerHTML =
+        '<div class="rt-row"><b>Flea (avg 24h):</b> '+(found.avg24hPrice ? found.avg24hPrice.toLocaleString()+' \u20bd' : 'No recent data')+'</div>' +
+        (best ? '<div class="rt-row"><b>Best trader sell:</b> '+best.source+' &mdash; '+best.price.toLocaleString()+' \u20bd</div>' : '') +
+        '<div class="rt-row" style="font-size:10.5px;">PvP flea data via tarkov.dev &mdash; treat as a general guide.</div>';
+    }).catch(() => {
+      target.innerHTML = '<div class="rt-row">Could not reach the price service.</div>';
+    });
     return;
   }
   const removeBtn = e.target.closest('.raid-tray-remove');
@@ -539,8 +606,9 @@ if(topbarRightEl){
     { name: 'Traders', url: 'traders.html' },
     { name: 'Maps', url: 'maps.html' },
     { name: 'Kappa', url: 'kappa.html' },
+    { name: 'Price', url: 'price.html' },
     { name: 'Recent', url: 'recent.html' },
-    { name: 'Manage Data', url: 'import.html' }
+    { name: 'Settings', url: 'import.html' }
   ];
 
   mobileMenuPanel.innerHTML = staticLinks.map(l => '<a href="'+l.url+'">'+l.name+'</a>').join('');
@@ -586,16 +654,89 @@ raidImgZoomOverlay.addEventListener('click', () => {
 });
 
 // ---- Keyboard shortcuts help overlay ----
+// ---- Voice input: works from any page via keybind, or the mic icons on specific pages ----
+const KEYBIND_KEY = 'easytarkov-keybinds';
+function loadVoiceKeybinds(){
+  try{
+    const raw = localStorage.getItem(KEYBIND_KEY);
+    return raw ? JSON.parse(raw) : { add: 'r', price: 'p' };
+  }catch(e){
+    return { add: 'r', price: 'p' };
+  }
+}
+
+const voicePopup = document.createElement('div');
+voicePopup.className = 'voice-popup';
+voicePopup.innerHTML = '<div class="voice-icon">&#127908;</div><div class="voice-status"></div>';
+document.body.appendChild(voicePopup);
+
+function speechSupported(){
+  return ('SpeechRecognition' in window) || ('webkitSpeechRecognition' in window);
+}
+
+function startVoiceCapture(mode){
+  if(!speechSupported()){
+    alert('Voice input isn\'t supported in this browser. Try Chrome or Edge.');
+    return;
+  }
+  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new Recognition();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  const statusEl = voicePopup.querySelector('.voice-status');
+  voicePopup.classList.add('open', 'listening');
+  statusEl.textContent = mode === 'price' ? 'Listening for an item to price-check\u2026' : 'Listening for a task to add\u2026';
+
+  recognition.onresult = (e) => {
+    const transcript = e.results[0][0].transcript;
+    voicePopup.classList.remove('listening');
+    if(mode === 'add'){
+      const id = 'custom:' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+      customItems[id] = { name: transcript, note: '' };
+      saveCustomItems(customItems);
+      raidTray.push(id);
+      saveTray(raidTray);
+      renderTray();
+      statusEl.textContent = 'Added: ' + transcript;
+    }else if(mode === 'price'){
+      statusEl.textContent = 'Checking "' + transcript + '"\u2026';
+      fetchTarkovPrice(transcript).then(items => {
+        if(!items.length){
+          statusEl.textContent = 'No match for "' + transcript + '".';
+          return;
+        }
+        const found = items[0];
+        const best = bestTraderSell(found);
+        const price = found.avg24hPrice || (best ? best.price : 0);
+        statusEl.textContent = found.name + ': ' + (price ? price.toLocaleString()+'\u20bd' : 'No recent data');
+      }).catch(() => { statusEl.textContent = 'Could not reach the price service.'; });
+    }
+    setTimeout(() => voicePopup.classList.remove('open'), 3200);
+  };
+  recognition.onerror = () => {
+    voicePopup.classList.remove('listening');
+    statusEl.textContent = 'Didn\'t catch that - try again.';
+    setTimeout(() => voicePopup.classList.remove('open'), 2200);
+  };
+  recognition.onspeechend = () => recognition.stop();
+  recognition.start();
+}
+
 const shortcutsOverlay = document.createElement('div');
 shortcutsOverlay.className = 'shortcuts-overlay';
+const currentVoiceKeybinds = loadVoiceKeybinds();
 shortcutsOverlay.innerHTML =
   '<div class="shortcuts-card">' +
     '<div class="shortcuts-title">Keyboard Shortcuts</div>' +
     '<div class="shortcuts-row"><span class="shortcuts-key">Space</span><span>Jump to search</span></div>' +
     '<div class="shortcuts-row"><span class="shortcuts-key">Shift</span><span>Open Current Raid</span></div>' +
+    '<div class="shortcuts-row"><span class="shortcuts-key">'+currentVoiceKeybinds.add.toUpperCase()+'</span><span>Voice: add to Current Raid</span></div>' +
+    '<div class="shortcuts-row"><span class="shortcuts-key">'+currentVoiceKeybinds.price.toUpperCase()+'</span><span>Voice: check a price</span></div>' +
     '<div class="shortcuts-row"><span class="shortcuts-key">Esc</span><span>Close open panels</span></div>' +
     '<div class="shortcuts-row"><span class="shortcuts-key">?</span><span>Show this list</span></div>' +
-    '<div class="shortcuts-hint">Click anywhere to close</div>' +
+    '<div class="shortcuts-hint">Click anywhere to close. Change keybinds on the Settings page.</div>' +
   '</div>';
 document.body.appendChild(shortcutsOverlay);
 shortcutsOverlay.addEventListener('click', () => shortcutsOverlay.classList.remove('open'));
@@ -624,5 +765,18 @@ document.addEventListener('keydown', (e) => {
   if(e.key === '?' && !isTyping){
     e.preventDefault();
     shortcutsOverlay.classList.toggle('open');
+  }
+
+  const voiceKeybinds = loadVoiceKeybinds();
+  const keyLower = e.key.toLowerCase();
+
+  if(keyLower === voiceKeybinds.add && !isTyping){
+    e.preventDefault();
+    startVoiceCapture('add');
+  }
+
+  if(keyLower === voiceKeybinds.price && !isTyping){
+    e.preventDefault();
+    startVoiceCapture('price');
   }
 });

@@ -69,6 +69,17 @@
     padding:6px 14px;
     margin-bottom:18px;
   }
+  .offline-banner{
+    display:none;
+    background:var(--panel-2);
+    border:1px solid var(--danger);
+    color:#e8a49c;
+    font-size:12px;
+    letter-spacing:.02em;
+    padding:10px 16px;
+    margin-bottom:16px;
+  }
+  .offline-banner.show{display:block;}
   .search-wrap{width:100%;margin:0 auto 18px;}
   .search-wrap input{
     font-size:16px;
@@ -107,7 +118,8 @@
 <body>
 <div class="center-wrap">
 <div class="hero">
-  <div class="badge">Site under construction v.08</div>
+  <div class="offline-banner" id="offlineBanner">You're offline &mdash; some features are disabled.</div>
+  <div class="badge">Site under construction v.09</div>
   <h1>Easy Tarkov</h1>
   <div class="sub">A quick and easy companion app</div>
 
@@ -128,8 +140,10 @@
     <a class="trader-btn" href="traders.html">Traders</a>
     <a class="trader-btn" href="maps.html">Maps</a>
     <a class="trader-btn" href="kappa.html">Kappa</a>
+    <a class="trader-btn" href="price.html">Price</a>
+    <a class="trader-btn" href="price.html">Price</a>
     <a class="trader-btn" href="recent.html">Recent</a>
-    <a class="trader-btn" href="import.html">Manage Data</a>
+    <a class="trader-btn settings-btn" href="import.html" title="Settings">&#9881;</a>
   </div>
 </div>
 </div>
@@ -150,6 +164,17 @@
 
 <script src="data.js"></script>
 <script src="site.js"></script>
+<script>
+(function(){
+  const offlineBanner = document.getElementById('offlineBanner');
+  function updateOfflineBanner(){
+    offlineBanner.classList.toggle('show', !navigator.onLine);
+  }
+  updateOfflineBanner();
+  window.addEventListener('online', updateOfflineBanner);
+  window.addEventListener('offline', updateOfflineBanner);
+})();
+</script>
 <script>
 (function(){
   let showHomeProgress = false;

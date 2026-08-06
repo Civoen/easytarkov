@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manage Data | Easy Tarkov</title>
+<title>Settings | Easy Tarkov</title>
 <meta property="og:type" content="website">
-<meta property="og:title" content="Manage Data | Easy Tarkov">
-<meta property="og:description" content="Back up or restore your Easy Tarkov progress on this browser.">
+<meta property="og:title" content="Settings | Easy Tarkov">
+<meta property="og:description" content="Customize keybinds and back up or restore your Easy Tarkov progress on this browser.">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Manage Data | Easy Tarkov">
-<meta name="twitter:description" content="Back up or restore your Easy Tarkov progress on this browser.">
+<meta name="twitter:title" content="Settings | Easy Tarkov">
+<meta name="twitter:description" content="Customize keybinds and back up or restore your Easy Tarkov progress on this browser.">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#14171a">
@@ -20,129 +20,258 @@
 <link rel="preload" href="fonts/ibm-plex-mono-500.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/ibm-plex-mono-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="site.css" as="style">
+<link rel="preload" href="trader.css" as="style">
+<link rel="preload" href="data.js" as="script">
+<link rel="preload" href="site.js" as="script">
 <link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="trader.css">
 <style>
-  body{
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-    padding:24px;
-  }
-  .center-wrap{
-    flex:1;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-  .page-footer{
-    text-align:center;
-    font-size:11px;
-    color:var(--paper-dim);
-    padding-top:16px;
-  }
-  .hero{
-    max-width:480px;
-    width:100%;
-    text-align:center;
-  }
-  h1{
-    font-size:44px;
-    letter-spacing:.08em;
-    margin:0 0 10px;
-  }
-  .sub{
-    font-size:14px;
-    color:var(--paper-dim);
-    margin:0 0 28px;
-    letter-spacing:.02em;
-  }
-  .drop-box{
-    border:1px dashed var(--olive-light);
-    background:var(--panel-2);
-    padding:40px 20px;
-    cursor:pointer;
-    margin-bottom:16px;
-  }
-  .drop-box.dragover{border-color:var(--rust);}
-  .drop-box .icon{font-size:28px;color:var(--olive-light);display:block;margin-bottom:10px;}
-  .drop-box .label{font-size:13px;color:var(--paper-dim);line-height:1.6;}
-  .drop-box .filename{font-size:12px;color:var(--amber);margin-top:8px;}
-  input[type=file]{display:none;}
-  .export-btn{
-    display:block;
-    width:100%;
-    background:var(--panel-2);
-    border:1px solid var(--olive-light);
-    color:var(--amber);
-    font-family:'IBM Plex Mono',monospace;
-    font-size:13px;
-    letter-spacing:.03em;
-    padding:12px 18px;
-    cursor:pointer;
-    margin-bottom:20px;
-  }
-  .export-btn:hover{border-color:var(--rust);color:var(--paper);}
-  .reset-btn{
-    display:block;
-    width:100%;
-    background:var(--panel-2);
-    border:1px solid var(--danger);
-    color:#e8a49c;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:13px;
-    letter-spacing:.03em;
-    padding:12px 18px;
-    cursor:pointer;
-    margin-top:32px;
-  }
-  .reset-btn:hover{background:var(--danger);color:#fff;}
-  .reset-btn.confirming{background:var(--danger);color:#fff;}
-  .status{
-    font-size:12px;
-    padding:10px 14px;
-    margin-bottom:16px;
-    display:none;
-  }
-  .status.show{display:block;}
-  .status.success{background:var(--olive);color:var(--paper);border:1px solid var(--amber);}
-  .status.error{background:var(--panel-2);color:#e8a49c;border:1px solid var(--danger);}
-  .home-link{
-    display:inline-block;
-    margin-top:32px;
-    font-size:11px;
-    color:var(--paper-dim);
-    text-decoration:none;
-    letter-spacing:.03em;
-  }
-  .home-link:hover{color:var(--amber);}
+.drop-box{
+  border:1px dashed var(--olive-light);
+  background:var(--panel-2);
+  padding:32px 20px;
+  cursor:pointer;
+  margin-bottom:16px;
+  text-align:center;
+}
+.drop-box.dragover{border-color:var(--rust);}
+.drop-box .icon{font-size:24px;color:var(--olive-light);display:block;margin-bottom:8px;}
+.drop-box .label{font-size:12.5px;color:var(--paper-dim);line-height:1.6;}
+.drop-box .filename{font-size:12px;color:var(--amber);margin-top:8px;}
+input[type=file]{display:none;}
+.export-btn{
+  display:block;
+  width:100%;
+  background:var(--panel-2);
+  border:1px solid var(--olive-light);
+  color:var(--amber);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  letter-spacing:.03em;
+  padding:12px 18px;
+  cursor:pointer;
+  margin-bottom:16px;
+}
+.export-btn:hover{border-color:var(--rust);color:var(--paper);}
+.reset-btn{
+  display:block;
+  width:100%;
+  background:var(--panel-2);
+  border:1px solid var(--danger);
+  color:#e8a49c;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  letter-spacing:.03em;
+  padding:12px 18px;
+  cursor:pointer;
+  margin-top:20px;
+}
+.reset-btn:hover{background:var(--danger);color:#fff;}
+.reset-btn.confirming{background:var(--danger);color:#fff;}
+.status{
+  font-size:12px;
+  padding:10px 14px;
+  margin-bottom:16px;
+  display:none;
+}
+.status.show{display:block;}
+.status.success{background:var(--olive);color:var(--paper);border:1px solid var(--amber);}
+.status.error{background:var(--panel-2);color:#e8a49c;border:1px solid var(--danger);}
+.keybind-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 16px;
+  background:var(--panel-2);
+  border:1px solid var(--line);
+  margin-bottom:8px;
+}
+.keybind-label{font-size:12.5px;color:var(--paper);}
+.keybind-hint{font-size:10.5px;color:var(--paper-dim);margin-top:2px;}
+.keybind-box{
+  min-width:70px;
+  text-align:center;
+  background:var(--bg);
+  border:1px solid var(--olive-light);
+  color:var(--amber);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  font-weight:600;
+  padding:9px 14px;
+  cursor:pointer;
+  letter-spacing:.05em;
+}
+.keybind-box:hover{border-color:var(--rust);}
+.keybind-box.listening{border-color:var(--rust);color:var(--paper);animation:kb-pulse 1s ease-in-out infinite;}
+@keyframes kb-pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+.keybind-error{font-size:11px;color:#e8a49c;margin-top:6px;min-height:14px;}
 </style>
 </head>
 <body>
-<div class="center-wrap">
-<div class="hero">
-  <h1>Manage Data</h1>
-  <div class="sub">Back up or restore your progress on this browser</div>
+<div class="wrap">
 
-  <div class="drop-box" id="dropBox">
-    <span class="icon">&#9660;</span>
-    <div class="label">Drag your progress file here<br>or click to browse</div>
-    <div class="filename" id="fileName"></div>
+  <div class="topbar">
+    <div class="topbar-right">
+      <a class="trader-btn" href="index.html">Home</a>
+      <a class="trader-btn" href="traders.html">Traders</a>
+      <a class="trader-btn" href="maps.html">Maps</a>
+      <a class="trader-btn" href="kappa.html">Kappa</a>
+      <a class="trader-btn" href="price.html">Price</a>
+      <a class="trader-btn" href="recent.html">Recent</a>
+      <a class="trader-btn settings-btn" href="import.html" title="Settings">&#9881;</a>
+      <div class="search-wrap">
+        <input type="text" id="taskSearch" placeholder="Search tasks..." autocomplete="off">
+        <div class="search-results" id="searchResults"></div>
+      </div>
+    </div>
   </div>
-  <input type="file" id="fileInput" accept=".json,application/json">
+  <div class="tab-row">
+    <span class="tab">Settings</span>
+  </div>
 
-  <div class="status" id="statusMsg"></div>
+  <header>
+    <h1>Settings</h1>
+    <div class="sub">Keybinds, and your data on this browser</div>
+  </header>
 
-  <button class="export-btn" id="exportBtn" type="button">Export</button>
+  <section>
+    <div class="section-label">Keybinds</div>
+    <p class="section-hint">Click a keybind, then press any key to change it. Press Escape or click the box again to cancel without changing anything.</p>
+    <div class="keybind-row">
+      <span>
+        <span class="keybind-label">Add to Current Raid (voice)</span><br>
+        <span class="keybind-hint">Starts listening, then adds what you say</span>
+      </span>
+      <button class="keybind-box" id="keybindAdd" data-action="add" type="button">R</button>
+    </div>
+    <div class="keybind-row">
+      <span>
+        <span class="keybind-label">Price Lookup (voice)</span><br>
+        <span class="keybind-hint">Starts listening, then checks the price of what you say</span>
+      </span>
+      <button class="keybind-box" id="keybindPrice" data-action="price" type="button">P</button>
+    </div>
+    <div class="keybind-error" id="keybindError"></div>
+  </section>
 
-  <button class="reset-btn" id="resetBtn" type="button">Reset Progress</button>
+  <section>
+    <div class="section-label">Manage Data</div>
+    <p class="section-hint">Back up or restore your progress on this browser.</p>
 
-  <a class="home-link" href="index.html">&larr; Back to Homepage</a>
+    <div class="drop-box" id="dropBox">
+      <span class="icon">&#9660;</span>
+      <div class="label">Drag your progress file here<br>or click to browse</div>
+      <div class="filename" id="fileName"></div>
+    </div>
+    <input type="file" id="fileInput" accept=".json,application/json">
+
+    <div class="status" id="statusMsg"></div>
+
+    <button class="export-btn" id="exportBtn" type="button">Export</button>
+    <button class="reset-btn" id="resetBtn" type="button">Reset Progress</button>
+  </section>
+
+  <footer>Site is still a work in progress. Some pages are still being added and all pages are subject to change.<br>Easy Tarkov is an unofficial, fan-made resource and claims no ownership over the game data referenced on this site. All information has been sourced from escapefromtarkov.fandom.com and remains the property of its respective owners.<br>Need help? Message 'Civoen' on Discord.</footer>
 </div>
+
+<div class="raid-tray" id="raidTray">
+  <div class="raid-tray-bar">
+    <div class="raid-tray-toggle" id="raidTrayToggle" role="button" tabindex="0">
+      <span>Current Raid</span>
+      <button class="raid-tray-infil" id="raidTrayInfil" type="button">Infil</button>
+      <button class="raid-tray-compact" id="raidTrayCompact" type="button">Show Compact</button>
+      <span class="raid-tray-count" id="raidTrayCount">0</span>
+    </div>
+  </div>
+  <div class="raid-tray-panel" id="raidTrayPanel"></div>
 </div>
 
-<footer class="page-footer">Site is still a work in progress. Some pages are still being added and all pages are subject to change.<br>Easy Tarkov is an unofficial, fan-made resource and claims no ownership over the game data referenced on this site. All information has been sourced from escapefromtarkov.fandom.com and remains the property of its respective owners.<br>Need help? Message 'Civoen' on Discord.</footer>
-
+<script src="data.js"></script>
+<script src="site.js"></script>
 <script>
+// ---- Keybind customization ----
+const KEYBIND_KEY = 'easytarkov-keybinds';
+function loadKeybindsLocal(){
+  try{
+    const raw = localStorage.getItem(KEYBIND_KEY);
+    return raw ? JSON.parse(raw) : { add: 'r', price: 'p' };
+  }catch(e){
+    return { add: 'r', price: 'p' };
+  }
+}
+function saveKeybindsLocal(kb){
+  try{ localStorage.setItem(KEYBIND_KEY, JSON.stringify(kb)); }catch(e){}
+}
+
+let keybinds = loadKeybindsLocal();
+const keybindAddBtn = document.getElementById('keybindAdd');
+const keybindPriceBtn = document.getElementById('keybindPrice');
+const keybindErrorEl = document.getElementById('keybindError');
+keybindAddBtn.textContent = keybinds.add.toUpperCase();
+keybindPriceBtn.textContent = keybinds.price.toUpperCase();
+
+let listeningFor = null;
+
+function stopListening(){
+  if(!listeningFor) return;
+  const btn = listeningFor === 'add' ? keybindAddBtn : keybindPriceBtn;
+  btn.classList.remove('listening');
+  btn.textContent = keybinds[listeningFor].toUpperCase();
+  listeningFor = null;
+}
+
+function startListening(action){
+  stopListening();
+  listeningFor = action;
+  const btn = action === 'add' ? keybindAddBtn : keybindPriceBtn;
+  btn.classList.add('listening');
+  btn.textContent = 'Press a key\u2026';
+  keybindErrorEl.textContent = '';
+}
+
+keybindAddBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if(listeningFor === 'add'){ stopListening(); return; }
+  startListening('add');
+});
+keybindPriceBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if(listeningFor === 'price'){ stopListening(); return; }
+  startListening('price');
+});
+document.addEventListener('click', () => { if(listeningFor) stopListening(); });
+
+const RESERVED_KEYS = [' ', 'shift', '?', 'escape'];
+
+document.addEventListener('keydown', (e) => {
+  if(!listeningFor) return;
+  e.preventDefault();
+  e.stopPropagation();
+
+  if(e.key === 'Escape'){
+    stopListening();
+    return;
+  }
+
+  const newKey = e.key.length === 1 ? e.key.toLowerCase() : e.key.toLowerCase();
+  const otherAction = listeningFor === 'add' ? 'price' : 'add';
+
+  if(RESERVED_KEYS.indexOf(newKey) !== -1){
+    keybindErrorEl.textContent = 'That key is already used elsewhere on the site. Try another.';
+    return;
+  }
+  if(newKey === keybinds[otherAction]){
+    keybindErrorEl.textContent = 'That key is already used for the other voice shortcut. Try another.';
+    return;
+  }
+
+  keybinds[listeningFor] = newKey;
+  saveKeybindsLocal(keybinds);
+  keybindErrorEl.textContent = '';
+  stopListening();
+}, true);
+
+// ---- Data export/import/reset (unchanged behavior) ----
 const EASYTARKOV_PREFIX = 'easytarkov-';
 
 function collectBundle(){
@@ -214,7 +343,7 @@ function handleImportFile(file){
 const dropBox = document.getElementById('dropBox');
 const fileInput = document.getElementById('fileInput');
 
-dropBox.addEventListener('click', () => fileInput.click());
+dropBox.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
 fileInput.addEventListener('change', (e) => handleImportFile(e.target.files[0]));
 
 dropBox.addEventListener('dragover', (e) => { e.preventDefault(); dropBox.classList.add('dragover'); });
@@ -231,7 +360,8 @@ const RESET_KEYS = ['easytarkov-progress', 'easytarkov-kappa-items', 'easytarkov
 let resetPending = false;
 let resetTimeout = null;
 
-resetBtn.addEventListener('click', () => {
+resetBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
   if(!resetPending){
     resetPending = true;
     resetBtn.textContent = 'Are you sure? Click to confirm';
