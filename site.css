@@ -249,14 +249,38 @@ footer{
 .raid-tray-count:hover{background:var(--danger);color:#fff;}
 .raid-tray-panel{
   display:none;
-  max-height:45vh;
-  overflow-y:auto;
   background:var(--bg);
   border-top:1px solid var(--line);
   border-left:1px solid var(--line);
   border-right:1px solid var(--line);
 }
-.raid-tray.open .raid-tray-panel{display:block;}
+.raid-tray.open .raid-tray-panel{display:flex;align-items:stretch;}
+.raid-col{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+}
+.raid-col:first-child{border-right:1px solid var(--line);}
+.raid-col-header{
+  padding:10px 16px;
+  font-family:'Oswald',sans-serif;
+  font-weight:600;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:var(--amber);
+  border-bottom:1px solid var(--line);
+  background:var(--panel-2);
+}
+.raid-col-count{color:var(--paper-dim);font-weight:400;text-transform:none;letter-spacing:0;}
+.raid-col-add{border-bottom:1px solid var(--line);}
+.raid-col-list{
+  flex:1;
+  min-height:0;
+  max-height:45vh;
+  overflow-y:auto;
+}
 .raid-tray-item{border-bottom:1px solid var(--line);cursor:grab;}
 .raid-tray-item.dragging{opacity:.4;cursor:grabbing;}
 .raid-tray-item.drag-over{border-top:2px solid var(--rust);}
@@ -414,23 +438,6 @@ footer{
   font-size:11px;
   color:var(--paper-dim);
 }
-.rt-merge-list{padding:4px 0;}
-.rt-merge-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:baseline;
-  gap:12px;
-  padding:9px 16px;
-  border-bottom:1px solid var(--line);
-  font-size:12px;
-}
-.rt-merge-item{color:var(--paper);}
-.rt-merge-task{
-  flex-shrink:0;
-  font-size:10px;
-  color:var(--amber);
-  white-space:nowrap;
-}
 
 .mobile-menu-wrap{position:relative;display:none;}
 .mobile-menu-btn{
@@ -478,6 +485,9 @@ footer{
 .mobile-search-btn:hover{border-color:var(--rust);color:var(--paper);}
 
 @media (max-width: 480px){
+  .raid-tray.open .raid-tray-panel{flex-direction:column;}
+  .raid-col:first-child{border-right:none;border-bottom:1px solid var(--line);}
+  .raid-col-list{max-height:32vh;}
   .topbar-right > a.trader-btn,
   .topbar-right > .search-wrap{display:none;}
   .topbar-right > .search-wrap.mobile-search-open{
@@ -595,3 +605,32 @@ footer{
 .raid-tray-img-box:hover{border-color:var(--rust);}
 .raid-tray-img-box img{width:100%;height:100%;object-fit:cover;display:block;}
 .raid-tray.infil-lg .raid-tray-img-box{width:80px;height:80px;}
+.rt-local-img-box{
+  position:relative;
+  width:56px;
+  height:56px;
+  flex-shrink:0;
+  border:1px dashed var(--olive-light);
+  background:var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  overflow:hidden;
+}
+.rt-local-img-box:hover{border-color:var(--rust);}
+.rt-local-img-box img{width:100%;height:100%;object-fit:cover;display:block;}
+.rt-local-img-plus{color:var(--olive-light);font-size:18px;}
+.rt-local-img-remove{
+  position:absolute;
+  top:2px;right:2px;
+  width:16px;height:16px;
+  line-height:14px;
+  padding:0;
+  background:rgba(20,23,26,.8);
+  border:1px solid var(--olive-light);
+  color:var(--paper);
+  font-size:12px;
+  cursor:pointer;
+}
+.rt-local-img-remove:hover{background:var(--danger);border-color:var(--danger);color:#fff;}

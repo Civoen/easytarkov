@@ -33,11 +33,9 @@
   <div class="topbar">
     <div class="topbar-right">
       <a class="trader-btn" href="index.html">Home</a>
-      <a class="trader-btn" href="traders.html">Traders</a>
       <a class="trader-btn" href="maps.html">Maps</a>
       <a class="trader-btn" href="kappa.html">Kappa</a>
       <a class="trader-btn" href="price.html">Price</a>
-      <a class="trader-btn" href="recent.html">Recent</a>
       <a class="trader-btn settings-btn" href="import.html" title="Settings">&#9881;</a>
       <div class="search-wrap">
         <input type="text" id="taskSearch" placeholder="Search tasks..." autocomplete="off">
@@ -55,7 +53,7 @@
   </header>
 
   <section>
-    <button class="trader-btn" id="toggleHomeProgress" type="button">Show Item Progress on Homepage</button>
+    <button class="trader-btn" id="toggleHomeProgress" type="button">Hide Item Progress from Homepage</button>
     <div class="section-label" style="margin-top:16px;">Required items</div>
     <div class="progress-wrap">
       <div class="progress-label">
@@ -102,14 +100,14 @@ const HOME_PROGRESS_KEY = 'easytarkov-show-home-progress';
 const toggleHomeProgress = document.getElementById('toggleHomeProgress');
 
 function refreshToggleLabel(){
-  let shown = false;
-  try{ shown = localStorage.getItem(HOME_PROGRESS_KEY) === '1'; }catch(e){}
+  let shown = true;
+  try{ shown = localStorage.getItem(HOME_PROGRESS_KEY) !== '0'; }catch(e){}
   toggleHomeProgress.textContent = shown ? 'Hide Item Progress from Homepage' : 'Show Item Progress on Homepage';
 }
 
 toggleHomeProgress.addEventListener('click', () => {
-  let shown = false;
-  try{ shown = localStorage.getItem(HOME_PROGRESS_KEY) === '1'; }catch(e){}
+  let shown = true;
+  try{ shown = localStorage.getItem(HOME_PROGRESS_KEY) !== '0'; }catch(e){}
   try{ localStorage.setItem(HOME_PROGRESS_KEY, shown ? '0' : '1'); }catch(e){}
   refreshToggleLabel();
 });

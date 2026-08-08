@@ -6,17 +6,6 @@ const TASK_DETAILS = {
   // Task pages removed for now - will be reintroduced for tasks required for Collector.
 };
 
-const TRADERS = [
-  { name: 'Prapor', url: 'prapor.html' },
-  { name: 'Therapist', url: 'therapist.html' },
-  { name: 'Skier', url: 'skier.html' },
-  { name: 'Peacekeeper', url: 'peacekeeper.html' },
-  { name: 'Mechanic', url: 'mechanic.html' },
-  { name: 'Ragman', url: 'ragman.html' },
-  { name: 'Jaeger', url: 'jaeger.html' },
-  { name: 'Fence', url: 'fence.html' }
-];
-
 const KAPPA_ITEMS = [
   '42 Signature Blend English Tea', 'Antique axe', 'Armband (Evasion)',
   'Axel parrot figurine', "Baddie's red beard", 'BakeEzy cook book',

@@ -532,20 +532,6 @@ async function initTaskPage(taskUrl){
     });
   }
 
-  // ---- Recently viewed tracking ----
-  try{
-    const RECENT_KEY = 'easytarkov-recent';
-    const task = TASKS.find(t => t.url === taskUrl);
-    if(task){
-      let recent = [];
-      try{ recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); }catch(e){ recent = []; }
-      recent = recent.filter(r => r.url !== taskUrl);
-      recent.unshift({ name: task.name, trader: task.trader, url: task.url });
-      recent = recent.slice(0, 10);
-      localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
-    }
-  }catch(e){}
-
   const pinBtn = document.getElementById('pinBtn');
   if(pinBtn){
     window.updatePinBtn = function(){

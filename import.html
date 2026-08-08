@@ -113,11 +113,9 @@ input[type=file]{display:none;}
   <div class="topbar">
     <div class="topbar-right">
       <a class="trader-btn" href="index.html">Home</a>
-      <a class="trader-btn" href="traders.html">Traders</a>
       <a class="trader-btn" href="maps.html">Maps</a>
       <a class="trader-btn" href="kappa.html">Kappa</a>
       <a class="trader-btn" href="price.html">Price</a>
-      <a class="trader-btn" href="recent.html">Recent</a>
       <a class="trader-btn settings-btn" href="import.html" title="Settings">&#9881;</a>
       <div class="search-wrap">
         <input type="text" id="taskSearch" placeholder="Search tasks..." autocomplete="off">
@@ -192,11 +190,12 @@ input[type=file]{display:none;}
 // ---- Keybind customization ----
 const KEYBIND_KEY = 'easytarkov-keybinds';
 function loadKeybindsLocal(){
+  const defaults = { add: 'r', price: 'p' };
   try{
     const raw = localStorage.getItem(KEYBIND_KEY);
-    return raw ? JSON.parse(raw) : { add: 'r', price: 'p' };
+    return raw ? Object.assign({}, defaults, JSON.parse(raw)) : defaults;
   }catch(e){
-    return { add: 'r', price: 'p' };
+    return defaults;
   }
 }
 function saveKeybindsLocal(kb){
@@ -204,17 +203,20 @@ function saveKeybindsLocal(kb){
 }
 
 let keybinds = loadKeybindsLocal();
-const keybindAddBtn = document.getElementById('keybindAdd');
-const keybindPriceBtn = document.getElementById('keybindPrice');
+const keybindButtons = {
+  add: document.getElementById('keybindAdd'),
+  price: document.getElementById('keybindPrice')
+};
 const keybindErrorEl = document.getElementById('keybindError');
-keybindAddBtn.textContent = keybinds.add.toUpperCase();
-keybindPriceBtn.textContent = keybinds.price.toUpperCase();
+Object.keys(keybindButtons).forEach(action => {
+  keybindButtons[action].textContent = keybinds[action].toUpperCase();
+});
 
 let listeningFor = null;
 
 function stopListening(){
   if(!listeningFor) return;
-  const btn = listeningFor === 'add' ? keybindAddBtn : keybindPriceBtn;
+  const btn = keybindButtons[listeningFor];
   btn.classList.remove('listening');
   btn.textContent = keybinds[listeningFor].toUpperCase();
   listeningFor = null;
@@ -223,21 +225,18 @@ function stopListening(){
 function startListening(action){
   stopListening();
   listeningFor = action;
-  const btn = action === 'add' ? keybindAddBtn : keybindPriceBtn;
+  const btn = keybindButtons[action];
   btn.classList.add('listening');
   btn.textContent = 'Press a key\u2026';
   keybindErrorEl.textContent = '';
 }
 
-keybindAddBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  if(listeningFor === 'add'){ stopListening(); return; }
-  startListening('add');
-});
-keybindPriceBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  if(listeningFor === 'price'){ stopListening(); return; }
-  startListening('price');
+Object.keys(keybindButtons).forEach(action => {
+  keybindButtons[action].addEventListener('click', (e) => {
+    e.stopPropagation();
+    if(listeningFor === action){ stopListening(); return; }
+    startListening(action);
+  });
 });
 document.addEventListener('click', () => { if(listeningFor) stopListening(); });
 
@@ -253,15 +252,15 @@ document.addEventListener('keydown', (e) => {
     return;
   }
 
-  const newKey = e.key.length === 1 ? e.key.toLowerCase() : e.key.toLowerCase();
-  const otherAction = listeningFor === 'add' ? 'price' : 'add';
+  const newKey = e.key.toLowerCase();
+  const conflictingAction = Object.keys(keybinds).find(action => action !== listeningFor && keybinds[action] === newKey);
 
   if(RESERVED_KEYS.indexOf(newKey) !== -1){
     keybindErrorEl.textContent = 'That key is already used elsewhere on the site. Try another.';
     return;
   }
-  if(newKey === keybinds[otherAction]){
-    keybindErrorEl.textContent = 'That key is already used for the other voice shortcut. Try another.';
+  if(conflictingAction){
+    keybindErrorEl.textContent = 'That key is already used for another shortcut. Try another.';
     return;
   }
 
