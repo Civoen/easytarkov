@@ -26,14 +26,19 @@ export async function onRequestGet(context) {
 
   if (!name) return json({ error: 'Missing name parameter.' }, 400);
 
-  const query = 'query($name: String!){ itemsByName(name: $name) { name shortName avg24hPrice basePrice iconLink wikiLink sellFor { price source } } }';
+  // Inline the name directly rather than using GraphQL variables - tarkov.dev's
+  // own documentation examples always inline values this way and never
+  // demonstrate variables, suggesting their server has incomplete support for
+  // the variables mechanism even though it's normally part of the GraphQL spec.
+  const escapedName = name.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  const query = '{ itemsByName(name: "' + escapedName + '") { name shortName avg24hPrice basePrice iconLink wikiLink sellFor { price source } } }';
 
   let res;
   try {
     res = await fetch('https://api.tarkov.dev/graphql', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, variables: { name } }),
+      body: JSON.stringify({ query }),
     });
   } catch (err) {
     return json({ error: 'Could not reach the price service.' }, 502);
