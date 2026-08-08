@@ -116,16 +116,11 @@ let priceDebounce = null;
 async function runPriceSearch(name){
   priceResults.innerHTML = '<div class="price-status">Searching...</div>';
   try{
-    const query = `query($name: String!){ itemsByName(name: $name) { id name shortName iconLink avg24hPrice basePrice sellFor { price source } } }`;
-    const res = await fetch('https://api.tarkov.dev/graphql', {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ query, variables: { name } })
-    });
+    const res = await fetch('/api/price?name=' + encodeURIComponent(name));
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    if(data.errors && data.errors.length) throw new Error(data.errors[0].message || 'API returned an error');
-    const items = (data.data && data.data.itemsByName) || [];
+    if(data.error) throw new Error(data.error);
+    const items = data.items || [];
     if(!items.length){
       priceResults.innerHTML = '<div class="price-status">No items found for that search.</div>';
       return;

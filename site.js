@@ -89,20 +89,11 @@ const raidTrayCount = document.getElementById('raidTrayCount');
 // expose a confirmed PvE-specific price feed, so treat results as a general
 // guide rather than exact PvE values.
 async function fetchTarkovPrice(name){
-  const query = 'query($name: String!){ itemsByName(name: $name) { name shortName avg24hPrice basePrice iconLink wikiLink sellFor { price source } } }';
-  // POST with the query as the body (the format the server actually expects) -
-  // but Content-Type: text/plain keeps this a CORS "simple request" so it never
-  // triggers a preflight, which is what caused issues on Safari. GraphQL servers
-  // generally parse the body as JSON regardless of the declared Content-Type.
-  const res = await fetch('https://api.tarkov.dev/graphql', {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({ query, variables: { name } })
-  });
+  const res = await fetch('/api/price?name=' + encodeURIComponent(name));
   if(!res.ok) throw new Error('HTTP ' + res.status);
   const data = await res.json();
-  if(data.errors && data.errors.length) throw new Error(data.errors[0].message || 'API returned an error');
-  return (data.data && data.data.itemsByName) ? data.data.itemsByName : [];
+  if(data.error) throw new Error(data.error);
+  return data.items || [];
 }
 
 function bestTraderSell(item){
