@@ -4,7 +4,7 @@
 // every cache that doesn't match the current name, so nobody gets stuck on
 // stale files, and offline users just keep their last-known-good copy until
 // they're back online and revisit the site.
-const CACHE_VERSION = 'easytarkov-v5';
+const CACHE_VERSION = 'easytarkov-v6';
 
 // The core shell: cached immediately on install, since these are needed on
 // almost every page. Individual task/trader/map pages are cached opportunistically
